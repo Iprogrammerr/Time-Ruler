@@ -3,9 +3,9 @@ import {Router} from "./router.js";
 const router = new Router();
 document.getElementById("continue").onclick = () => {
     if (Math.random() < 0.5) {
-        router.forward("sign-in.html");
+        router.forward("sign-in");
     } else {
-        router.forward("dashboard.html");
+        router.forward("dashboard");
     }
 };
-document.getElementById("start").onclick = () => router.forward("sign-up.html");
+document.getElementById("start").onclick = () => router.forward("sign-up");
