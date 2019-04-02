@@ -1,5 +1,12 @@
 package com.iprogrammerr.time.ruler;
 
+import com.iprogrammerr.time.ruler.database.Database;
+import com.iprogrammerr.time.ruler.database.DatabaseSession;
+import com.iprogrammerr.time.ruler.database.QueryTemplates;
+import com.iprogrammerr.time.ruler.database.SqlDatabase;
+import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
+import com.iprogrammerr.time.ruler.model.DatabaseUsers;
+import com.iprogrammerr.time.ruler.model.Users;
 import com.iprogrammerr.time.ruler.view.HtmlViews;
 import com.iprogrammerr.time.ruler.view.Views;
 import io.javalin.Javalin;
@@ -35,7 +42,7 @@ public class App {
         JavalinThymeleaf.configure(engine);
         app.get("test", ctx -> {
             Map<String, String> params = new HashMap<>();
-            params.put("name", "TestC");
+            params.put("table", "TestC");
             ctx
                 .render(configuration.resourcesPath() + File.separator + "template" + File.separator + "test.html",
                     params);
@@ -47,6 +54,10 @@ public class App {
             ctx.html(e.getMessage());
             e.printStackTrace();
         });
+
+        Database database = new SqlDatabase(configuration.databaseUser(), configuration.databasePassword(), configuration.jdbcUrl());
+        DatabaseSession session = new SqlDatabaseSession(database, new QueryTemplates());
+        Users users = new DatabaseUsers(session);
         app.start(configuration.port());
     }
 }

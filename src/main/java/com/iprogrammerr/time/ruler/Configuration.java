@@ -8,6 +8,9 @@ public class Configuration {
 
     private static final String PORT = "port";
     private static final String COMPILED_RESOURCES = "compiledResources";
+    private static final String DATABASE_USER = "database.user";
+    private static final String DATABASE_PASSWORD = "database.password";
+    private static final String JDBC_URL = "jdbc-url";
     private final Properties properties;
 
     public Configuration(Properties properties) {
@@ -29,10 +32,6 @@ public class Configuration {
         return Integer.parseInt(properties.getProperty(PORT));
     }
 
-    public boolean useCompiledResources() {
-        return Boolean.parseBoolean(properties.getProperty(COMPILED_RESOURCES));
-    }
-
     public String resourcesPath() {
         String path;
         if (Boolean.parseBoolean(properties.getProperty(COMPILED_RESOURCES))) {
@@ -42,5 +41,17 @@ public class Configuration {
             path = classPath.substring(0, classPath.indexOf("target")) + "src/main/resources";
         }
         return path;
+    }
+
+    public String databaseUser() {
+        return properties.getProperty(DATABASE_USER);
+    }
+
+    public String databasePassword() {
+        return properties.getProperty(DATABASE_PASSWORD);
+    }
+
+    public String jdbcUrl() {
+        return properties.getProperty(JDBC_URL);
     }
 }
