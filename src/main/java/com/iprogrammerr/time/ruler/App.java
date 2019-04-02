@@ -9,11 +9,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 public class App {
 
@@ -23,8 +20,8 @@ public class App {
         File root = new File(configuration.resourcesPath());
         Views views = new HtmlViews(new File(root, "html"));
         Javalin app = Javalin.create()
-        .enableStaticFiles(root.getPath() + File.separator + "css", Location.EXTERNAL)
-        .enableStaticFiles(root.getPath() + File.separator + "js", Location.EXTERNAL);
+            .enableStaticFiles(root.getPath() + File.separator + "css", Location.EXTERNAL)
+            .enableStaticFiles(root.getPath() + File.separator + "js", Location.EXTERNAL);
         app.get("/sign-in", ctx -> {
             ctx.html(views.view("sign-in"));
         });
@@ -40,7 +37,8 @@ public class App {
             Map<String, String> params = new HashMap<>();
             params.put("name", "TestC");
             ctx
-            .render(configuration.resourcesPath() + File.separator + "template" + File.separator + "test.html", params);
+                .render(configuration.resourcesPath() + File.separator + "template" + File.separator + "test.html",
+                    params);
 
         });
         //TODO handle exceptions
