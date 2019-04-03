@@ -1,5 +1,6 @@
 package com.iprogrammerr.time.ruler.database;
 
+import com.iprogrammerr.time.ruler.TestDatabaseSetup;
 import com.iprogrammerr.time.ruler.model.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.User;
 import org.hamcrest.MatcherAssert;

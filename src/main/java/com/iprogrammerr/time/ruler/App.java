@@ -31,6 +31,7 @@ public class App {
             .enableStaticFiles(root.getPath() + File.separator + "js", Location.EXTERNAL);
         app.get("/sign-in", ctx -> {
             ctx.html(views.view("sign-in"));
+            ctx.req.getSession().invalidate();;
         });
         app.get("/", ctx -> {
             ctx.html(views.view("index"));

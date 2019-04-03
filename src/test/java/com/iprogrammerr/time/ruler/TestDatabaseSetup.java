@@ -1,6 +1,7 @@
-package com.iprogrammerr.time.ruler.database;
+package com.iprogrammerr.time.ruler;
 
-import com.iprogrammerr.time.ruler.Configuration;
+import com.iprogrammerr.time.ruler.database.Database;
+import com.iprogrammerr.time.ruler.database.SqlDatabase;
 import org.h2.tools.RunScript;
 
 import java.io.BufferedReader;

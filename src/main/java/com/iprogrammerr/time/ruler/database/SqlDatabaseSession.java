@@ -34,8 +34,9 @@ public class SqlDatabaseSession implements DatabaseSession {
     @Override
     public long create(Record record) {
         try (Connection c = database.connection()) {
-            PreparedStatement preparedStatement = c
-                .prepareStatement(templates.insert(record), Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement preparedStatement = c.prepareStatement(
+                templates.insert(record), Statement.RETURN_GENERATED_KEYS
+            );
             preparedStatement.executeUpdate();
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             resultSet.next();
