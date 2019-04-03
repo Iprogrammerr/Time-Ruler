@@ -25,7 +25,6 @@ public class SqlDatabaseSession implements DatabaseSession {
         try (Connection c = database.connection()) {
             Statement statement = c.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
-            resultSet.next();
             return mapping.map(resultSet);
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -43,8 +43,7 @@ public class App {
         app.get("test", ctx -> {
             Map<String, String> params = new HashMap<>();
             params.put("table", "TestC");
-            ctx
-                .render(configuration.resourcesPath() + File.separator + "template" + File.separator + "test.html",
+            ctx.render(configuration.resourcesPath() + File.separator + "template" + File.separator + "test.html",
                     params);
 
         });

@@ -49,7 +49,7 @@ public class QueryTemplates {
         valuesBuilder.append(toStringValue(record.values().get(0)));
         for (int i = 1; i < record.keys().size(); i++) {
             keysBuilder.append(", ").append(record.keys().get(i));
-            valuesBuilder.append(", ").append(record.values().get(i));
+            valuesBuilder.append(", ").append(toStringValue(record.values().get(i)));
         }
         keysBuilder.append(")");
         valuesBuilder.append(")");

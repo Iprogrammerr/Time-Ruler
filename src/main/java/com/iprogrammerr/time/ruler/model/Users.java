@@ -6,5 +6,9 @@ public interface Users {
 
     List<User> all();
 
-    long create(User user);
+    User user(long id);
+
+    long create(String name, String email, String password);
+
+    void update(User user);
 }
