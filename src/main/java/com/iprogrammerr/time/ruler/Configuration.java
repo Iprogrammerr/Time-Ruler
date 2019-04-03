@@ -11,6 +11,10 @@ public class Configuration {
     private static final String DATABASE_USER = "database.user";
     private static final String DATABASE_PASSWORD = "database.password";
     private static final String JDBC_URL = "jdbc-url";
+    private static final String ADMIN_EMAIL = "admin.email";
+    private static final String ADMIN_PASSWORD = "admin.password";
+    private static final String SMTP_HOST = "smtp.host";
+    private static final String SMTP_PORT = "smtp.port";
     private final Properties properties;
 
     public Configuration(Properties properties) {
@@ -53,5 +57,21 @@ public class Configuration {
 
     public String jdbcUrl() {
         return properties.getProperty(JDBC_URL);
+    }
+
+    public String adminEmail() {
+        return properties.getProperty(ADMIN_EMAIL);
+    }
+
+    public String adminPassword() {
+        return properties.getProperty(ADMIN_PASSWORD);
+    }
+
+    public String smtpHost() {
+        return properties.getProperty(SMTP_HOST);
+    }
+
+    public int smtpPort() {
+        return Integer.parseInt(properties.getProperty(SMTP_PORT));
     }
 }

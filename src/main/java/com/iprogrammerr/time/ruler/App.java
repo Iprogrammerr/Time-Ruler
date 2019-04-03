@@ -5,6 +5,9 @@ import com.iprogrammerr.time.ruler.database.DatabaseSession;
 import com.iprogrammerr.time.ruler.database.QueryTemplates;
 import com.iprogrammerr.time.ruler.database.SqlDatabase;
 import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
+import com.iprogrammerr.time.ruler.email.ConfigurableEmailServer;
+import com.iprogrammerr.time.ruler.email.Email;
+import com.iprogrammerr.time.ruler.email.EmailServer;
 import com.iprogrammerr.time.ruler.model.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.Users;
 import com.iprogrammerr.time.ruler.view.HtmlViews;
@@ -31,7 +34,8 @@ public class App {
             .enableStaticFiles(root.getPath() + File.separator + "js", Location.EXTERNAL);
         app.get("/sign-in", ctx -> {
             ctx.html(views.view("sign-in"));
-            ctx.req.getSession().invalidate();;
+            ctx.req.getSession().invalidate();
+            ;
         });
         app.get("/", ctx -> {
             ctx.html(views.view("index"));
@@ -45,7 +49,7 @@ public class App {
             Map<String, String> params = new HashMap<>();
             params.put("table", "TestC");
             ctx.render(configuration.resourcesPath() + File.separator + "template" + File.separator + "test.html",
-                    params);
+                params);
 
         });
         //TODO handle exceptions
@@ -55,9 +59,14 @@ public class App {
             e.printStackTrace();
         });
 
-        Database database = new SqlDatabase(configuration.databaseUser(), configuration.databasePassword(), configuration.jdbcUrl());
+        Database database = new SqlDatabase(configuration.databaseUser(), configuration.databasePassword(),
+            configuration.jdbcUrl());
         DatabaseSession session = new SqlDatabaseSession(database, new QueryTemplates());
         Users users = new DatabaseUsers(session);
+        EmailServer emailServer = new ConfigurableEmailServer(
+            configuration.adminEmail(), configuration.adminPassword(),
+            configuration.smtpHost(), configuration.smtpPort()
+        );
         app.start(configuration.port());
     }
 }
