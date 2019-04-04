@@ -1,8 +1,8 @@
 package com.iprogrammerr.time.ruler.respondent;
 
 import com.iprogrammerr.time.ruler.email.EmailServer;
-import com.iprogrammerr.time.ruler.model.Users;
 import com.iprogrammerr.time.ruler.model.Hashing;
+import com.iprogrammerr.time.ruler.model.Users;
 import com.iprogrammerr.time.ruler.view.Views;
 import io.javalin.Context;
 import io.javalin.Javalin;
@@ -28,19 +28,19 @@ public class UsersRespondent implements Respondent {
 
     @Override
     public void init(Javalin app) {
-        app.routes(() -> {
-            ApiBuilder.path(PREFIX, () -> {
+        app.routes(() -> ApiBuilder.path(PREFIX, () -> {
                 ApiBuilder.post(SIGN_UP, this::signUp);
                 ApiBuilder.post(SIGN_IN, this::signIn);
                 ApiBuilder.post(SIGN_OUT, this::signOut);
-            });
-        });
+            })
+        );
         app.get(SIGN_UP, ctx -> ctx.html(views.view(SIGN_UP)));
         app.get(SIGN_IN, ctx -> ctx.html(views.view(SIGN_IN)));
     }
 
+    //TODO proper implementations
     public void signUp(Context context) {
-
+        context.status(201);
     }
 
     public void signIn(Context context) {

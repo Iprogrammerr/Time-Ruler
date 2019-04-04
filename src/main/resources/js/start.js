@@ -1,6 +1,5 @@
-import {Router} from "./router.js";
+import {router} from "./app.js";
 
-const router = new Router();
 document.getElementById("continue").onclick = () => {
     if (Math.random() < 0.5) {
         router.forward("sign-in");
