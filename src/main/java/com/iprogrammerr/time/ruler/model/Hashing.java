@@ -1,4 +1,4 @@
-package com.iprogrammerr.time.ruler.security;
+package com.iprogrammerr.time.ruler.model;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
