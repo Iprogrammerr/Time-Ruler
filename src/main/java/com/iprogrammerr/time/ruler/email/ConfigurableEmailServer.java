@@ -39,7 +39,7 @@ public class ConfigurableEmailServer implements EmailServer {
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(admin));
-            message.setRecipient(Message.RecipientType.TO, new InternetAddress(email.recipent));
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress(email.recipient));
             message.setSubject(email.subject);
             MimeBodyPart mimeBodyPart = new MimeBodyPart();
             mimeBodyPart.setContent(email.text, "text/html");

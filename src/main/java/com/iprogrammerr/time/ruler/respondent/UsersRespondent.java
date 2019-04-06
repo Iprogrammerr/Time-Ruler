@@ -8,8 +8,6 @@ import io.javalin.Context;
 import io.javalin.Javalin;
 
 import java.net.HttpURLConnection;
-import java.util.List;
-import java.util.Map;
 
 public class UsersRespondent implements Respondent {
 
@@ -17,6 +15,9 @@ public class UsersRespondent implements Respondent {
     private static final String SIGN_UP_SUCCESS = "sign-up-success";
     private static final String SIGN_IN = "sign-in";
     private static final String SIGN_OUT = "sign-out";
+    private static final String FORM_EMAIL = "email";
+    private static final String FORM_LOGIN = "login";
+    private static final String FORM_PASSWORD = "password";
     private final Views views;
     private final Users users;
     private final Hashing hashing;
@@ -41,6 +42,11 @@ public class UsersRespondent implements Respondent {
 
     //TODO proper implementations
     public void signUp(Context context) {
+        String email = context.formParam(FORM_EMAIL);
+        String user = context.formParam(FORM_LOGIN);
+        String password = context.formParam(FORM_PASSWORD);
+        String test = context.formParam("test");
+        System.out.println("Test = " + test);
         context.status(HttpURLConnection.HTTP_CREATED);
         context.html(SIGN_UP_SUCCESS);
     }
