@@ -18,4 +18,12 @@ public class Hashing {
     public String hash(String message) {
         return new String(digest.digest(message.getBytes(StandardCharsets.UTF_8)));
     }
+
+    public String hash(String message, String... messages) {
+        StringBuilder builder = new StringBuilder(message);
+        for (String m : messages) {
+            builder.append("&").append(m);
+        }
+        return builder.toString();
+    }
 }

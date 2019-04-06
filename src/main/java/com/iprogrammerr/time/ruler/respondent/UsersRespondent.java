@@ -20,8 +20,10 @@ public class UsersRespondent implements Respondent {
     private static final String SIGN_IN = "sign-in";
     private static final String SIGN_OUT = "sign-out";
     private static final String FORM_EMAIL = "email";
+    private static final String FORM_EMAIL_LOGIN = "emailLogin";
     private static final String FORM_LOGIN = "login";
     private static final String FORM_PASSWORD = "password";
+    private static final String ACTIVATION = "activation";
     private final Views views;
     private final Users users;
     private final Hashing hashing;
@@ -58,14 +60,31 @@ public class UsersRespondent implements Respondent {
         }
     }
 
-    //TODO unmock
     private void createUser(String email, String name, String password) {
-        //long id = users.create(name, email, hashing.hash(password));
-        emails.sendSignUpEmail(email, String.format("%s?activation_id=%d", SIGN_IN, 1));
+        long id = users.create(name, email, hashing.hash(password));
+        String userHash = hashing.hash(email, password, String.valueOf(id));
+        emails.sendSignUpEmail(email, String.format("%s?activation=%s", SIGN_IN, userHash));
     }
 
-
+    //TODO failure page
     public void signIn(Context context) {
+        String activation = context.pathParamMap().getOrDefault(ACTIVATION, "");
+        if (activation.isEmpty()) {
+            String emailOrLogin = context.formParam(FORM_EMAIL_LOGIN);
+            signIn(
+                new ValidateableEmail(emailOrLogin), new ValidateableName(emailOrLogin),
+                new ValidateablePassword(context.formParam(FORM_PASSWORD))
+            );
+        } else {
+            activate(context, activation);
+        }
+    }
+
+    private void signIn(ValidateableEmail email, ValidateableName name, ValidateablePassword password) {
+
+    }
+
+    private void activate(Context context, String activation) {
 
     }
 
