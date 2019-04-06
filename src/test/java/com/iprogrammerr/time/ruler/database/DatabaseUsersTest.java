@@ -1,6 +1,7 @@
 package com.iprogrammerr.time.ruler.database;
 
 import com.iprogrammerr.time.ruler.TestDatabaseSetup;
+import com.iprogrammerr.time.ruler.ThrowsMatcher;
 import com.iprogrammerr.time.ruler.model.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.User;
 import org.hamcrest.MatcherAssert;
@@ -48,5 +49,25 @@ public class DatabaseUsersTest {
         User user = new User(id, "Yegor3", "yegor@gmail.com", "lovesHibernateSecretly", true);
         users.update(user);
         MatcherAssert.assertThat("Update failure", users.user(id), Matchers.equalTo(user));
+    }
+
+    @Test
+    public void throwsExceptionIfUserDoesNotExist() {
+        long id = 1;
+        MatcherAssert.assertThat(
+            "Does not throw expected exception",
+            () -> users.user(id),
+            new ThrowsMatcher(String.format("There is no user of with %d id", id))
+        );
+    }
+
+    @Test
+    public void findsUserWithGivenId() {
+        String name = "Aleks";
+        String email = "aleks@gmail.com";
+        String password = "lovesJustice";
+        long id = users.create(name, email, password);
+        User user = new User(id, name, email, password, false);
+        MatcherAssert.assertThat("Can not find user with given id", users.user(id), Matchers.equalTo(user));
     }
 }

@@ -1,6 +1,5 @@
-package com.iprogrammerr.time.ruler.security;
+package com.iprogrammerr.time.ruler.model;
 
-import com.iprogrammerr.time.ruler.model.Hashing;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
