@@ -4,23 +4,34 @@
 <head>
     <title>Sign up</title>
     <link rel="stylesheet" type="text/css" href="style.css" />
+    <!--TODO is this a good idea?-->
+    <style>
+        input {
+            margin-bottom: 4px;
+        }
+    </style>
 </head>
 
 <body>
     <h1>Sign up to get started</h1>
     <form>
-        <div>Email</div>
-        <input type="email"></input>
-        <div>Login</div>
-        <input type="text"></input>
-        <div>Password</div>
-        <input type="password"></input>
-        <div>Password, once again</div>
-        <input type="password"></input>
-        <br/>
+        <p>Email</p>
+        <p id="emailError" class="error">Error</p>
+        <input type="email" name="email"></input>
+        <p>Login</p>
+        <p id="loginError" class="error">Error</p>
+        <input type="text" name="login"></input>
+        <p>Password</p>
+        <p id="passwordError" class="error">Error</p>
+        <input type="password" name="password"></input>
+        <p>Password, once again</p>
+        <p id="passwordError" class="error">Error</p>
+        <input type="password" name="repassword"></input>
+        </br>
         <input id="signUp" type="submit" value="Sign up"></input>
     </form>
 </body>
 
 <script src="sign-up.js" type="module"></script>
+
 </html>

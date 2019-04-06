@@ -6,12 +6,15 @@ import com.iprogrammerr.time.ruler.model.Users;
 import com.iprogrammerr.time.ruler.view.Views;
 import io.javalin.Context;
 import io.javalin.Javalin;
-import io.javalin.apibuilder.ApiBuilder;
+
+import java.net.HttpURLConnection;
+import java.util.List;
+import java.util.Map;
 
 public class UsersRespondent implements Respondent {
 
-    private static final String PREFIX = "user";
     private static final String SIGN_UP = "sign-up";
+    private static final String SIGN_UP_SUCCESS = "sign-up-success";
     private static final String SIGN_IN = "sign-in";
     private static final String SIGN_OUT = "sign-out";
     private final Views views;
@@ -28,19 +31,18 @@ public class UsersRespondent implements Respondent {
 
     @Override
     public void init(Javalin app) {
-        app.routes(() -> ApiBuilder.path(PREFIX, () -> {
-                ApiBuilder.post(SIGN_UP, this::signUp);
-                ApiBuilder.post(SIGN_IN, this::signIn);
-                ApiBuilder.post(SIGN_OUT, this::signOut);
-            })
-        );
         app.get(SIGN_UP, ctx -> ctx.html(views.view(SIGN_UP)));
         app.get(SIGN_IN, ctx -> ctx.html(views.view(SIGN_IN)));
+
+        app.post(SIGN_UP, this::signUp);
+        app.post(SIGN_IN, this::signIn);
+        app.post(SIGN_OUT, this::signOut);
     }
 
     //TODO proper implementations
     public void signUp(Context context) {
-        context.status(201);
+        context.status(HttpURLConnection.HTTP_CREATED);
+        context.html(SIGN_UP_SUCCESS);
     }
 
     public void signIn(Context context) {
