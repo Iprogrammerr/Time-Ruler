@@ -8,11 +8,11 @@ import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
 import com.iprogrammerr.time.ruler.email.ConfigurableEmailServer;
 import com.iprogrammerr.time.ruler.email.EmailServer;
 import com.iprogrammerr.time.ruler.model.DatabaseUsers;
+import com.iprogrammerr.time.ruler.model.Hashing;
 import com.iprogrammerr.time.ruler.model.Users;
 import com.iprogrammerr.time.ruler.respondent.Respondent;
 import com.iprogrammerr.time.ruler.respondent.UsersRespondent;
 import com.iprogrammerr.time.ruler.respondent.WelcomeRespondent;
-import com.iprogrammerr.time.ruler.model.Hashing;
 import com.iprogrammerr.time.ruler.view.HtmlViews;
 import com.iprogrammerr.time.ruler.view.Views;
 import io.javalin.Javalin;
@@ -71,8 +71,6 @@ public class App {
             ctx.html(e.getMessage());
             e.printStackTrace();
         });
-
-
         app.start(configuration.port());
     }
 }
