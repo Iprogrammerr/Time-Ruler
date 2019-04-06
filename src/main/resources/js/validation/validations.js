@@ -1,4 +1,4 @@
-export function Validations(minNameLength = 3, minPasswordLength = 6) {
+export function Validations(minNameLength = 3, minPasswordLength = 8) {
     //TODO check if they are valid
     const alphanumericRegex = /^[a-zA-Z0-9]+$/;
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;

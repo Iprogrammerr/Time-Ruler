@@ -60,7 +60,7 @@ public class ValidateableEmailTest {
     }
 
     @Test
-    public void throwsExceptionIfEmailIsNotValid() {
+    public void throwsExceptionIfIsNotValid() {
         String email = "@d.com";
         String message = String.format("%s is not a valid email", email);
         MatcherAssert.assertThat(

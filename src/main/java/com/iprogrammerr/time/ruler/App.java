@@ -7,6 +7,7 @@ import com.iprogrammerr.time.ruler.database.SqlDatabase;
 import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
 import com.iprogrammerr.time.ruler.email.ConfigurableEmailServer;
 import com.iprogrammerr.time.ruler.email.EmailServer;
+import com.iprogrammerr.time.ruler.email.Emails;
 import com.iprogrammerr.time.ruler.model.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.Hashing;
 import com.iprogrammerr.time.ruler.model.Users;
@@ -57,10 +58,14 @@ public class App {
             configuration.adminEmail(), configuration.adminPassword(),
             configuration.smtpHost(), configuration.smtpPort()
         );
+        Emails emails = new Emails(
+            emailServer, configuration.activationLinkBase(), configuration.signUpEmailSubject(),
+            configuration.signUpEmailTemplate()
+        );
         Hashing hashing = new Hashing();
 
         Respondent welcomeRespondent = new WelcomeRespondent(views);
-        Respondent usersRespondent = new UsersRespondent(views, users, hashing, emailServer);
+        UsersRespondent usersRespondent = new UsersRespondent(views, users, hashing, emails);
 
         welcomeRespondent.init(app);
         usersRespondent.init(app);

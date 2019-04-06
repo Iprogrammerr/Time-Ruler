@@ -24,7 +24,7 @@ export const cookiesKeys = {
 export const errors = {
     invalidEmail: "Email should be at least 5 signs of length, contains '@' character, domain and '.' character",
     invalidLogin: "Login should have at least 3 alphanumeric characters",
-    invalidPassword: "Password needs to have at least 6 characters",
+    invalidPassword: "Password needs to have at least 8 characters",
     passwordsMismatch: "Given passwords differ"
 };
 

@@ -9,7 +9,7 @@ public class ValidateableEmail implements Validateable<String> {
     private final Initialization<Boolean> valid;
 
     public ValidateableEmail(String email) {
-        this.email = email;
+        this.email = email == null ? "" : email;
         this.valid = new Initialization<>(() -> {
             int atIndex = email.indexOf('@');
             int dotIndex = email.indexOf('.');
@@ -20,10 +20,10 @@ public class ValidateableEmail implements Validateable<String> {
 
     @Override
     public String value() {
-        if (!isValid()) {
-            throw new RuntimeException(String.format("%s is not a valid email", email));
+        if (isValid()) {
+            return email;
         }
-        return email;
+        throw new RuntimeException(String.format("%s is not a valid email", email));
     }
 
     @Override
