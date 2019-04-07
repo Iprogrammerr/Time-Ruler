@@ -3,6 +3,7 @@ package com.iprogrammerr.time.ruler.model;
 import com.iprogrammerr.time.ruler.database.DatabaseSession;
 import com.iprogrammerr.time.ruler.database.Record;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,11 +47,36 @@ public class DatabaseUsers implements Users {
 
     @Override
     public User user(long id) {
-        return session.select(r -> {
-            if (r.next()) {
-                return new User(r);
-            }
-            throw new RuntimeException(String.format("There is no user of with %d id", id));
-        }, "SELECT * FROM user WHERE id = ?", id);
+        return session.select(r -> mapOrThrow(r, "There is no user with %s id", String.valueOf(id)),
+            "SELECT * FROM user WHERE id = ?", id);
+    }
+
+    private User mapOrThrow(ResultSet result, String exceptionTemplate, String identifier) throws Exception {
+        if (result.next()) {
+            return new User(result);
+        }
+        throw new RuntimeException(String.format(exceptionTemplate, identifier));
+    }
+
+    @Override
+    public boolean existsWithName(String name) {
+        return session.select(ResultSet::next, "SELECT id FROM user WHERE name = ?", name);
+    }
+
+    @Override
+    public boolean existsWithEmail(String email) {
+        return session.select(ResultSet::next, "SELECT id FROM user WHERE email = ?", email);
+    }
+
+    @Override
+    public User byName(String name) {
+        return session.select(r -> mapOrThrow(r, "There is no user with %s name", name),
+            "SELECT * FROM user WHERE name = ? ", name);
+    }
+
+    @Override
+    public User byEmail(String email) {
+        return session.select(r -> mapOrThrow(r, "There is no user with %s email", email),
+            "SELECT * FROM user WHERE email = ? ", email);
     }
 }

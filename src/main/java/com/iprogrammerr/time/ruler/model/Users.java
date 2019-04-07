@@ -8,6 +8,14 @@ public interface Users {
 
     User user(long id);
 
+    boolean existsWithName(String name);
+
+    boolean existsWithEmail(String email);
+
+    User byName(String name);
+
+    User byEmail(String email);
+
     long create(String name, String email, String password);
 
     void update(User user);

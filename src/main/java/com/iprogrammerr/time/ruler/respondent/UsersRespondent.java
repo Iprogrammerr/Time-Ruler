@@ -2,15 +2,19 @@ package com.iprogrammerr.time.ruler.respondent;
 
 import com.iprogrammerr.time.ruler.email.Emails;
 import com.iprogrammerr.time.ruler.model.Hashing;
+import com.iprogrammerr.time.ruler.model.User;
 import com.iprogrammerr.time.ruler.model.Users;
 import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateablePassword;
 import com.iprogrammerr.time.ruler.view.Views;
+import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
 import java.net.HttpURLConnection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UsersRespondent implements Respondent {
 
@@ -24,13 +28,17 @@ public class UsersRespondent implements Respondent {
     private static final String FORM_LOGIN = "login";
     private static final String FORM_PASSWORD = "password";
     private static final String ACTIVATION = "activation";
+    private static final String INVALID_EMAIL_LOGIN_TEMPLATE = "invalidEmailLogin";
+    private static final String INVALID_PASSWORD_TEMPLATE = "invalidPassword";
     private final Views views;
+    private final ViewsTemplates templates;
     private final Users users;
     private final Hashing hashing;
     private final Emails emails;
 
-    public UsersRespondent(Views views, Users users, Hashing hashing, Emails emails) {
+    public UsersRespondent(Views views, ViewsTemplates templates, Users users, Hashing hashing, Emails emails) {
         this.views = views;
+        this.templates = templates;
         this.users = users;
         this.hashing = hashing;
         this.emails = emails;
@@ -39,7 +47,7 @@ public class UsersRespondent implements Respondent {
     @Override
     public void init(Javalin app) {
         app.get(SIGN_UP, ctx -> ctx.html(views.view(SIGN_UP)));
-        app.get(SIGN_IN, ctx -> ctx.html(views.view(SIGN_IN)));
+        app.get(SIGN_IN, ctx -> renderSignIn(ctx, false, false));
 
         app.post(SIGN_UP, this::signUp);
         app.post(SIGN_IN, this::signIn);
@@ -63,7 +71,7 @@ public class UsersRespondent implements Respondent {
     private void createUser(String email, String name, String password) {
         long id = users.create(name, email, hashing.hash(password));
         String userHash = hashing.hash(email, password, String.valueOf(id));
-        emails.sendSignUpEmail(email, String.format("%s?activation=%s", SIGN_IN, userHash));
+        emails.sendSignUpEmail(email, String.format("%s?%s=%s", SIGN_IN, ACTIVATION, userHash));
     }
 
     //TODO failure page
@@ -72,16 +80,56 @@ public class UsersRespondent implements Respondent {
         if (activation.isEmpty()) {
             String emailOrLogin = context.formParam(FORM_EMAIL_LOGIN);
             signIn(
-                new ValidateableEmail(emailOrLogin), new ValidateableName(emailOrLogin),
-                new ValidateablePassword(context.formParam(FORM_PASSWORD))
+                context, new ValidateableEmail(emailOrLogin),
+                new ValidateableName(emailOrLogin), new ValidateablePassword(context.formParam(FORM_PASSWORD))
             );
         } else {
             activate(context, activation);
         }
     }
 
-    private void signIn(ValidateableEmail email, ValidateableName name, ValidateablePassword password) {
+    private void signIn(Context context, ValidateableEmail email, ValidateableName name, ValidateablePassword password) {
+        if (email.isValid() && password.isValid()) {
+            signInByEmail(context, email.value(), hashing.hash(password.value()));
+        } else if (name.isValid() && password.isValid()) {
+            signInByLogin(context, name.value(), hashing.hash(password.value()));
+        } else {
+            renderSignIn(context, true, true);
+        }
+    }
 
+    private void signInByEmail(Context context, String email, String passwordHash) {
+        if (users.existsWithEmail(email)) {
+            User user = users.byName(email);
+            if (passwordHash.equals(user.password)) {
+                //TODO create session, render dashboard!
+            } else {
+                renderSignIn(context, true, false);
+            }
+        } else {
+            renderSignIn(context, true, false);
+        }
+    }
+
+    private void signInByLogin(Context context, String login, String passwordHash) {
+        if (users.existsWithName(login)) {
+            User user = users.byName(login);
+            if (passwordHash.equals(user.password)) {
+                //TODO create session, , render dashboard!
+            } else {
+                renderSignIn(context, true, false);
+            }
+        } else {
+            renderSignIn(context, true, false);
+        }
+    }
+
+    //TODO render!
+    private void renderSignIn(Context context, boolean invalidLoginEmail, boolean invalidPassword) {
+        Map<String, Object> params = new HashMap<>();
+        params.put(INVALID_EMAIL_LOGIN_TEMPLATE, invalidLoginEmail);
+        params.put(INVALID_PASSWORD_TEMPLATE, invalidPassword);
+        templates.render(context, SIGN_IN, params);
     }
 
     private void activate(Context context, String activation) {

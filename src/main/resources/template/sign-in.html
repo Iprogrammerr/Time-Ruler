@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
 
 <head>
     <title>Sign in</title>
@@ -16,10 +16,10 @@
     <form>
         <h1 style="display: none">Your account has been activated, now you can sign in!</h1>
         <p>Email/Login</p>
-        <p class="error">Error</p>
+        <p th:class="${invalidEmailLogin} ? error-visible : error" id="emailLoginError">Invalid email or login</p>
         <input type="text" name="emailLogin"></input>
-        <p>Password</p>
-        <p class="error">Error</p>
+        <p>Password</p> 
+        <p th:class="${invalidPassword} ? error-visible : error" id="passwordError">Invalid password</p>
         <input type="password" name="password"></input>
         </br>
         <input id="signIn" type="submit" value="Sign in"></input>

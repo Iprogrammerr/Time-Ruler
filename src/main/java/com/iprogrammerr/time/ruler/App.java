@@ -15,7 +15,9 @@ import com.iprogrammerr.time.ruler.respondent.Respondent;
 import com.iprogrammerr.time.ruler.respondent.UsersRespondent;
 import com.iprogrammerr.time.ruler.respondent.WelcomeRespondent;
 import com.iprogrammerr.time.ruler.view.HtmlViews;
+import com.iprogrammerr.time.ruler.view.HtmlViewsTemplates;
 import com.iprogrammerr.time.ruler.view.Views;
+import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinThymeleaf;
 import io.javalin.staticfiles.Location;
@@ -50,6 +52,7 @@ public class App {
 
         });
         Views views = new HtmlViews(new File(root, "html"));
+        ViewsTemplates viewsTemplates = new HtmlViewsTemplates(new File(root, "template"));
         Database database = new SqlDatabase(configuration.databaseUser(), configuration.databasePassword(),
             configuration.jdbcUrl());
         DatabaseSession session = new SqlDatabaseSession(database, new QueryTemplates());
@@ -65,7 +68,7 @@ public class App {
         Hashing hashing = new Hashing();
 
         Respondent welcomeRespondent = new WelcomeRespondent(views);
-        UsersRespondent usersRespondent = new UsersRespondent(views, users, hashing, emails);
+        UsersRespondent usersRespondent = new UsersRespondent(views, viewsTemplates, users, hashing, emails);
 
         welcomeRespondent.init(app);
         usersRespondent.init(app);

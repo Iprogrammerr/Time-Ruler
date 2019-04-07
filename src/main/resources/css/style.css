@@ -20,7 +20,11 @@ p, p.error {
     margin-bottom: 4px;
 }
 
-p.error {
+p.error, p.error-visible {
     color: red;
     display: none;
+}
+
+p.error-visible {
+    display: block
 }
