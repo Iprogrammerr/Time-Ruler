@@ -24,6 +24,6 @@ public class Hashing {
         for (String m : messages) {
             builder.append("&").append(m);
         }
-        return builder.toString();
+        return hash(builder.toString());
     }
 }

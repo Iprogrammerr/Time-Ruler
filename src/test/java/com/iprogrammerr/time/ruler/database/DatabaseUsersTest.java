@@ -28,7 +28,7 @@ public class DatabaseUsersTest {
     }
 
     @Test
-    public void returnsList() {
+    public void returnsListOfAll() {
         users.create("Igor", "ceigor@gmail.com", "SECRET");
         users.create("Olek", "olek@super.com", "password2");
         int expectedSize = 2;
@@ -39,8 +39,23 @@ public class DatabaseUsersTest {
     }
 
     @Test
-    public void returnsEmpty() {
+    public void returnsEmptyAsAll() {
         MatcherAssert.assertThat("Does not return empty list", users.all(), Matchers.empty());
+    }
+
+    @Test
+    public void returnsListOfAllInactive() {
+        users.create("Igor", "ceigor32@gmail.com", "SECREdT");
+        int expectedSize = 1;
+        MatcherAssert.assertThat(
+            "Does not contain proper elements",
+            users.allInactive().size(), Matchers.equalTo(expectedSize)
+        );
+    }
+
+    @Test
+    public void returnsEmptyAsAllInactive() {
+        MatcherAssert.assertThat("Does not return empty list", users.allInactive(), Matchers.empty());
     }
 
     @Test

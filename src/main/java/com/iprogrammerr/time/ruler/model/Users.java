@@ -6,6 +6,8 @@ public interface Users {
 
     List<User> all();
 
+    List<User> allInactive();
+
     User user(long id);
 
     boolean existsWithName(String name);

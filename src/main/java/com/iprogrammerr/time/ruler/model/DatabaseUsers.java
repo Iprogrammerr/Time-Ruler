@@ -17,15 +17,21 @@ public class DatabaseUsers implements Users {
 
     @Override
     public List<User> all() {
-        return session.select(r -> {
-            List<User> users = new ArrayList<>();
-            while (r.next()) {
-                users.add(new User(r));
-            }
-            return users;
-        }, "SELECT * FROM user");
+        return session.select(this::users, "SELECT * FROM user");
     }
 
+    private List<User> users(ResultSet result) throws Exception {
+        List<User> users = new ArrayList<>();
+        while (result.next()) {
+            users.add(new User(result));
+        }
+        return users;
+    }
+
+    @Override
+    public List<User> allInactive() {
+        return session.select(this::users, "SELECT * FROM user WHERE active = 0");
+    }
 
     @Override
     public long create(String name, String email, String password) {

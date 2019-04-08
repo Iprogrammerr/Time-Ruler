@@ -13,7 +13,11 @@ import io.javalin.Context;
 import io.javalin.Javalin;
 
 import java.net.HttpURLConnection;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UsersRespondent implements Respondent {
@@ -36,7 +40,10 @@ public class UsersRespondent implements Respondent {
     private final Hashing hashing;
     private final Emails emails;
 
-    public UsersRespondent(Views views, ViewsTemplates templates, Users users, Hashing hashing, Emails emails) {
+    public UsersRespondent(
+        Views views, ViewsTemplates templates, Users users, Hashing hashing,
+        Emails emails
+    ) {
         this.views = views;
         this.templates = templates;
         this.users = users;
@@ -70,11 +77,22 @@ public class UsersRespondent implements Respondent {
 
     private void createUser(String email, String name, String password) {
         long id = users.create(name, email, hashing.hash(password));
-        String userHash = hashing.hash(email, password, String.valueOf(id));
-        emails.sendSignUpEmail(email, String.format("%s?%s=%s", SIGN_IN, ACTIVATION, userHash));
+        emails.sendSignUpEmail(email,
+            String.format("%s?%s=%s", SIGN_IN, ACTIVATION, urlEncodedUserHash(email, name, id)));
     }
 
-    //TODO failure page
+    private String userHash(String email, String password, long id) {
+        return hashing.hash(email, password, String.valueOf(id));
+    }
+
+    private String urlEncodedUserHash(String email, String password, long id) {
+        try {
+            return URLEncoder.encode(userHash(email, password, id), StandardCharsets.UTF_8.toString());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void signIn(Context context) {
         String activation = context.pathParamMap().getOrDefault(ACTIVATION, "");
         if (activation.isEmpty()) {
@@ -84,7 +102,11 @@ public class UsersRespondent implements Respondent {
                 new ValidateableName(emailOrLogin), new ValidateablePassword(context.formParam(FORM_PASSWORD))
             );
         } else {
-            activate(context, activation);
+            try {
+                activate(context, URLDecoder.decode(activation, StandardCharsets.UTF_8.toString()));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -115,7 +137,7 @@ public class UsersRespondent implements Respondent {
         if (users.existsWithName(login)) {
             User user = users.byName(login);
             if (passwordHash.equals(user.password)) {
-                //TODO create session, , render dashboard!
+
             } else {
                 renderSignIn(context, true, false);
             }
@@ -124,7 +146,6 @@ public class UsersRespondent implements Respondent {
         }
     }
 
-    //TODO render!
     private void renderSignIn(Context context, boolean invalidLoginEmail, boolean invalidPassword) {
         Map<String, Object> params = new HashMap<>();
         params.put(INVALID_EMAIL_LOGIN_TEMPLATE, invalidLoginEmail);
@@ -132,8 +153,23 @@ public class UsersRespondent implements Respondent {
         templates.render(context, SIGN_IN, params);
     }
 
+    //TODO simplify update, handle exceptions
     private void activate(Context context, String activation) {
-
+        List<User> inactive = users.allInactive();
+        boolean activated = false;
+        for (User u : inactive) {
+            String hash = userHash(u.email, u.password, u.id);
+            if (activation.equals(hash)) {
+                users.update(new User(u.id, u.name, u.email, u.password, true));
+                activated = true;
+                break;
+            }
+        }
+        if (activated) {
+            renderSignIn(context, false, false);
+        } else {
+            throw new RuntimeException("Given activation link is invalid");
+        }
     }
 
     public void signOut(Context context) {
