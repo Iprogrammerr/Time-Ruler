@@ -14,6 +14,17 @@ public class SessionIdentity implements Identity<Long> {
     }
 
     @Override
+    public boolean isValid(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        boolean valid = session != null;
+        if (valid) {
+            Object id = session.getAttribute(IDENTITY);
+            valid = id != null && Long.class.isAssignableFrom(id.getClass());
+        }
+        return valid;
+    }
+
+    @Override
     public Long value(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null) {

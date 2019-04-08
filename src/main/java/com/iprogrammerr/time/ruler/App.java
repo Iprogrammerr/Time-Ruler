@@ -13,8 +13,8 @@ import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.SessionIdentity;
 import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.user.Users;
-import com.iprogrammerr.time.ruler.respondent.DashboardRespondent;
-import com.iprogrammerr.time.ruler.respondent.Respondent;
+import com.iprogrammerr.time.ruler.respondent.ProfileRespondent;
+import com.iprogrammerr.time.ruler.respondent.TodayRespondent;
 import com.iprogrammerr.time.ruler.respondent.UsersRespondent;
 import com.iprogrammerr.time.ruler.respondent.WelcomeRespondent;
 import com.iprogrammerr.time.ruler.view.HtmlViews;
@@ -72,15 +72,17 @@ public class App {
         Hashing hashing = new Hashing();
         Identity<Long> identity = new SessionIdentity();
 
-        Respondent welcomeRespondent = new WelcomeRespondent(views);
-        DashboardRespondent dashboardRespondent = new DashboardRespondent(identity, viewsTemplates);
-        Respondent usersRespondent = new UsersRespondent(
+        WelcomeRespondent welcomeRespondent = new WelcomeRespondent(views);
+        TodayRespondent dashboardRespondent = new TodayRespondent(identity, viewsTemplates);
+        UsersRespondent usersRespondent = new UsersRespondent(
             dashboardRespondent, views, viewsTemplates, users, hashing, emails, identity
         );
+        ProfileRespondent profileRespondent = new ProfileRespondent(identity, viewsTemplates);
 
         welcomeRespondent.init(app);
         dashboardRespondent.init(app);
         usersRespondent.init(app);
+        profileRespondent.init(app);
 
         //TODO handle exceptions
         app.exception(Exception.class, (e, ctx) -> {

@@ -8,7 +8,10 @@ const host = "http://127.0.0.1:8080/";
 export const routes = {
     signIn: "sign-in",
     signUp: "sign-up",
-    dashboard: "dashboard"
+    today: "today",
+    plan: "plan",
+    history: "history",
+    profile: "profile"
 };
 
 export const endpoints = {

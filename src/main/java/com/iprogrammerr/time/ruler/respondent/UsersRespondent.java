@@ -35,7 +35,7 @@ public class UsersRespondent implements Respondent {
     private static final String ACTIVATION = "activation";
     private static final String INVALID_EMAIL_LOGIN_TEMPLATE = "invalidEmailLogin";
     private static final String INVALID_PASSWORD_TEMPLATE = "invalidPassword";
-    private final DashboardRespondent respondent;
+    private final TodayRespondent respondent;
     private final Views views;
     private final ViewsTemplates templates;
     private final Users users;
@@ -44,7 +44,7 @@ public class UsersRespondent implements Respondent {
     private final Identity<Long> identity;
 
     public UsersRespondent(
-        DashboardRespondent respondent, Views views, ViewsTemplates templates,
+        TodayRespondent respondent, Views views, ViewsTemplates templates,
         Users users, Hashing hashing, Emails emails, Identity<Long> identity
     ) {
         this.respondent = respondent;

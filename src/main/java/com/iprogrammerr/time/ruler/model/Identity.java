@@ -6,5 +6,7 @@ public interface Identity<T> {
 
     void create(T value, HttpServletRequest request);
 
+    boolean isValid(HttpServletRequest request);
+
     T value(HttpServletRequest request);
 }

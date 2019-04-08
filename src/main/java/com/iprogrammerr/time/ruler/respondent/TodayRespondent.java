@@ -7,35 +7,33 @@ import io.javalin.Javalin;
 
 import java.net.HttpURLConnection;
 import java.util.HashMap;
-import java.util.Map;
 
-public class DashboardRespondent implements Respondent {
+public class TodayRespondent implements Respondent {
 
-    private static final String DASHBOARD = "dashboard";
+    private static final String TODAY = "today";
     private final Identity<Long> identity;
     private final ViewsTemplates viewsTemplates;
 
-    public DashboardRespondent(Identity<Long> identity, ViewsTemplates viewsTemplates) {
+    public TodayRespondent(Identity<Long> identity, ViewsTemplates viewsTemplates) {
         this.identity = identity;
         this.viewsTemplates = viewsTemplates;
     }
 
     @Override
     public void init(Javalin app) {
-        app.get(DASHBOARD, this::showDashboard);
+        app.get(TODAY, this::showMainPage);
     }
 
-    private void showDashboard(Context context) {
-        try {
-            Map<String, Long> params = new HashMap<>();
-            params.put("id", identity.value(context.req));
-            viewsTemplates.render(context, DASHBOARD, params);
-        } catch (Exception e) {
+    //TODO render with proper data
+    private void showMainPage(Context context) {
+        if (identity.isValid(context.req)) {
+            viewsTemplates.render(context, TODAY, new HashMap<>());
+        } else {
             context.status(HttpURLConnection.HTTP_UNAUTHORIZED);
         }
     }
 
     public void redirect(Context context) {
-        context.redirect(DASHBOARD);
+        context.redirect(TODAY);
     }
 }
