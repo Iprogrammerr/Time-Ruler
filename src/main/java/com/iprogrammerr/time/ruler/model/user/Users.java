@@ -1,4 +1,4 @@
-package com.iprogrammerr.time.ruler.model;
+package com.iprogrammerr.time.ruler.model.user;
 
 import java.util.List;
 
@@ -10,13 +10,9 @@ public interface Users {
 
     User user(long id);
 
-    boolean existsWithName(String name);
+    boolean existsWithEmailOrName(String emailOrName);
 
-    boolean existsWithEmail(String email);
-
-    User byName(String name);
-
-    User byEmail(String email);
+    User byEmailOrName(String emailOrName);
 
     long create(String name, String email, String password);
 

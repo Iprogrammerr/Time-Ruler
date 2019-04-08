@@ -1,4 +1,4 @@
-package com.iprogrammerr.time.ruler.model;
+package com.iprogrammerr.time.ruler.model.user;
 
 import com.iprogrammerr.time.ruler.database.DatabaseSession;
 import com.iprogrammerr.time.ruler.database.Record;
@@ -65,24 +65,28 @@ public class DatabaseUsers implements Users {
     }
 
     @Override
-    public boolean existsWithName(String name) {
-        return session.select(ResultSet::next, "SELECT id FROM user WHERE name = ?", name);
+    public boolean existsWithEmailOrName(String emailOrName) {
+        String template;
+        if (emailOrName.contains("@")) {
+            template = "SELECT id FROM user WHERE email = ?";
+        } else {
+            template = "SELECT id FROM user WHERE name = ?";
+        }
+        return session.select(ResultSet::next, template, emailOrName);
     }
 
     @Override
-    public boolean existsWithEmail(String email) {
-        return session.select(ResultSet::next, "SELECT id FROM user WHERE email = ?", email);
-    }
-
-    @Override
-    public User byName(String name) {
-        return session.select(r -> mapOrThrow(r, "There is no user with %s name", name),
-            "SELECT * FROM user WHERE name = ? ", name);
-    }
-
-    @Override
-    public User byEmail(String email) {
-        return session.select(r -> mapOrThrow(r, "There is no user with %s email", email),
-            "SELECT * FROM user WHERE email = ? ", email);
+    public User byEmailOrName(String emailOrName) {
+        String exceptionTemplate;
+        String queryTemplate;
+        if (emailOrName.contains("@")) {
+            exceptionTemplate = "There is no user with %s email";
+            queryTemplate = "SELECT * FROM user WHERE email = ?";
+        } else {
+            exceptionTemplate = "There is no user with %s name";
+            queryTemplate = "SELECT * FROM user WHERE name = ?";
+        }
+        return session.select(r -> mapOrThrow(r, exceptionTemplate, emailOrName),
+            queryTemplate, emailOrName);
     }
 }

@@ -1,4 +1,4 @@
-package com.iprogrammerr.time.ruler.model;
+package com.iprogrammerr.time.ruler.model.user;
 
 import java.sql.ResultSet;
 import java.util.Objects;

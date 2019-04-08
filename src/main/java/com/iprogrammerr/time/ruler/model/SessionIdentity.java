@@ -5,7 +5,7 @@ import javax.servlet.http.HttpSession;
 
 public class SessionIdentity implements Identity<Long> {
 
-    private static final String IDENTITY = "Identity";
+    private static final String IDENTITY = "IDENTITY";
 
     @Override
     public void create(Long value, HttpServletRequest request) {

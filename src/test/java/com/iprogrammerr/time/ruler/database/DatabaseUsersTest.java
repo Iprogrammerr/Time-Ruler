@@ -2,8 +2,8 @@ package com.iprogrammerr.time.ruler.database;
 
 import com.iprogrammerr.time.ruler.TestDatabaseSetup;
 import com.iprogrammerr.time.ruler.ThrowsMatcher;
-import com.iprogrammerr.time.ruler.model.DatabaseUsers;
-import com.iprogrammerr.time.ruler.model.User;
+import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
+import com.iprogrammerr.time.ruler.model.user.User;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -91,14 +91,15 @@ public class DatabaseUsersTest {
         String email = "example@example.com";
         users.create("Name", email, "1234five");
         MatcherAssert.assertThat(
-            "Should return true with existing user", users.existsWithEmail(email), Matchers.equalTo(true)
+            "Should return true with existing user", users.existsWithEmailOrName(email), Matchers.equalTo(true)
         );
     }
 
     @Test
     public void returnsFalseIfUserWithEmailDoesNotExist() {
         MatcherAssert.assertThat(
-            "Should return false with non existing user", users.existsWithEmail("abc@abc.com"), Matchers.equalTo(false)
+            "Should return false with non existing user", users.existsWithEmailOrName("abc@abc.com"),
+            Matchers.equalTo(false)
         );
     }
 
@@ -107,7 +108,7 @@ public class DatabaseUsersTest {
         String email = "super@super.com";
         MatcherAssert.assertThat(
             "Does not throw expected exception",
-            () -> users.byEmail(email),
+            () -> users.byEmailOrName(email),
             new ThrowsMatcher(String.format("There is no user with %s email", email))
         );
     }
@@ -119,22 +120,24 @@ public class DatabaseUsersTest {
         String password = "lovesJustice";
         long id = users.create(name, email, password);
         User user = new User(id, name, email, password, false);
-        MatcherAssert.assertThat("Can not find user with given email", users.byEmail(email), Matchers.equalTo(user));
-    }
-
-    @Test
-    public void returnsTrueIfUserWithLoginExists() {
-        String name = "Kitty";
-        users.create(name, "example@example.com", "1234five");
         MatcherAssert.assertThat(
-            "Should return true with existing user", users.existsWithName(name), Matchers.equalTo(true)
+            "Can not find user with given email", users.byEmailOrName(email), Matchers.equalTo(user)
         );
     }
 
     @Test
-    public void returnsFalseIfUserWithLoginDoesNotExist() {
+    public void returnsTrueIfUserWithNameExists() {
+        String name = "Kitty";
+        users.create(name, "example@example.com", "1234five");
         MatcherAssert.assertThat(
-            "Should return false with non existing user", users.existsWithName("abc"), Matchers.equalTo(false)
+            "Should return true with existing user", users.existsWithEmailOrName(name), Matchers.equalTo(true)
+        );
+    }
+
+    @Test
+    public void returnsFalseIfUserWithNameDoesNotExist() {
+        MatcherAssert.assertThat(
+            "Should return false with non existing user", users.existsWithEmailOrName("abc"), Matchers.equalTo(false)
         );
     }
 
@@ -143,7 +146,7 @@ public class DatabaseUsersTest {
         String name = "super";
         MatcherAssert.assertThat(
             "Does not throw expected exception",
-            () -> users.byName(name),
+            () -> users.byEmailOrName(name),
             new ThrowsMatcher(String.format("There is no user with %s name", name))
         );
     }
@@ -155,6 +158,8 @@ public class DatabaseUsersTest {
         String password = "lovesFreedom";
         long id = users.create(name, email, password);
         User user = new User(id, name, email, password, false);
-        MatcherAssert.assertThat("Can not find user with given name", users.byName(name), Matchers.equalTo(user));
+        MatcherAssert.assertThat(
+            "Can not find user with given name", users.byEmailOrName(name), Matchers.equalTo(user)
+        );
     }
 }

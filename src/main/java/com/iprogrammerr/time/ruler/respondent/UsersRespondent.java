@@ -2,8 +2,9 @@ package com.iprogrammerr.time.ruler.respondent;
 
 import com.iprogrammerr.time.ruler.email.Emails;
 import com.iprogrammerr.time.ruler.model.Hashing;
-import com.iprogrammerr.time.ruler.model.User;
-import com.iprogrammerr.time.ruler.model.Users;
+import com.iprogrammerr.time.ruler.model.Identity;
+import com.iprogrammerr.time.ruler.model.user.User;
+import com.iprogrammerr.time.ruler.model.user.Users;
 import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateablePassword;
@@ -34,21 +35,25 @@ public class UsersRespondent implements Respondent {
     private static final String ACTIVATION = "activation";
     private static final String INVALID_EMAIL_LOGIN_TEMPLATE = "invalidEmailLogin";
     private static final String INVALID_PASSWORD_TEMPLATE = "invalidPassword";
+    private final DashboardRespondent respondent;
     private final Views views;
     private final ViewsTemplates templates;
     private final Users users;
     private final Hashing hashing;
     private final Emails emails;
+    private final Identity<Long> identity;
 
     public UsersRespondent(
-        Views views, ViewsTemplates templates, Users users, Hashing hashing,
-        Emails emails
+        DashboardRespondent respondent, Views views, ViewsTemplates templates,
+        Users users, Hashing hashing, Emails emails, Identity<Long> identity
     ) {
+        this.respondent = respondent;
         this.views = views;
         this.templates = templates;
         this.users = users;
         this.hashing = hashing;
         this.emails = emails;
+        this.identity = identity;
     }
 
     @Override
@@ -111,33 +116,19 @@ public class UsersRespondent implements Respondent {
     }
 
     private void signIn(Context context, ValidateableEmail email, ValidateableName name, ValidateablePassword password) {
-        if (email.isValid() && password.isValid()) {
-            signInByEmail(context, email.value(), hashing.hash(password.value()));
-        } else if (name.isValid() && password.isValid()) {
-            signInByLogin(context, name.value(), hashing.hash(password.value()));
+        if ((email.isValid() || name.isValid()) && password.isValid()) {
+            signIn(context, email.isValid() ? email.value() : name.value(), hashing.hash(password.value()));
         } else {
             renderSignIn(context, true, true);
         }
     }
 
-    private void signInByEmail(Context context, String email, String passwordHash) {
-        if (users.existsWithEmail(email)) {
-            User user = users.byName(email);
+    private void signIn(Context context, String emailOrName, String passwordHash) {
+        if (users.existsWithEmailOrName(emailOrName)) {
+            User user = users.byEmailOrName(emailOrName);
             if (passwordHash.equals(user.password)) {
-                //TODO create session, render dashboard!
-            } else {
-                renderSignIn(context, true, false);
-            }
-        } else {
-            renderSignIn(context, true, false);
-        }
-    }
-
-    private void signInByLogin(Context context, String login, String passwordHash) {
-        if (users.existsWithName(login)) {
-            User user = users.byName(login);
-            if (passwordHash.equals(user.password)) {
-
+                identity.create(user.id, context.req);
+                respondent.redirect(context);
             } else {
                 renderSignIn(context, true, false);
             }

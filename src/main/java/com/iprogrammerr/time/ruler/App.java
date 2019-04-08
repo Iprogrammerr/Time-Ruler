@@ -8,9 +8,12 @@ import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
 import com.iprogrammerr.time.ruler.email.ConfigurableEmailServer;
 import com.iprogrammerr.time.ruler.email.EmailServer;
 import com.iprogrammerr.time.ruler.email.Emails;
-import com.iprogrammerr.time.ruler.model.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.Hashing;
-import com.iprogrammerr.time.ruler.model.Users;
+import com.iprogrammerr.time.ruler.model.Identity;
+import com.iprogrammerr.time.ruler.model.SessionIdentity;
+import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
+import com.iprogrammerr.time.ruler.model.user.Users;
+import com.iprogrammerr.time.ruler.respondent.DashboardRespondent;
 import com.iprogrammerr.time.ruler.respondent.Respondent;
 import com.iprogrammerr.time.ruler.respondent.UsersRespondent;
 import com.iprogrammerr.time.ruler.respondent.WelcomeRespondent;
@@ -25,6 +28,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
 
 import java.io.File;
+import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,11 +70,16 @@ public class App {
             configuration.signUpEmailTemplate()
         );
         Hashing hashing = new Hashing();
+        Identity<Long> identity = new SessionIdentity();
 
         Respondent welcomeRespondent = new WelcomeRespondent(views);
-        UsersRespondent usersRespondent = new UsersRespondent(views, viewsTemplates, users, hashing, emails);
+        DashboardRespondent dashboardRespondent = new DashboardRespondent(identity, viewsTemplates);
+        Respondent usersRespondent = new UsersRespondent(
+            dashboardRespondent, views, viewsTemplates, users, hashing, emails, identity
+        );
 
         welcomeRespondent.init(app);
+        dashboardRespondent.init(app);
         usersRespondent.init(app);
 
         //TODO handle exceptions
@@ -78,6 +87,10 @@ public class App {
             ctx.status(500);
             ctx.html(e.getMessage());
             e.printStackTrace();
+        });
+        //TODO proper pages per http code
+        app.error(HttpURLConnection.HTTP_UNAUTHORIZED, ctx -> {
+            ctx.html("You are not allowed to see this page");
         });
         app.start(configuration.port());
     }
