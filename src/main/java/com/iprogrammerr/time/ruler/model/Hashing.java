@@ -16,7 +16,15 @@ public class Hashing {
     }
 
     public String hash(String message) {
-        return new String(digest.digest(message.getBytes(StandardCharsets.UTF_8)));
+        return bytesToHex(digest.digest(message.getBytes(StandardCharsets.UTF_8)));
+    }
+
+    private String bytesToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
     }
 
     public String hash(String message, String... messages) {

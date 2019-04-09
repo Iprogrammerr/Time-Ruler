@@ -17,10 +17,10 @@
         <h1 style="display: none">Your account has been activated, now you can sign in!</h1>
         <p>Email/Login</p>
         <p th:class="${invalidEmailLogin} ? error-visible : error" id="emailLoginError">Invalid email or login</p>
-        <input type="text" name="emailLogin"></input>
+        <input type="text" name="emailLogin" th:value="${emailLogin}"></input>
         <p>Password</p> 
         <p th:class="${invalidPassword} ? error-visible : error" id="passwordError">Invalid password</p>
-        <input type="password" name="password"></input>
+        <input type="password" name="password" th:value="${password}"></input>
         </br>
         <input id="signIn" type="submit" value="Sign in"></input>
     </form>

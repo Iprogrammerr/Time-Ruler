@@ -13,6 +13,8 @@ import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.SessionIdentity;
 import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.user.Users;
+import com.iprogrammerr.time.ruler.respondent.HistoryRespondent;
+import com.iprogrammerr.time.ruler.respondent.PlanRespondent;
 import com.iprogrammerr.time.ruler.respondent.ProfileRespondent;
 import com.iprogrammerr.time.ruler.respondent.TodayRespondent;
 import com.iprogrammerr.time.ruler.respondent.UsersRespondent;
@@ -77,11 +79,15 @@ public class App {
         UsersRespondent usersRespondent = new UsersRespondent(
             dashboardRespondent, views, viewsTemplates, users, hashing, emails, identity
         );
+        PlanRespondent planRespondent = new PlanRespondent(identity, viewsTemplates);
+        HistoryRespondent historyRespondent = new HistoryRespondent(identity, viewsTemplates);
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, viewsTemplates);
 
         welcomeRespondent.init(app);
         dashboardRespondent.init(app);
         usersRespondent.init(app);
+        planRespondent.init(app);
+        historyRespondent.init(app);
         profileRespondent.init(app);
 
         //TODO handle exceptions

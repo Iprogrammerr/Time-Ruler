@@ -14,9 +14,6 @@ import io.javalin.Context;
 import io.javalin.Javalin;
 
 import java.net.HttpURLConnection;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +30,7 @@ public class UsersRespondent implements Respondent {
     private static final String FORM_LOGIN = "login";
     private static final String FORM_PASSWORD = "password";
     private static final String ACTIVATION = "activation";
+    private static final String EMAIL_LOGIN_TEMPLATE = "emailLogin";
     private static final String INVALID_EMAIL_LOGIN_TEMPLATE = "invalidEmailLogin";
     private static final String INVALID_PASSWORD_TEMPLATE = "invalidPassword";
     private final TodayRespondent respondent;
@@ -59,11 +57,20 @@ public class UsersRespondent implements Respondent {
     @Override
     public void init(Javalin app) {
         app.get(SIGN_UP, ctx -> ctx.html(views.view(SIGN_UP)));
-        app.get(SIGN_IN, ctx -> renderSignIn(ctx, false, false));
+        app.get(SIGN_IN, this::renderSignIn);
 
         app.post(SIGN_UP, this::signUp);
         app.post(SIGN_IN, this::signIn);
         app.post(SIGN_OUT, this::signOut);
+    }
+
+    private void renderSignIn(Context context) {
+        String activation = context.queryParam(ACTIVATION, "");
+        if (activation.isEmpty()) {
+            renderValidSignIn(context);
+        } else {
+            activate(context, activation);
+        }
     }
 
     public void signUp(Context context) {
@@ -83,63 +90,52 @@ public class UsersRespondent implements Respondent {
     private void createUser(String email, String name, String password) {
         long id = users.create(name, email, hashing.hash(password));
         emails.sendSignUpEmail(email,
-            String.format("%s?%s=%s", SIGN_IN, ACTIVATION, urlEncodedUserHash(email, name, id)));
+            String.format("%s?%s=%s", SIGN_IN, ACTIVATION, userHash(email, name, id)));
     }
 
-    private String userHash(String email, String password, long id) {
-        return hashing.hash(email, password, String.valueOf(id));
+    private String userHash(String email, String name, long id) {
+        return hashing.hash(email, name, String.valueOf(id));
     }
 
-    private String urlEncodedUserHash(String email, String password, long id) {
-        try {
-            return URLEncoder.encode(userHash(email, password, id), StandardCharsets.UTF_8.toString());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public void signIn(Context context) {
-        String activation = context.pathParamMap().getOrDefault(ACTIVATION, "");
-        if (activation.isEmpty()) {
-            String emailOrLogin = context.formParam(FORM_EMAIL_LOGIN);
-            signIn(
-                context, new ValidateableEmail(emailOrLogin),
-                new ValidateableName(emailOrLogin), new ValidateablePassword(context.formParam(FORM_PASSWORD))
-            );
-        } else {
-            try {
-                activate(context, URLDecoder.decode(activation, StandardCharsets.UTF_8.toString()));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    private void signIn(Context context, ValidateableEmail email, ValidateableName name, ValidateablePassword password) {
+        String emailOrLogin = context.formParam(FORM_EMAIL_LOGIN);
+        ValidateableEmail email = new ValidateableEmail(emailOrLogin);
+        ValidateableName name = new ValidateableName(emailOrLogin);
+        ValidateablePassword password = new ValidateablePassword(context.formParam(FORM_PASSWORD));
         if ((email.isValid() || name.isValid()) && password.isValid()) {
-            signIn(context, email.isValid() ? email.value() : name.value(), hashing.hash(password.value()));
+            signInOrSetError(context, email.isValid() ? email.value() : name.value(), hashing.hash(password.value()));
         } else {
-            renderSignIn(context, true, true);
+            renderSignIn(context, emailOrLogin, true);
         }
     }
 
-    private void signIn(Context context, String emailOrName, String passwordHash) {
+    private void signInOrSetError(Context context, String emailOrName, String passwordHash) {
         if (users.existsWithEmailOrName(emailOrName)) {
             User user = users.byEmailOrName(emailOrName);
             if (passwordHash.equals(user.password)) {
                 identity.create(user.id, context.req);
                 respondent.redirect(context);
             } else {
-                renderSignIn(context, true, false);
+                renderSignIn(context, emailOrName, false);
             }
         } else {
-            renderSignIn(context, true, false);
+            renderSignIn(context, emailOrName, false);
         }
     }
 
-    private void renderSignIn(Context context, boolean invalidLoginEmail, boolean invalidPassword) {
+    private void renderValidSignIn(Context context) {
+        renderSignIn(context, "", false);
+    }
+
+    private void renderSignIn(Context context, String invalidEmailLogin, boolean invalidPassword) {
         Map<String, Object> params = new HashMap<>();
-        params.put(INVALID_EMAIL_LOGIN_TEMPLATE, invalidLoginEmail);
+        if (!invalidEmailLogin.isEmpty()) {
+            params.put(EMAIL_LOGIN_TEMPLATE, invalidEmailLogin);
+            params.put(INVALID_EMAIL_LOGIN_TEMPLATE, true);
+        } else {
+            params.put(INVALID_EMAIL_LOGIN_TEMPLATE, false);
+        }
         params.put(INVALID_PASSWORD_TEMPLATE, invalidPassword);
         templates.render(context, SIGN_IN, params);
     }
@@ -149,7 +145,7 @@ public class UsersRespondent implements Respondent {
         List<User> inactive = users.allInactive();
         boolean activated = false;
         for (User u : inactive) {
-            String hash = userHash(u.email, u.password, u.id);
+            String hash = userHash(u.email, u.name, u.id);
             if (activation.equals(hash)) {
                 users.update(new User(u.id, u.name, u.email, u.password, true));
                 activated = true;
@@ -157,7 +153,7 @@ public class UsersRespondent implements Respondent {
             }
         }
         if (activated) {
-            renderSignIn(context, false, false);
+            renderValidSignIn(context);
         } else {
             throw new RuntimeException("Given activation link is invalid");
         }
