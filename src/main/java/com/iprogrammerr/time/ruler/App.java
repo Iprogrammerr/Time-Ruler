@@ -81,7 +81,7 @@ public class App {
         );
         PlanRespondent planRespondent = new PlanRespondent(identity, viewsTemplates);
         HistoryRespondent historyRespondent = new HistoryRespondent(identity, viewsTemplates);
-        ProfileRespondent profileRespondent = new ProfileRespondent(identity, viewsTemplates);
+        ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, viewsTemplates);
 
         welcomeRespondent.init(app);
         dashboardRespondent.init(app);
