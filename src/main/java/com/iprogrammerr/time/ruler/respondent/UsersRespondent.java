@@ -13,6 +13,8 @@ import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpSession;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.Map;
 
 public class UsersRespondent implements Respondent {
 
+    private static final String SESSION_COOKIE_KEY = "JSESSIONID";
     private static final String SIGN_UP = "sign-up";
     private static final String SIGN_UP_SUCCESS = "sign-up-success";
     private static final String SIGN_UP_FAILURE = "sign-up-failure";
@@ -30,9 +33,12 @@ public class UsersRespondent implements Respondent {
     private static final String FORM_LOGIN = "login";
     private static final String FORM_PASSWORD = "password";
     private static final String ACTIVATION = "activation";
+    private static final String MESSAGE_TEMPLATE = "message";
     private static final String EMAIL_LOGIN_TEMPLATE = "emailLogin";
     private static final String INVALID_EMAIL_LOGIN_TEMPLATE = "invalidEmailLogin";
     private static final String INVALID_PASSWORD_TEMPLATE = "invalidPassword";
+    private static final String ACTIVATION_CONGRATULATIONS = "Your account has been activated, now you can sign in!";
+    private static final String SIGN_OUT_FAREWELL = "Always take charge of your time.";
     private final TodayRespondent respondent;
     private final Views views;
     private final ViewsTemplates templates;
@@ -58,16 +64,19 @@ public class UsersRespondent implements Respondent {
     public void init(Javalin app) {
         app.get(SIGN_UP, ctx -> ctx.html(views.view(SIGN_UP)));
         app.get(SIGN_IN, this::renderSignIn);
-
+        app.get(SIGN_OUT, this::signOut);
         app.post(SIGN_UP, this::signUp);
         app.post(SIGN_IN, this::signIn);
-        app.post(SIGN_OUT, this::signOut);
     }
 
     private void renderSignIn(Context context) {
         String activation = context.queryParam(ACTIVATION, "");
         if (activation.isEmpty()) {
-            renderValidSignIn(context);
+            if (context.req.getSession(false) == null) {
+                renderValidSignIn(context);
+            } else {
+                respondent.redirect(context);
+            }
         } else {
             activate(context, activation);
         }
@@ -128,6 +137,12 @@ public class UsersRespondent implements Respondent {
         renderSignIn(context, "", false);
     }
 
+    private void renderValidSignInWithMessage(Context context, String message) {
+        Map<String, Object> params = new HashMap<>();
+        params.put(MESSAGE_TEMPLATE, message);
+        templates.render(context, SIGN_IN, params);
+    }
+
     private void renderSignIn(Context context, String invalidEmailLogin, boolean invalidPassword) {
         Map<String, Object> params = new HashMap<>();
         if (!invalidEmailLogin.isEmpty()) {
@@ -153,13 +168,21 @@ public class UsersRespondent implements Respondent {
             }
         }
         if (activated) {
-            renderValidSignIn(context);
+            renderValidSignInWithMessage(context, ACTIVATION_CONGRATULATIONS);
         } else {
             throw new RuntimeException("Given activation link is invalid");
         }
     }
 
     public void signOut(Context context) {
-
+        HttpSession session = context.req.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        for (Cookie c : context.req.getCookies()) {
+            c.setMaxAge(0);
+            context.cookie(c);
+        }
+        renderValidSignInWithMessage(context, SIGN_OUT_FAREWELL);
     }
 }

@@ -1,6 +1,5 @@
 import {Router} from "./navigation/router.js";
 import {HttpConnections} from "./http/http-connections.js";
-import {Cookies} from "./http/cookies.js";
 import {Validations} from "./validation/validations.js";
 
 const host = "http://127.0.0.1:8080/";
@@ -8,6 +7,7 @@ const host = "http://127.0.0.1:8080/";
 export const routes = {
     signIn: "sign-in",
     signUp: "sign-up",
+    signOut: "sign-out",
     today: "today",
     plan: "plan",
     history: "history",
@@ -18,10 +18,6 @@ export const endpoints = {
     signIn: `${host}sign-in`,
     signUp: `${host}sign-up`,
     signOut: `${host}sign-out`
-};
-
-export const cookiesKeys = {
-    signedIn: "signedIn"
 };
 
 export const errors = {
@@ -49,5 +45,4 @@ export function setupTabsNavigation(tabsContainer, activeIndex) {
 
 export const router = new Router(host);
 export const httpConnections = new HttpConnections();
-export const cookies = new Cookies();
 export const validations = new Validations();

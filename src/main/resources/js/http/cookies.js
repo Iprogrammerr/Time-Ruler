@@ -24,5 +24,11 @@ export function Cookies() {
         }
         throw new Error(`There is no cookie associated with ${key} key`);
     }
+    this.has = (key) => {
+        if (source.size < 1) {
+            read();
+        }
+        return source.has(key);
+    }
     this.refresh = () => read();
 }

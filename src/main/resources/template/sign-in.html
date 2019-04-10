@@ -14,7 +14,7 @@
 
 <body>
     <form>
-        <h1 style="display: none">Your account has been activated, now you can sign in!</h1>
+        <h1 th:text="${message}"></h1>
         <p>Email/Login</p>
         <p th:class="${invalidEmailLogin} ? error-visible : error" id="emailLoginError">Invalid email or login</p>
         <input type="text" name="emailLogin" th:value="${emailLogin}"></input>

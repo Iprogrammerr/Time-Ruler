@@ -2,18 +2,11 @@ import { endpoints } from "./app.js";
 import { validations } from "./app.js";
 import { errors } from "./app.js";
 
-const activationParam = "activation=";
 const emailLoginError = document.getElementById("emailLoginError");
 const passwordError = document.getElementById("passwordError");
 const inputs = document.querySelectorAll("input");
 const form = document.querySelector("form");
 const signIn = document.getElementById("signIn");
-
-let params = window.location.search;
-console.log(`Current url params = ${params}`);
-if (params.indexOf(activationParam) > -1 ) {
-    document.querySelector("h1").style.display = "block";
-}
 
 addEventListener("submit", e => e.preventDefault());
 signIn.onclick = () => {
