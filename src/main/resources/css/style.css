@@ -2,12 +2,15 @@
     box-sizing: border-box;
 }
 
-body {
-    margin: 16px;
+html , body, .marginless{
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    overflow: hidden;
 }
 
-.marginless {
-    margin: 0;
+body {
+    margin: 16px;
 }
 
 .centered {
@@ -73,4 +76,80 @@ input:hover, input:focus {
 button.main, input[type=submit].main {
     padding: 8px;
     margin: 8px;
+}
+
+ul {
+    list-style-type: none;
+}
+
+.calendar {
+    width: 100%;
+}
+
+.month {
+    padding: 50px 25px;
+    width: 100%;
+    background: #307cf4;
+    text-align: center;
+}
+
+ul.calendar, li.calendar {
+    color: white;
+    font-size: 20px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+li.month-title {
+    font-size: 2em;
+}
+
+.month .prev {
+    float: left;
+    padding-top: 10px;
+}
+
+.month .next {
+    float: right;
+    padding-top: 10px;
+}
+
+.weekdays {
+    margin: 0;
+    padding: 10px 0;
+    background-color: #ddd;
+}
+
+.weekdays li {
+    display: inline-block;
+    width: 13.6%;
+    color: #666;
+    font-size: 1.5em;
+    text-align: center;
+}
+
+.days {
+    padding: 10px 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+.days li {
+    list-style-type: none;
+    display: inline-block;
+    width: 13.6%;
+    text-align: center;
+    margin-bottom: 5px;
+    font-size: 1.5em;
+    color: #777;
+}
+
+.days li.active {
+    padding: 5px;
+    color: #307cf4;
+    text-decoration: underline;
+}
+
+.days li.inactive {
+    color: #dee5ef;
 }

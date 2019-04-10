@@ -93,8 +93,9 @@ public class App {
         //TODO handle exceptions
         app.exception(Exception.class, (e, ctx) -> {
             ctx.status(500);
-            ctx.html(e.getMessage());
             e.printStackTrace();
+            String message = e.getMessage() == null ? "UNKNOWN" : e.getMessage();
+            ctx.html(message);
         });
         //TODO proper pages per http code
         app.error(HttpURLConnection.HTTP_UNAUTHORIZED, ctx -> {

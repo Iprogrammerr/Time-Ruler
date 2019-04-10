@@ -179,9 +179,12 @@ public class UsersRespondent implements Respondent {
         if (session != null) {
             session.invalidate();
         }
-        for (Cookie c : context.req.getCookies()) {
-            c.setMaxAge(0);
-            context.cookie(c);
+        Cookie[] cookies = context.req.getCookies();
+        if (cookies != null) {
+            for (Cookie c : cookies) {
+                c.setMaxAge(0);
+                context.cookie(c);
+            }
         }
         renderValidSignInWithMessage(context, SIGN_OUT_FAREWELL);
     }
