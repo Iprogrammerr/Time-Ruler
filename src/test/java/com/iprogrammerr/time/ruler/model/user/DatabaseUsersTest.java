@@ -1,9 +1,9 @@
-package com.iprogrammerr.time.ruler.database;
+package com.iprogrammerr.time.ruler.model.user;
 
 import com.iprogrammerr.time.ruler.TestDatabaseSetup;
 import com.iprogrammerr.time.ruler.ThrowsMatcher;
-import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
-import com.iprogrammerr.time.ruler.model.user.User;
+import com.iprogrammerr.time.ruler.database.QueryTemplates;
+import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.After;
