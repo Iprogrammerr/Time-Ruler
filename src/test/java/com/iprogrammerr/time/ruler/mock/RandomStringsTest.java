@@ -17,7 +17,7 @@ public class RandomStringsTest {
     public void returnsRandomAlphabeticStrings() {
         RandomStrings random = new RandomStrings();
         MatcherAssert.assertThat(
-            "Should be random", random.alphabetic(), Matchers.not(Matchers.equalTo(random.alphabetic()))
+            "Should be user", random.alphabetic(), Matchers.not(Matchers.equalTo(random.alphabetic()))
         );
     }
 
@@ -44,7 +44,7 @@ public class RandomStringsTest {
     public void returnsRandomAlphanumericStrings() {
         RandomStrings random = new RandomStrings();
         MatcherAssert.assertThat(
-            "Should be random", random.alphanumeric(), Matchers.not(Matchers.equalTo(random.alphanumeric()))
+            "Should be user", random.alphanumeric(), Matchers.not(Matchers.equalTo(random.alphanumeric()))
         );
     }
 
@@ -71,7 +71,7 @@ public class RandomStringsTest {
     public void returnsRandomEmail() {
         RandomStrings random = new RandomStrings();
         MatcherAssert.assertThat(
-            "Should return proper random email",
+            "Should return proper user email",
             new ValidateableEmail(random.email()).isValid(),
             Matchers.equalTo(true)
         );

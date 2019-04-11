@@ -1,6 +1,7 @@
 package com.iprogrammerr.time.ruler.model.day;
 
 import java.sql.ResultSet;
+import java.util.Objects;
 
 public class Day {
 
@@ -21,5 +22,22 @@ public class Day {
 
     public Day(ResultSet result) throws Exception {
         this(result.getLong(ID), result.getLong(USER_ID), result.getLong(DATE));
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        boolean equal = false;
+        if (this == other) {
+            equal = true;
+        } else if (other != null && Day.class.isAssignableFrom(other.getClass())) {
+            Day day = (Day) other;
+            equal = id == day.id && userId == day.userId && date == day.date;
+        }
+        return equal;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, date);
     }
 }

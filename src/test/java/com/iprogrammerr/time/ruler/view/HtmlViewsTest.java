@@ -25,7 +25,7 @@ public class HtmlViewsTest {
     @Test
     public void throwsExceptionIfViewDoesNotExist() {
         HtmlViews views = new HtmlViews(root);
-        MatcherAssert.assertThat("View should not exist", () -> views.view("random"), new ThrowsMatcher());
+        MatcherAssert.assertThat("View should not exist", () -> views.view("user"), new ThrowsMatcher());
     }
 
     private String read(String path) {

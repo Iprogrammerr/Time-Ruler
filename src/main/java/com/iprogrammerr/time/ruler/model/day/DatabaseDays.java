@@ -44,18 +44,22 @@ public class DatabaseDays implements Days {
                 days.add(new Day(r));
             }
             return days;
-        }, "SELECT * from day where data <= ?", modifiedDate(date, 23, 59, 59));
+        }, "SELECT * from day where date <= ? ORDER BY date ASC", modifiedDate(date, 23, 59, 59));
     }
 
     @Override
-    public void createForUser(long id) {
-        session.create(new Record(Day.TABLE).put(Day.USER_ID, id).put(Day.DATE, System.currentTimeMillis()));
+    public long createForUser(long id, long date) {
+        return session.create(new Record(Day.TABLE).put(Day.USER_ID, id).put(Day.DATE, date));
     }
 
     @Override
     public boolean ofUserExists(long id, long date) {
         long from = modifiedDate(date, 0, 0, 0);
         long to = modifiedDate(date, 23, 59, 59);
-        return session.select(ResultSet::next, "SELECT id from day WHERE date >= ? AND date <= ?", from, to);
+        return session.select(
+            ResultSet::next,
+            "SELECT id from day WHERE user_id = ? AND date >= ? AND date <= ? ORDER by date ASC",
+            id, from, to
+        );
     }
 }

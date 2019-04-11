@@ -8,7 +8,7 @@ public interface Days {
 
     List<Day> userTo(long id, long date);
 
-    void createForUser(long id);
+    long createForUser(long id, long date);
 
     boolean ofUserExists(long id, long date);
 }

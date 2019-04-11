@@ -4,6 +4,8 @@ import com.iprogrammerr.time.ruler.TestDatabaseSetup;
 import com.iprogrammerr.time.ruler.ThrowsMatcher;
 import com.iprogrammerr.time.ruler.database.QueryTemplates;
 import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
+import com.iprogrammerr.time.ruler.mock.RandomStrings;
+import com.iprogrammerr.time.ruler.mock.RandomUsers;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -29,13 +31,12 @@ public class DatabaseUsersTest {
 
     @Test
     public void returnsListOfAll() {
-        users.create("Igor", "ceigor@gmail.com", "SECRET");
-        users.create("Olek", "olek@super.com", "password2");
-        int expectedSize = 2;
-        MatcherAssert.assertThat(
-            "Does not contain proper elements",
-            users.all().size(), Matchers.equalTo(expectedSize)
-        );
+        RandomUsers randomUsers = new RandomUsers();
+        User first = randomUsers.user();
+        User second = randomUsers.user();
+        users.create(first.name, first.email, first.password);
+        users.create(second.name, second.email, second.password);
+        MatcherAssert.assertThat("Does not contain proper elements", users.all(), Matchers.hasSize(2));
     }
 
     @Test
@@ -45,12 +46,9 @@ public class DatabaseUsersTest {
 
     @Test
     public void returnsListOfAllInactive() {
-        users.create("Igor", "ceigor32@gmail.com", "SECREdT");
-        int expectedSize = 1;
-        MatcherAssert.assertThat(
-            "Does not contain proper elements",
-            users.allInactive().size(), Matchers.equalTo(expectedSize)
-        );
+        User user = new RandomUsers().user();
+        users.create(user.name, user.email, user.password);
+        MatcherAssert.assertThat("Does not contain proper elements", users.allInactive(), Matchers.hasSize(1));
     }
 
     @Test
@@ -60,10 +58,12 @@ public class DatabaseUsersTest {
 
     @Test
     public void updates() {
-        long id = users.create("Yegor", "yegor@gmail.com", "lovesSpringSecretly");
-        User user = new User(id, "Yegor3", "yegor@gmail.com", "lovesHibernateSecretly", true);
-        users.update(user);
-        MatcherAssert.assertThat("Update failure", users.user(id), Matchers.equalTo(user));
+        RandomUsers randomUsers = new RandomUsers();
+        User toCreate = randomUsers.user();
+        long id = users.create(toCreate.name, toCreate.email, toCreate.password);
+        User toUpdate = randomUsers.user(id);
+        users.update(toUpdate);
+        MatcherAssert.assertThat("Update failure", users.user(id), Matchers.equalTo(toUpdate));
     }
 
     @Test
@@ -78,34 +78,35 @@ public class DatabaseUsersTest {
 
     @Test
     public void findsUserWithId() {
-        String name = "Aleks";
-        String email = "aleks@gmail.com";
-        String password = "lovesJustice";
-        long id = users.create(name, email, password);
-        User user = new User(id, name, email, password, false);
-        MatcherAssert.assertThat("Can not find user with given id", users.user(id), Matchers.equalTo(user));
+        User user = new RandomUsers().user();
+        long id = users.create(user.name, user.email, user.password);
+        MatcherAssert.assertThat(
+            "Can not find user with given id",
+            users.user(id), Matchers.equalTo(new User(id, user.name, user.email, user.password, false))
+        );
     }
 
     @Test
     public void returnsTrueIfUserWithEmailExists() {
-        String email = "example@example.com";
-        users.create("Name", email, "1234five");
+        User user = new RandomUsers().user();
+        users.create(user.name, user.email, user.password);
         MatcherAssert.assertThat(
-            "Should return true with existing user", users.existsWithEmailOrName(email), Matchers.equalTo(true)
+            "Should return true with existing user", users.existsWithEmailOrName(user.email), Matchers.equalTo(true)
         );
     }
 
     @Test
     public void returnsFalseIfUserWithEmailDoesNotExist() {
+        String email = new RandomStrings().email();
         MatcherAssert.assertThat(
-            "Should return false with non existing user", users.existsWithEmailOrName("abc@abc.com"),
+            "Should return false with non existing user", users.existsWithEmailOrName(email),
             Matchers.equalTo(false)
         );
     }
 
     @Test
     public void throwsExceptionIfUserWithEmailDoesNotExist() {
-        String email = "super@super.com";
+        String email = new RandomStrings().email();
         MatcherAssert.assertThat(
             "Does not throw expected exception",
             () -> users.byEmailOrName(email),
@@ -115,35 +116,35 @@ public class DatabaseUsersTest {
 
     @Test
     public void findsUserWithEmail() {
-        String name = "Aleks";
-        String email = "aleks@gmail.com";
-        String password = "lovesJustice";
-        long id = users.create(name, email, password);
-        User user = new User(id, name, email, password, false);
+        User user = new RandomUsers().user();
+        long id = users.create(user.name, user.email, user.password);
         MatcherAssert.assertThat(
-            "Can not find user with given email", users.byEmailOrName(email), Matchers.equalTo(user)
+            "Can not find user with given email",
+            users.byEmailOrName(user.email),
+            Matchers.equalTo(new User(id, user.name, user.email, user.password, false))
         );
     }
 
     @Test
     public void returnsTrueIfUserWithNameExists() {
-        String name = "Kitty";
-        users.create(name, "example@example.com", "1234five");
+        User user = new RandomUsers().user();
+        users.create(user.name, user.email, user.password);
         MatcherAssert.assertThat(
-            "Should return true with existing user", users.existsWithEmailOrName(name), Matchers.equalTo(true)
+            "Should return true with existing user", users.existsWithEmailOrName(user.name), Matchers.equalTo(true)
         );
     }
 
     @Test
     public void returnsFalseIfUserWithNameDoesNotExist() {
+        String name = new RandomStrings().alphabetic(5);
         MatcherAssert.assertThat(
-            "Should return false with non existing user", users.existsWithEmailOrName("abc"), Matchers.equalTo(false)
+            "Should return false with non existing user", users.existsWithEmailOrName(name), Matchers.equalTo(false)
         );
     }
 
     @Test
     public void throwsExceptionIfUserWithNameDoesNotExist() {
-        String name = "super";
+        String name = new RandomStrings().alphabetic(10);
         MatcherAssert.assertThat(
             "Does not throw expected exception",
             () -> users.byEmailOrName(name),
@@ -153,13 +154,11 @@ public class DatabaseUsersTest {
 
     @Test
     public void findsUserWithName() {
-        String name = "Alo";
-        String email = "alo@gmail.com";
-        String password = "lovesFreedom";
-        long id = users.create(name, email, password);
-        User user = new User(id, name, email, password, false);
+        User user = new RandomUsers().user();
+        long id = users.create(user.name, user.email, user.password);
         MatcherAssert.assertThat(
-            "Can not find user with given name", users.byEmailOrName(name), Matchers.equalTo(user)
+            "Can not find user with given name", users.byEmailOrName(user.name),
+            Matchers.equalTo(new User(id, user.name, user.email, user.password, false))
         );
     }
 }

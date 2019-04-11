@@ -44,12 +44,15 @@ public class User {
 
     @Override
     public boolean equals(Object other) {
-        if (other != null && User.class.isAssignableFrom(other.getClass())) {
+        boolean equal = false;
+        if (this == other) {
+            equal = true;
+        } else if (other != null && User.class.isAssignableFrom(other.getClass())) {
             User user = (User) other;
-            return id == user.id && name.equals(user.name) && email.equals(user.email)
+            equal = id == user.id && name.equals(user.name) && email.equals(user.email)
                 && password.equals(user.password) && active == user.active;
         }
-        return false;
+        return equal;
     }
 
     @Override
