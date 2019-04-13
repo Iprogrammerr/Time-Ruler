@@ -19,13 +19,12 @@ import java.util.concurrent.TimeUnit;
 
 public class DatabaseDaysTest {
 
-    private TestDatabaseSetup setup;
+    private final TestDatabaseSetup setup = new TestDatabaseSetup();
     private DatabaseUsers users;
     private DatabaseDays days;
 
     @Before
     public void setup() {
-        setup = new TestDatabaseSetup();
         DatabaseSession session = new SqlDatabaseSession(setup.database(), new QueryTemplates());
         users = new DatabaseUsers(session);
         days = new DatabaseDays(session);

@@ -1,7 +1,6 @@
 package com.iprogrammerr.time.ruler.email;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetup;
 import com.iprogrammerr.time.ruler.Configuration;
 import com.iprogrammerr.time.ruler.matcher.MimeMessageMatcher;
 import com.iprogrammerr.time.ruler.mock.RandomEmails;
@@ -17,14 +16,13 @@ import java.util.Random;
 public class EmailsTest {
 
     private static final int MAX_ACTIVATION_LINK_SUFFIX_LENGTH = 50;
+    private final Configuration configuration = Configuration.fromClassPath();
     @Rule
-    public final GreenMailRule rule = new GreenMailRule(ServerSetup.ALL);
-    private Configuration configuration;
+    public final GreenMailRule rule = new MailRuleFactory().smtp(configuration.smtpPort());
     private Emails emails;
 
     @Before
     public void setup() {
-        configuration = Configuration.fromClassPath();
         rule.setUser(configuration.adminEmail(), configuration.adminPassword());
         ConfigurableEmailServer emailServer = new ConfigurableEmailServer(
             configuration.adminEmail(), configuration.adminPassword(), configuration.smtpHost(),

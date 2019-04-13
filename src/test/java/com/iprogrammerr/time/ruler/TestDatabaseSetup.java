@@ -25,7 +25,7 @@ public class TestDatabaseSetup {
     }
 
     public TestDatabaseSetup() {
-        this(Configuration.fromCmd(new String[0]));
+        this(Configuration.fromClassPath());
     }
 
     public void setup() {
