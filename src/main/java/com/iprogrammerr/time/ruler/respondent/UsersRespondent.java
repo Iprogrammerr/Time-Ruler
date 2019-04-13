@@ -98,8 +98,9 @@ public class UsersRespondent implements Respondent {
 
     private void createUser(String email, String name, String password) {
         long id = users.create(name, email, hashing.hash(password));
-        emails.sendSignUpEmail(email,
-            String.format("%s?%s=%s", SIGN_IN, ACTIVATION, userHash(email, name, id)));
+        emails.sendSignUpEmail(
+            email, String.format("%s?%s=%s", SIGN_IN, ACTIVATION, userHash(email, name, id))
+        );
     }
 
     private String userHash(String email, String name, long id) {

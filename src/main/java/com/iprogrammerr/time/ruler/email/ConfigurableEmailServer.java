@@ -48,6 +48,7 @@ public class ConfigurableEmailServer implements EmailServer {
             message.setContent(multipart);
             Transport.send(message);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

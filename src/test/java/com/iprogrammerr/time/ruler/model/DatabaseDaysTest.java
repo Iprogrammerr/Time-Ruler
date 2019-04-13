@@ -1,4 +1,4 @@
-package com.iprogrammerr.time.ruler.model.user;
+package com.iprogrammerr.time.ruler.model;
 
 import com.iprogrammerr.time.ruler.TestDatabaseSetup;
 import com.iprogrammerr.time.ruler.database.DatabaseSession;
@@ -7,6 +7,8 @@ import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
 import com.iprogrammerr.time.ruler.mock.RandomUsers;
 import com.iprogrammerr.time.ruler.model.day.DatabaseDays;
 import com.iprogrammerr.time.ruler.model.day.Day;
+import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
+import com.iprogrammerr.time.ruler.model.user.User;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.After;

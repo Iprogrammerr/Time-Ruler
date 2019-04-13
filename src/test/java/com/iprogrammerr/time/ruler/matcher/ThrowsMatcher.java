@@ -1,4 +1,4 @@
-package com.iprogrammerr.time.ruler;
+package com.iprogrammerr.time.ruler.matcher;
 
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;

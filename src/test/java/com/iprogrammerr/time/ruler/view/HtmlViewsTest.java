@@ -1,6 +1,6 @@
 package com.iprogrammerr.time.ruler.view;
 
-import com.iprogrammerr.time.ruler.ThrowsMatcher;
+import com.iprogrammerr.time.ruler.matcher.ThrowsMatcher;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;

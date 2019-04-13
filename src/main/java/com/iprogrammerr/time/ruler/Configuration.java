@@ -24,7 +24,7 @@ public class Configuration {
         this.properties = properties;
     }
 
-    public static Configuration fromCmd(String[] args) {
+    public static Configuration fromCmd(String... args) {
         try (InputStream is = args.length == 0 ? App.class.getResourceAsStream("/application.properties")
             : new FileInputStream(args[0])) {
             Properties properties = new Properties();
@@ -33,6 +33,10 @@ public class Configuration {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static Configuration fromClassPath() {
+        return fromCmd();
     }
 
     public int port() {

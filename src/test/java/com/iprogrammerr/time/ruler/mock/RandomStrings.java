@@ -61,7 +61,7 @@ public class RandomStrings {
 
     public String email() {
         return new StringBuilder()
-            .append(alphabetic(2 + random.nextInt(10)))
+            .append(alphabetic(3 + random.nextInt(10)))
             .append(AT).append(alphanumeric(2 + random.nextInt(5)))
             .append(DOT).append(alphabetic(3))
             .toString();
