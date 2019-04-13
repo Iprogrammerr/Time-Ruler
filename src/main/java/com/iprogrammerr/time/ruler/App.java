@@ -11,6 +11,8 @@ import com.iprogrammerr.time.ruler.email.Emails;
 import com.iprogrammerr.time.ruler.model.Hashing;
 import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.SessionIdentity;
+import com.iprogrammerr.time.ruler.model.day.DatabaseDays;
+import com.iprogrammerr.time.ruler.model.day.Days;
 import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.user.Users;
 import com.iprogrammerr.time.ruler.respondent.HistoryRespondent;
@@ -63,6 +65,7 @@ public class App {
             configuration.jdbcUrl());
         DatabaseSession session = new SqlDatabaseSession(database, new QueryTemplates());
         Users users = new DatabaseUsers(session);
+        Days days = new DatabaseDays(session);
         EmailServer emailServer = new ConfigurableEmailServer(
             configuration.adminEmail(), configuration.adminPassword(),
             configuration.smtpHost(), configuration.smtpPort()
@@ -79,7 +82,7 @@ public class App {
         UsersRespondent usersRespondent = new UsersRespondent(
             dashboardRespondent, views, viewsTemplates, users, hashing, emails, identity
         );
-        PlanRespondent planRespondent = new PlanRespondent(identity, viewsTemplates);
+        PlanRespondent planRespondent = new PlanRespondent(identity, viewsTemplates, days);
         HistoryRespondent historyRespondent = new HistoryRespondent(identity, viewsTemplates);
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, viewsTemplates);
 

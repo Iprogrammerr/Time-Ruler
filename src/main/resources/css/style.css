@@ -144,12 +144,23 @@ li.month-title {
     color: #777;
 }
 
-.days li.active {
+.days li span.current {
     padding: 5px;
     color: #307cf4;
     text-decoration: underline;
 }
 
-.days li.inactive {
+.days li span.available {
+    color: #666;
+}
+
+.days li span.not-available {
     color: #dee5ef;
+    cursor: none;
+}
+
+.days li span.planned {
+    padding: 5px;
+    color: red;
+    text-decoration: underline;
 }
