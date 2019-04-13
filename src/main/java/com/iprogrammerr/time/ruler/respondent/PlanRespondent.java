@@ -22,7 +22,11 @@ import java.util.concurrent.TimeUnit;
 public class PlanRespondent implements Respondent {
 
     private static final long DAY_SECONDS = TimeUnit.DAYS.toSeconds(1);
+    private static final int MAX_OFFSET_VALUE = 120;
     private static final String PLAN = "plan";
+    private static final String OFFSET_PARAM = "offset";
+    private static final String PREV_TEMPLATE = "prev";
+    private static final String NEXT_TEMPLATE = "next";
     private static final String MONTH_TEMPLATE = "month";
     private static final String YEAR_TEMPLATE = "year";
     private static final String DAYS_TEMPLATE = "days";
@@ -50,21 +54,29 @@ public class PlanRespondent implements Respondent {
     }
 
     //TODO consider client timezone!
+    //TODO more universal validation mechanism?
+    //TODO limit or not next availability?
     private void renderCalendar(Context context) {
-        ZonedDateTime currentDate = ZonedDateTime.now();
+        int offset = context.queryParam(OFFSET_PARAM, Integer.class, "0").get();
+        if (offset < 0 || offset > MAX_OFFSET_VALUE) {
+            offset = 0;
+        }
+        ZonedDateTime currentDate = ZonedDateTime.now().plusMonths(offset);
         Map<String, Object> params = new HashMap<>();
+        params.put(PREV_TEMPLATE, offset > 0);
+        params.put(NEXT_TEMPLATE, offset < MAX_OFFSET_VALUE);
         params.put(MONTH_TEMPLATE, currentDate.getMonth().getDisplayName(TextStyle.FULL, Locale.US));
         params.put(YEAR_TEMPLATE, currentDate.getYear());
-        params.put(DAYS_TEMPLATE, calendarDays(context, currentDate));
+        params.put(DAYS_TEMPLATE, calendarDays(context, currentDate, offset > 0));
         viewsTemplates.render(context, PLAN, params);
     }
 
-    private List<CalendarDay> calendarDays(Context context, ZonedDateTime currentDate) {
+    private List<CalendarDay> calendarDays(Context context, ZonedDateTime currentDate, boolean hasOffset) {
         long id = identity.value(context.req);
         List<Day> plannedDays = days.userFrom(id, currentDate.toEpochSecond());
-        int daysNumber = currentDate.getMonth().maxLength();
+        int daysNumber = currentDate.toLocalDate().lengthOfMonth();
         List<CalendarDay> calendarDays = new ArrayList<>(daysNumber);
-        long currentDay = currentDate.toEpochSecond();
+        long currentDay = hasOffset ? -1 : currentDate.toEpochSecond();
         int plannedDayIdx = 0;
         long monthStart = monthStart(currentDate);
         for (int i = 0; i < daysNumber; i++) {

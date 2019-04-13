@@ -45,8 +45,8 @@
     <div class="calendar">
         <div class="month">
             <ul>
-                <li class="prev">&#10094;</li>
-                <li class="next">&#10095;</li>
+                <li th:if="${prev}" class="prev">&#10094;</li>
+                <li th:if="${next}" class="next">&#10095;</li>
                 <li class="month-title" th:utext="|${month}</br>${year}|">
                 </li>
             </ul>

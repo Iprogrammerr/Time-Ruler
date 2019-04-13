@@ -20,6 +20,10 @@ export const endpoints = {
     signOut: `${host}sign-out`
 };
 
+export const params = {
+    offset: "offset"
+};
+
 export const errors = {
     invalidEmail: "Email should be at least 5 signs of length, contains '@' character, domain and '.' character",
     invalidLogin: "Login should have at least 3 alphanumeric characters",

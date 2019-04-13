@@ -6,7 +6,7 @@ html , body, .marginless{
     width: 100%;
     height: 100%;
     margin: 0px;
-    overflow: hidden;
+    overflow: auto;
 }
 
 body {
@@ -106,12 +106,15 @@ li.month-title {
 
 .month .prev {
     float: left;
-    padding-top: 10px;
 }
 
 .month .next {
     float: right;
+}
+
+.month .prev, .month .next {
     padding-top: 10px;
+    cursor: pointer;
 }
 
 .weekdays {
