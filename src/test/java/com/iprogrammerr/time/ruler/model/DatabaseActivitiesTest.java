@@ -54,26 +54,28 @@ public class DatabaseActivitiesTest {
 
     @Test
     public void returnsListOfUserDate() {
-        User user = new RandomUsers().user();
+        RandomUsers randomUsers = new RandomUsers();
+        RandomActivities randomActivities = new RandomActivities();
+        User user = randomUsers.user();
         long userId = users.create(user.name, user.email, user.password);
         long date = System.currentTimeMillis() / 1000;
         long dayId = days.createForUser(userId, date);
+        insertUserWithActivity(randomUsers, randomActivities, date);
 
-        RandomActivities randomActivities = new RandomActivities();
         Activity first = randomActivities.activity(dayId);
         Activity second = randomActivities.activity(dayId);
         first = first.withId(activities.create(first));
         second = second.withId(activities.create(second));
 
         MatcherAssert.assertThat(
-            "Does not return proper activities",
-            activities.ofUserDate(userId, date),
+            "Does not return proper activities", activities.ofUserDate(userId, date),
             Matchers.contains(first, second)
         );
     }
 
-    @Test
-    public void createsActivity() {
-
+    private void insertUserWithActivity(RandomUsers randomUsers, RandomActivities randomActivities, long date) {
+        User user = randomUsers.user();
+        long id = users.create(user.name, user.email, user.password);
+        activities.create(randomActivities.activity(days.createForUser(id, date)));
     }
 }
