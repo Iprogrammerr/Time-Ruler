@@ -2,10 +2,10 @@ package com.iprogrammerr.time.ruler.model.day;
 
 import com.iprogrammerr.time.ruler.database.DatabaseSession;
 import com.iprogrammerr.time.ruler.database.Record;
+import com.iprogrammerr.time.ruler.model.SmartDate;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class DatabaseDays implements Days {
@@ -24,16 +24,7 @@ public class DatabaseDays implements Days {
                 days.add(new Day(r));
             }
             return days;
-        }, "SELECT * from day where date >= ?", modifiedDate(date, 0, 0, 0));
-    }
-
-    private long modifiedDate(long date, int hour, int minute, int second) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(date);
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, minute);
-        calendar.set(Calendar.SECOND, second);
-        return calendar.getTimeInMillis();
+        }, "SELECT * from day where date >= ?", new SmartDate(date).dayBeginning());
     }
 
     @Override
@@ -44,7 +35,7 @@ public class DatabaseDays implements Days {
                 days.add(new Day(r));
             }
             return days;
-        }, "SELECT * from day where date <= ? ORDER BY date ASC", modifiedDate(date, 23, 59, 59));
+        }, "SELECT * from day where date <= ? ORDER BY date ASC", new SmartDate(date).dayEnd());
     }
 
     @Override
@@ -54,12 +45,11 @@ public class DatabaseDays implements Days {
 
     @Override
     public boolean ofUserExists(long id, long date) {
-        long from = modifiedDate(date, 0, 0, 0);
-        long to = modifiedDate(date, 23, 59, 59);
+        SmartDate smartDate = new SmartDate(date);
         return session.select(
             ResultSet::next,
             "SELECT id from day WHERE user_id = ? AND date >= ? AND date <= ? ORDER by date ASC",
-            id, from, to
+            id, smartDate.dayBeginning(), smartDate.dayEnd()
         );
     }
 }
