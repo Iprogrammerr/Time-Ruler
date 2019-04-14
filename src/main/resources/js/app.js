@@ -11,7 +11,9 @@ export const routes = {
     today: "today",
     plan: "plan",
     history: "history",
-    profile: "profile"
+    profile: "profile",
+    dayPlan: "plan/day",
+    editDayPlan: "plan/day/edit"
 };
 
 export const endpoints = {
@@ -21,7 +23,8 @@ export const endpoints = {
 };
 
 export const params = {
-    offset: "offset"
+    offset: "offset",
+    day: "day"
 };
 
 export const errors = {

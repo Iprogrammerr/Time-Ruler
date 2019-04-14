@@ -11,16 +11,19 @@ import com.iprogrammerr.time.ruler.email.Emails;
 import com.iprogrammerr.time.ruler.model.Hashing;
 import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.SessionIdentity;
+import com.iprogrammerr.time.ruler.model.activity.Activities;
+import com.iprogrammerr.time.ruler.model.activity.DatabaseActivities;
 import com.iprogrammerr.time.ruler.model.day.DatabaseDays;
 import com.iprogrammerr.time.ruler.model.day.Days;
 import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.user.Users;
 import com.iprogrammerr.time.ruler.respondent.HistoryRespondent;
-import com.iprogrammerr.time.ruler.respondent.PlanRespondent;
 import com.iprogrammerr.time.ruler.respondent.ProfileRespondent;
 import com.iprogrammerr.time.ruler.respondent.TodayRespondent;
 import com.iprogrammerr.time.ruler.respondent.UsersRespondent;
 import com.iprogrammerr.time.ruler.respondent.WelcomeRespondent;
+import com.iprogrammerr.time.ruler.respondent.plan.DayPlanRespondent;
+import com.iprogrammerr.time.ruler.respondent.plan.PlanRespondent;
 import com.iprogrammerr.time.ruler.view.HtmlViews;
 import com.iprogrammerr.time.ruler.view.HtmlViewsTemplates;
 import com.iprogrammerr.time.ruler.view.Views;
@@ -33,8 +36,6 @@ import org.thymeleaf.templateresolver.FileTemplateResolver;
 
 import java.io.File;
 import java.net.HttpURLConnection;
-import java.util.HashMap;
-import java.util.Map;
 
 public class App {
 
@@ -52,13 +53,6 @@ public class App {
         resolver.setCacheable(false);
         engine.setTemplateResolver(resolver);
         JavalinThymeleaf.configure(engine);
-        app.get("test", ctx -> {
-            Map<String, String> params = new HashMap<>();
-            params.put("table", "TestC");
-            ctx.render(configuration.resourcesPath() + File.separator + "template" + File.separator + "test.html",
-                params);
-
-        });
         Views views = new HtmlViews(new File(root, "html"));
         ViewsTemplates viewsTemplates = new HtmlViewsTemplates(new File(root, "template"));
         Database database = new SqlDatabase(configuration.databaseUser(), configuration.databasePassword(),
@@ -66,6 +60,8 @@ public class App {
         DatabaseSession session = new SqlDatabaseSession(database, new QueryTemplates());
         Users users = new DatabaseUsers(session);
         Days days = new DatabaseDays(session);
+        Activities activities = new DatabaseActivities(session);
+
         EmailServer emailServer = new ConfigurableEmailServer(
             configuration.adminEmail(), configuration.adminPassword(),
             configuration.smtpHost(), configuration.smtpPort()
@@ -85,6 +81,7 @@ public class App {
         PlanRespondent planRespondent = new PlanRespondent(identity, viewsTemplates, days);
         HistoryRespondent historyRespondent = new HistoryRespondent(identity, viewsTemplates);
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, viewsTemplates);
+        DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, viewsTemplates, activities);
 
         welcomeRespondent.init(app);
         dashboardRespondent.init(app);
@@ -92,6 +89,7 @@ public class App {
         planRespondent.init(app);
         historyRespondent.init(app);
         profileRespondent.init(app);
+        dayPlanRespondent.init(app);
 
         //TODO handle exceptions
         app.exception(Exception.class, (e, ctx) -> {

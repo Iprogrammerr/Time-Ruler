@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Day plan</title>
+    <link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+
+<body class="marginless">
+    <h1 th:text=${date}></h1>
+    <ul>
+        <li th:each="a : ${activities}" th:text="${a.title}">
+            <span class="close">&times;</span>
+        </li>
+    </ul>
+    <button id="add">Add</button>
+</body>
+<script src="../day-plan.js" type="module"></script>
+
+</html>

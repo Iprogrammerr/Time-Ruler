@@ -1,10 +1,11 @@
-package com.iprogrammerr.time.ruler.respondent;
+package com.iprogrammerr.time.ruler.respondent.plan;
 
 import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.day.Day;
 import com.iprogrammerr.time.ruler.model.day.Days;
 import com.iprogrammerr.time.ruler.model.rendering.CalendarDay;
 import com.iprogrammerr.time.ruler.model.rendering.DayState;
+import com.iprogrammerr.time.ruler.respondent.Respondent;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import io.javalin.Context;
 import io.javalin.Javalin;
