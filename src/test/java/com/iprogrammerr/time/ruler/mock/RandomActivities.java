@@ -25,18 +25,26 @@ public class RandomActivities {
         this(new Random());
     }
 
-    public Activity activity(long id, long dayId) {
+    public Activity activity(long id, long dayId, boolean done) {
         String name = strings.alphabetic(1 + random.nextInt(MAX_NAME_LENGTH));
         int end = 1 + random.nextInt(DAY_SECONDS);
         int start = random.nextInt(end);
-        return new Activity(id, name, dayId, start, end, random.nextBoolean());
+        return new Activity(id, name, dayId, start, end, done);
+    }
+
+    public Activity activity(long dayId, boolean done) {
+        return activity(0, dayId, done);
     }
 
     public Activity activity(long dayId) {
-        return activity(0, dayId);
+        return activity(dayId, random.nextBoolean());
+    }
+
+    public Activity activity(boolean done) {
+        return activity(0, done);
     }
 
     public Activity activity() {
-        return activity(0);
+        return activity(random.nextBoolean());
     }
 }

@@ -6,10 +6,12 @@
     <link rel="stylesheet" type="text/css" href="../style.css" />
 </head>
 
-<body class="marginless">
+<body>
     <h1 th:text=${date}></h1>
-    <ul>
-        <li th:each="a : ${activities}" th:text="${a.title}">
+    <p th:if="${activities.size()} == 0">You have not planned any activity. Start by clicking a button below</p>
+    <ul class="activities">
+        <li th:each="a : ${activities}">
+            <span th:text="${a.name}"></span>
             <span class="close">&times;</span>
         </li>
     </ul>

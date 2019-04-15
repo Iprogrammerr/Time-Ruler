@@ -13,7 +13,7 @@ export const routes = {
     history: "history",
     profile: "profile",
     dayPlan: "plan/day",
-    editDayPlan: "plan/day/edit"
+    activity: "activity"
 };
 
 export const endpoints = {

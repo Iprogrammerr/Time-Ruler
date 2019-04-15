@@ -17,6 +17,7 @@ import com.iprogrammerr.time.ruler.model.day.DatabaseDays;
 import com.iprogrammerr.time.ruler.model.day.Days;
 import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.user.Users;
+import com.iprogrammerr.time.ruler.respondent.ActivityRespondent;
 import com.iprogrammerr.time.ruler.respondent.HistoryRespondent;
 import com.iprogrammerr.time.ruler.respondent.ProfileRespondent;
 import com.iprogrammerr.time.ruler.respondent.TodayRespondent;
@@ -36,6 +37,8 @@ import org.thymeleaf.templateresolver.FileTemplateResolver;
 
 import java.io.File;
 import java.net.HttpURLConnection;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 public class App {
 
@@ -73,6 +76,8 @@ public class App {
         Hashing hashing = new Hashing();
         Identity<Long> identity = new SessionIdentity();
 
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+
         WelcomeRespondent welcomeRespondent = new WelcomeRespondent(views);
         TodayRespondent dashboardRespondent = new TodayRespondent(identity, viewsTemplates);
         UsersRespondent usersRespondent = new UsersRespondent(
@@ -81,7 +86,8 @@ public class App {
         PlanRespondent planRespondent = new PlanRespondent(identity, viewsTemplates, days);
         HistoryRespondent historyRespondent = new HistoryRespondent(identity, viewsTemplates);
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, viewsTemplates);
-        DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, viewsTemplates, activities);
+        DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, viewsTemplates, activities, dateFormat);
+        ActivityRespondent activityRespondent = new ActivityRespondent(identity, viewsTemplates);
 
         welcomeRespondent.init(app);
         dashboardRespondent.init(app);
@@ -90,6 +96,7 @@ public class App {
         historyRespondent.init(app);
         profileRespondent.init(app);
         dayPlanRespondent.init(app);
+        activityRespondent.init(app);
 
         //TODO handle exceptions
         app.exception(Exception.class, (e, ctx) -> {

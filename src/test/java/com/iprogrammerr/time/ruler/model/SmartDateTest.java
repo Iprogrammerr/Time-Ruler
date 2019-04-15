@@ -10,7 +10,7 @@ import java.util.Random;
 public class SmartDateTest {
 
     @Test
-    public void returnsDateWithOffset() {
+    public void returnsDateWithTimeOffset() {
         Random random = new Random();
         int hour = random.nextInt(24);
         int minute = random.nextInt(60);
@@ -19,7 +19,7 @@ public class SmartDateTest {
         SmartDate date = new SmartDate(calendar.getTimeInMillis());
         shiftCalendar(calendar, hour, minute, second);
         MatcherAssert.assertThat(
-            "Does not return properly shifted date", calendar.getTimeInMillis(),
+            "Does not return properly shifted date by time", calendar.getTimeInMillis(),
             Matchers.equalTo(date.withOffset(hour, minute, second))
         );
     }
@@ -49,6 +49,21 @@ public class SmartDateTest {
         MatcherAssert.assertThat(
             "Does not return day end", calendar.getTimeInMillis(),
             Matchers.equalTo(date.dayEnd())
+        );
+    }
+
+    @Test
+    public void returnsDateWithOffset() {
+        Random random = new Random();
+        int monthOffset = random.nextInt(100);
+        int dayOffset = random.nextInt(31);
+        Calendar calendar = Calendar.getInstance();
+        SmartDate date = new SmartDate(calendar.getTimeInMillis());
+        calendar.add(Calendar.MONTH, monthOffset);
+        calendar.set(Calendar.DAY_OF_MONTH, dayOffset);
+        MatcherAssert.assertThat(
+            "Does not return properly shifted date", calendar.getTimeInMillis(),
+            Matchers.equalTo(date.withOffset(monthOffset, dayOffset))
         );
     }
 }

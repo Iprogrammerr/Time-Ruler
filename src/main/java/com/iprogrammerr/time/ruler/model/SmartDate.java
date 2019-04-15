@@ -10,6 +10,14 @@ public class SmartDate {
         this.date = date;
     }
 
+    public long withOffset(int month, int day) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(date);
+        calendar.add(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, day);
+        return calendar.getTimeInMillis();
+    }
+
     public long withOffset(int hour, int minute, int second) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(date);

@@ -3,11 +3,11 @@ export function Router(root = "http://127.0.0.1:8080/") {
     const _root = root;
 
     this.forward = (route) => {
-        location.href = `${root}${route}`;
+        location.href = `${_root}${route}`;
     };
 
     this.forwardWithParams = (route, ...params) => {
-        location.href = `${root}${route}${paramsString(params)}`;
+        location.href = `${_root}${route}${paramsString(params)}`;
     }
 
     function paramsString(params) {
@@ -23,10 +23,10 @@ export function Router(root = "http://127.0.0.1:8080/") {
     }
 
     this.replace = (route) => {
-        location.replace(`${root}${route}`);
+        location.replace(`${_root}${route}`);
     };
 
     this.replaceWithParams = (route, ...params) => {
-        location.replace(`${root}${route}${paramsString(params)}`);
+        location.replace(`${_root}${route}${paramsString(params)}`);
     };
 }   
