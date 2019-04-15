@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    <form>
+    <form class="centered">
         <h1 th:text="${message}"></h1>
         <p>Email/Login</p>
         <p th:class="${invalidEmailLogin} ? error-visible : error" id="emailLoginError">Invalid email or login</p>

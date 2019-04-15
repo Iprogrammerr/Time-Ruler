@@ -2,11 +2,15 @@
     box-sizing: border-box;
 }
 
-html , body, .marginless{
+html {
     width: 100%;
     height: 100%;
     margin: 0px;
     overflow: auto;
+}
+
+.marginless {
+    margin: 0px;
 }
 
 body {
