@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.time.Instant;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class DatabaseDaysTest {
@@ -119,5 +120,24 @@ public class DatabaseDaysTest {
             "Should return true if asked about existing day", days.ofUserExists(userId, date),
             Matchers.equalTo(true)
         );
+    }
+
+    @Test
+    public void returnsZeroOfNonExistingUserFirstDate() {
+        MatcherAssert.assertThat(
+            "Should return negative date", days.userFirstDate(new Random().nextInt()), Matchers.equalTo(0L)
+        );
+    }
+
+    @Test
+    public void returnsUserFirstDate() {
+        Random random = new Random();
+        User user = new RandomUsers(random).user();
+        long userId = users.create(user.name, user.email, user.password);
+        long date = Instant.now().getEpochSecond();
+        long min = date - (1 + random.nextInt((int) TimeUnit.DAYS.toSeconds(1)));
+        days.createForUser(userId, date);
+        days.createForUser(userId, min);
+        MatcherAssert.assertThat("Should return min value", days.userFirstDate(userId), Matchers.equalTo(min));
     }
 }

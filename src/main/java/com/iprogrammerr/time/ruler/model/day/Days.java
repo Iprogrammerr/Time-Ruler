@@ -11,4 +11,6 @@ public interface Days {
     long createForUser(long id, long date);
 
     boolean ofUserExists(long id, long date);
+
+    long userFirstDate(long id);
 }

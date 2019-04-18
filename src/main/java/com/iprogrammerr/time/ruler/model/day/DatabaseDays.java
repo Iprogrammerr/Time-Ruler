@@ -52,4 +52,15 @@ public class DatabaseDays implements Days {
             id, smartDate.dayBeginning(), smartDate.dayEnd()
         );
     }
+
+    @Override
+    public long userFirstDate(long id) {
+        return session.select(r -> {
+            long min = 0;
+            if (r.next()) {
+                min = r.getLong(1);
+            }
+            return min;
+        }, "SELECT MIN(date) from day WHERE user_id = ?", id);
+    }
 }

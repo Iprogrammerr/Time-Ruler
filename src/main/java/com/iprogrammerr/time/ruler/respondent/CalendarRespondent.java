@@ -1,4 +1,4 @@
-package com.iprogrammerr.time.ruler.respondent.plan;
+package com.iprogrammerr.time.ruler.respondent;
 
 import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.SmartDate;
@@ -6,7 +6,6 @@ import com.iprogrammerr.time.ruler.model.day.Day;
 import com.iprogrammerr.time.ruler.model.day.Days;
 import com.iprogrammerr.time.ruler.model.rendering.CalendarDay;
 import com.iprogrammerr.time.ruler.model.rendering.DayState;
-import com.iprogrammerr.time.ruler.respondent.Respondent;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import io.javalin.Context;
 import io.javalin.Javalin;
@@ -22,12 +21,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class PlanRespondent implements Respondent {
+public class CalendarRespondent implements Respondent {
 
     private static final long DAY_SECONDS = TimeUnit.DAYS.toSeconds(1);
     private static final int MAX_YEAR_OFFSET_VALUE = 100;
     private static final int MAX_MONTH_VALUE = 12;
     private static final String PLAN = "plan";
+    private static final String HISTORY = "history";
     private static final String YEAR_PARAM = "year";
     private static final String MONTH_PARAM = "month";
     private static final String PREV_TEMPLATE = "prev";
@@ -39,7 +39,7 @@ public class PlanRespondent implements Respondent {
     private final ViewsTemplates viewsTemplates;
     private final Days days;
 
-    public PlanRespondent(Identity<Long> identity, ViewsTemplates viewsTemplates, Days days) {
+    public CalendarRespondent(Identity<Long> identity, ViewsTemplates viewsTemplates, Days days) {
         this.identity = identity;
         this.viewsTemplates = viewsTemplates;
         this.days = days;
@@ -47,21 +47,28 @@ public class PlanRespondent implements Respondent {
 
     @Override
     public void init(Javalin app) {
-        app.get(PLAN, this::showMainPage);
+        app.get(PLAN, this::showPlan);
+        app.get(HISTORY, this::showHistory);
     }
 
-    private void showMainPage(Context context) {
+    private void showPlan(Context context) {
         if (identity.isValid(context.req)) {
-            renderCalendar(context);
+            renderToFutureCalendar(context);
         } else {
             context.status(HttpURLConnection.HTTP_UNAUTHORIZED);
         }
     }
 
-    //TODO consider client timezone!
+    private void showHistory(Context context) {
+        if (identity.isValid(context.req)) {
+            renderToPastCalendar(context);
+        } else {
+            context.status(HttpURLConnection.HTTP_UNAUTHORIZED);
+        }
+    }
+
     //TODO more universal validation mechanism?
-    //TODO limit or not next availability?
-    private void renderCalendar(Context context) {
+    private void renderToFutureCalendar(Context context) {
         ZonedDateTime currentDate = ZonedDateTime.now(ZoneOffset.UTC);
         int currentYear = currentDate.getYear();
         int maxYear = currentYear + MAX_YEAR_OFFSET_VALUE;
@@ -134,5 +141,31 @@ public class PlanRespondent implements Respondent {
 
     private boolean isBetween(long start, long end, long value) {
         return value >= start && end >= value;
+    }
+
+    private void renderToPastCalendar(Context context) {
+        ZonedDateTime currentDate = ZonedDateTime.now(ZoneOffset.UTC);
+        int currentYear = currentDate.getYear();
+        int maxYear = currentYear + MAX_YEAR_OFFSET_VALUE;
+        int requestedYear = context.queryParam(YEAR_PARAM, Integer.class, String.valueOf(currentYear)).get();
+        if (requestedYear < currentYear || requestedYear > maxYear) {
+            requestedYear = currentYear;
+        }
+        int currentMonth = currentDate.getMonthValue();
+        int requestedMonth = context.queryParam(MONTH_PARAM, Integer.class, String.valueOf(currentMonth)).get();
+        if (requestedMonth < 1 || requestedMonth > MAX_MONTH_VALUE) {
+            requestedMonth = currentMonth;
+        }
+
+        Map<String, Object> params = new HashMap<>();
+        params.put(PREV_TEMPLATE, requestedMonth > currentMonth || requestedYear > currentYear);
+        params.put(NEXT_TEMPLATE, currentYear < maxYear);
+        ZonedDateTime withOffset = new SmartDate(currentDate).ofYearMonth(requestedYear, requestedMonth);
+        params.put(MONTH_TEMPLATE, withOffset.getMonth().getDisplayName(TextStyle.FULL, Locale.US));
+        params.put(YEAR_TEMPLATE, withOffset.getYear());
+        boolean hasOffset = requestedYear != currentYear || requestedMonth != currentMonth;
+        params.put(DAYS_TEMPLATE, calendarDays(context, withOffset, hasOffset));
+
+        viewsTemplates.render(context, PLAN, params);
     }
 }

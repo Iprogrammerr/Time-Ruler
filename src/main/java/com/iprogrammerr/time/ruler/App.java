@@ -18,13 +18,12 @@ import com.iprogrammerr.time.ruler.model.day.Days;
 import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.user.Users;
 import com.iprogrammerr.time.ruler.respondent.ActivityRespondent;
-import com.iprogrammerr.time.ruler.respondent.HistoryRespondent;
+import com.iprogrammerr.time.ruler.respondent.CalendarRespondent;
 import com.iprogrammerr.time.ruler.respondent.ProfileRespondent;
 import com.iprogrammerr.time.ruler.respondent.TodayRespondent;
 import com.iprogrammerr.time.ruler.respondent.UsersRespondent;
 import com.iprogrammerr.time.ruler.respondent.WelcomeRespondent;
 import com.iprogrammerr.time.ruler.respondent.plan.DayPlanRespondent;
-import com.iprogrammerr.time.ruler.respondent.plan.PlanRespondent;
 import com.iprogrammerr.time.ruler.view.HtmlViews;
 import com.iprogrammerr.time.ruler.view.HtmlViewsTemplates;
 import com.iprogrammerr.time.ruler.view.Views;
@@ -83,8 +82,7 @@ public class App {
         UsersRespondent usersRespondent = new UsersRespondent(
             dashboardRespondent, views, viewsTemplates, users, hashing, emails, identity
         );
-        PlanRespondent planRespondent = new PlanRespondent(identity, viewsTemplates, days);
-        HistoryRespondent historyRespondent = new HistoryRespondent(identity, viewsTemplates);
+        CalendarRespondent calendarRespondent = new CalendarRespondent(identity, viewsTemplates, days);
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, viewsTemplates);
         DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, viewsTemplates, activities, dateFormat);
         ActivityRespondent activityRespondent = new ActivityRespondent(identity, viewsTemplates);
@@ -92,8 +90,7 @@ public class App {
         welcomeRespondent.init(app);
         dashboardRespondent.init(app);
         usersRespondent.init(app);
-        planRespondent.init(app);
-        historyRespondent.init(app);
+        calendarRespondent.init(app);
         profileRespondent.init(app);
         dayPlanRespondent.init(app);
         activityRespondent.init(app);
