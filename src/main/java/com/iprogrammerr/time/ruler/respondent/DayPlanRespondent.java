@@ -1,4 +1,4 @@
-package com.iprogrammerr.time.ruler.respondent.plan;
+package com.iprogrammerr.time.ruler.respondent;
 
 import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.SmartDate;

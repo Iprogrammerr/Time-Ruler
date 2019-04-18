@@ -2,6 +2,7 @@ package com.iprogrammerr.time.ruler.respondent;
 
 import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.SmartDate;
+import com.iprogrammerr.time.ruler.model.YearMonthDay;
 import com.iprogrammerr.time.ruler.model.day.Day;
 import com.iprogrammerr.time.ruler.model.day.Days;
 import com.iprogrammerr.time.ruler.model.rendering.CalendarDay;
@@ -80,19 +81,16 @@ public class CalendarRespondent implements Respondent {
         ZonedDateTime currentDate = ZonedDateTime.now(ZoneOffset.UTC);
         int currentYear = currentDate.getYear();
         int maxYear = currentYear + MAX_YEAR_OFFSET_VALUE;
-        int requestedYear = context.queryParam(YEAR_PARAM, Integer.class, String.valueOf(currentYear)).get();
+        YearMonthDay yearMonth = new YearMonthDay(context.queryParamMap());
+        int requestedYear = yearMonth.year(currentYear);
         if (requestedYear < currentYear || requestedYear > maxYear) {
             requestedYear = currentYear;
         }
-        int currentMonth = currentDate.getMonthValue();
-        int requestedMonth = context.queryParam(MONTH_PARAM, Integer.class, String.valueOf(currentMonth)).get();
-        if (requestedMonth < 1 || requestedMonth > MAX_MONTH_VALUE) {
-            requestedMonth = currentMonth;
-        }
-        ZonedDateTime withOffset = new SmartDate(currentDate).ofYearMonth(requestedYear, requestedMonth);
+        ZonedDateTime withOffset = new SmartDate(currentDate)
+            .ofYearMonth(requestedYear, yearMonth.month(currentDate.getMonthValue()));
         renderCalendar(
             context, PLAN_TITLE, true,
-            requestedMonth > currentMonth || requestedYear > currentYear,
+            withOffset.isAfter(currentDate),
             currentYear < maxYear,
             withOffset.getMonth().getDisplayName(TextStyle.FULL, Locale.US),
             withOffset.getYear(), calendarDays(context, withOffset, false)
@@ -184,16 +182,14 @@ public class CalendarRespondent implements Respondent {
     private void renderToPastCalendar(Context context, ZonedDateTime firstDate) {
         ZonedDateTime currentDate = ZonedDateTime.now(ZoneOffset.UTC);
         int currentYear = currentDate.getYear();
+        int currentMonth = currentDate.getMonthValue();
+        YearMonthDay yearMonth = new YearMonthDay(context.queryParamMap());
         int minYear = firstDate.getYear();
-        int requestedYear = context.queryParam(YEAR_PARAM, Integer.class, String.valueOf(currentYear)).get();
+        int requestedYear = yearMonth.year(currentYear);
         if (requestedYear < minYear || requestedYear > currentYear) {
             requestedYear = currentYear;
         }
-        int currentMonth = currentDate.getMonthValue();
-        int requestedMonth = context.queryParam(MONTH_PARAM, Integer.class, String.valueOf(currentMonth)).get();
-        if (requestedMonth < 1 || requestedMonth > MAX_MONTH_VALUE) {
-            requestedMonth = currentMonth;
-        }
+        int requestedMonth = yearMonth.month(currentMonth);
         ZonedDateTime requestedDate = new SmartDate(currentDate).ofYearMonth(requestedYear, requestedMonth);
         if (requestedDate.isBefore(firstDate)) {
             requestedMonth = firstDate.getMonthValue();
