@@ -11,6 +11,7 @@ import io.javalin.Context;
 import io.javalin.Javalin;
 
 import java.net.HttpURLConnection;
+import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.TextStyle;
@@ -27,9 +28,14 @@ public class CalendarRespondent implements Respondent {
     private static final int MAX_YEAR_OFFSET_VALUE = 100;
     private static final int MAX_MONTH_VALUE = 12;
     private static final String PLAN = "plan";
+    private static final String PLAN_TITLE = "Plan";
     private static final String HISTORY = "history";
+    private static final String HISTORY_TITLE = "History";
+    private static final String CALENDAR = "calendar";
     private static final String YEAR_PARAM = "year";
     private static final String MONTH_PARAM = "month";
+    private static final String TITLE_TEMPLATE = "title";
+    private static final String PLAN_TEMPLATE = "plan";
     private static final String PREV_TEMPLATE = "prev";
     private static final String NEXT_TEMPLATE = "next";
     private static final String MONTH_TEMPLATE = "month";
@@ -61,7 +67,9 @@ public class CalendarRespondent implements Respondent {
 
     private void showHistory(Context context) {
         if (identity.isValid(context.req)) {
-            renderToPastCalendar(context);
+            long firstDate = days.userFirstDate(identity.value(context.req));
+            Instant dateInstant = firstDate == 0 ? Instant.now() : Instant.ofEpochSecond(firstDate);
+            renderToPastCalendar(context, ZonedDateTime.ofInstant(dateInstant, ZoneOffset.UTC));
         } else {
             context.status(HttpURLConnection.HTTP_UNAUTHORIZED);
         }
@@ -81,32 +89,44 @@ public class CalendarRespondent implements Respondent {
         if (requestedMonth < 1 || requestedMonth > MAX_MONTH_VALUE) {
             requestedMonth = currentMonth;
         }
-
-        Map<String, Object> params = new HashMap<>();
-        params.put(PREV_TEMPLATE, requestedMonth > currentMonth || requestedYear > currentYear);
-        params.put(NEXT_TEMPLATE, currentYear < maxYear);
         ZonedDateTime withOffset = new SmartDate(currentDate).ofYearMonth(requestedYear, requestedMonth);
-        params.put(MONTH_TEMPLATE, withOffset.getMonth().getDisplayName(TextStyle.FULL, Locale.US));
-        params.put(YEAR_TEMPLATE, withOffset.getYear());
-        boolean hasOffset = requestedYear != currentYear || requestedMonth != currentMonth;
-        params.put(DAYS_TEMPLATE, calendarDays(context, withOffset, hasOffset));
-
-        viewsTemplates.render(context, PLAN, params);
+        renderCalendar(
+            context, PLAN_TITLE, true,
+            requestedMonth > currentMonth || requestedYear > currentYear,
+            currentYear < maxYear,
+            withOffset.getMonth().getDisplayName(TextStyle.FULL, Locale.US),
+            withOffset.getYear(), calendarDays(context, withOffset, false)
+        );
     }
 
-    private List<CalendarDay> calendarDays(Context context, ZonedDateTime currentDate, boolean hasOffset) {
+    private void renderCalendar(Context context, String title, boolean plan, boolean hasPrevious, boolean hasNext,
+        String month, int year, List<CalendarDay> days) {
+        Map<String, Object> params = new HashMap<>();
+        params.put(TITLE_TEMPLATE, title);
+        params.put(PLAN_TEMPLATE, plan);
+        params.put(PREV_TEMPLATE, hasPrevious);
+        params.put(NEXT_TEMPLATE, hasNext);
+        params.put(MONTH_TEMPLATE, month);
+        params.put(YEAR_TEMPLATE, year);
+        params.put(DAYS_TEMPLATE, days);
+        viewsTemplates.render(context, CALENDAR, params);
+    }
+
+    private List<CalendarDay> calendarDays(Context context, ZonedDateTime currentDate, boolean fromPast) {
         long id = identity.value(context.req);
-        List<Day> plannedDays = days.userFrom(id, currentDate.toEpochSecond());
+        List<Day> plannedDays = fromPast ? days.userTo(id, currentDate.toEpochSecond()) :
+            days.userFrom(id, currentDate.toEpochSecond());
         int daysNumber = currentDate.toLocalDate().lengthOfMonth();
         List<CalendarDay> calendarDays = new ArrayList<>(daysNumber);
-        long currentDay = hasOffset ? -1 : currentDate.toEpochSecond();
         int plannedDayIdx = 0;
         long monthStart = monthStart(currentDate);
         for (int i = 0; i < daysNumber; i++) {
             long dayStart = monthStart + (DAY_SECONDS * i);
             long dayEnd = dayStart + (DAY_SECONDS - 1);
             long plannedDay = plannedDayIdx < plannedDays.size() ? plannedDays.get(plannedDayIdx).date : -1;
-            DayState state = dayState(dayStart, dayEnd, currentDay, plannedDay);
+            DayState state = fromPast ?
+                dayStateForPast(dayStart, dayEnd, plannedDay) :
+                dayStateForFuture(dayStart, dayEnd, plannedDay);
             if (state == DayState.PLANNED) {
                 plannedDayIdx++;
             }
@@ -123,8 +143,9 @@ public class CalendarRespondent implements Respondent {
         ).toEpochSecond();
     }
 
-    private DayState dayState(long dayStart, long dayEnd, long currentDay, long plannedDay) {
+    private DayState dayStateForFuture(long dayStart, long dayEnd, long plannedDay) {
         DayState state;
+        long currentDay = Instant.now().getEpochSecond();
         if (currentDay > dayEnd) {
             state = DayState.NOT_AVAILABLE;
         } else if (isBetween(dayStart, dayEnd, currentDay)) {
@@ -139,16 +160,33 @@ public class CalendarRespondent implements Respondent {
         return state;
     }
 
+    private DayState dayStateForPast(long dayStart, long dayEnd, long plannedDay) {
+        DayState state;
+        long currentDay = Instant.now().getEpochSecond();
+        if (dayEnd < currentDay) {
+            state = DayState.AVAILABLE;
+        } else if (isBetween(dayStart, dayEnd, currentDay)) {
+            state = DayState.CURRENT;
+        } else {
+            if (isBetween(dayStart, dayEnd, plannedDay)) {
+                state = DayState.PLANNED;
+            } else {
+                state = DayState.NOT_AVAILABLE;
+            }
+        }
+        return state;
+    }
+
     private boolean isBetween(long start, long end, long value) {
         return value >= start && end >= value;
     }
 
-    private void renderToPastCalendar(Context context) {
+    private void renderToPastCalendar(Context context, ZonedDateTime firstDate) {
         ZonedDateTime currentDate = ZonedDateTime.now(ZoneOffset.UTC);
         int currentYear = currentDate.getYear();
-        int maxYear = currentYear + MAX_YEAR_OFFSET_VALUE;
+        int minYear = firstDate.getYear();
         int requestedYear = context.queryParam(YEAR_PARAM, Integer.class, String.valueOf(currentYear)).get();
-        if (requestedYear < currentYear || requestedYear > maxYear) {
+        if (requestedYear < minYear || requestedYear > currentYear) {
             requestedYear = currentYear;
         }
         int currentMonth = currentDate.getMonthValue();
@@ -156,16 +194,17 @@ public class CalendarRespondent implements Respondent {
         if (requestedMonth < 1 || requestedMonth > MAX_MONTH_VALUE) {
             requestedMonth = currentMonth;
         }
-
-        Map<String, Object> params = new HashMap<>();
-        params.put(PREV_TEMPLATE, requestedMonth > currentMonth || requestedYear > currentYear);
-        params.put(NEXT_TEMPLATE, currentYear < maxYear);
-        ZonedDateTime withOffset = new SmartDate(currentDate).ofYearMonth(requestedYear, requestedMonth);
-        params.put(MONTH_TEMPLATE, withOffset.getMonth().getDisplayName(TextStyle.FULL, Locale.US));
-        params.put(YEAR_TEMPLATE, withOffset.getYear());
-        boolean hasOffset = requestedYear != currentYear || requestedMonth != currentMonth;
-        params.put(DAYS_TEMPLATE, calendarDays(context, withOffset, hasOffset));
-
-        viewsTemplates.render(context, PLAN, params);
+        ZonedDateTime requestedDate = new SmartDate(currentDate).ofYearMonth(requestedYear, requestedMonth);
+        if (requestedDate.isBefore(firstDate)) {
+            requestedMonth = firstDate.getMonthValue();
+            requestedDate = requestedDate.withMonth(requestedMonth);
+        }
+        renderCalendar(
+            context, HISTORY_TITLE, false,
+            requestedDate.isAfter(firstDate),
+            requestedDate.isBefore(currentDate),
+            requestedDate.getMonth().getDisplayName(TextStyle.FULL, Locale.US),
+            requestedDate.getYear(), calendarDays(context, requestedDate, true)
+        );
     }
 }

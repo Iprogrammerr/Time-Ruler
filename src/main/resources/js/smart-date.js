@@ -27,7 +27,7 @@ export function SmartDate(date = new Date()) {
     this.addMonth = (value) => {
         let newMonth = _date.getUTCMonth() + value;
         if (newMonth > MAX_UTC_MONTH) {
-            newMonth = 1;
+            newMonth = 0;
             _date.setUTCFullYear(_date.getUTCFullYear() + 1);
         }
         _date.setUTCMonth(newMonth);

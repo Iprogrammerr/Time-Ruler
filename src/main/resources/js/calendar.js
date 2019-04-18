@@ -4,10 +4,43 @@ import { routes } from "./app.js";
 import { dateTimeParams } from "./app.js";
 import { SmartDate } from "./smart-date.js";
 
+const STATE = {
+    PLAN: "plan",
+    HISTORY: "history"
+};
+
 const yearMonth = dateTimeParams.currentYearMonthFromUrl();
-setupTabsNavigation(document.querySelector("div"), 1);
+let tabs = document.querySelector("div");
+const state = stateFromTabs(tabs.children);
+
+setupTabsNavigation(tabs);
 setupMonthsNavigation();
 setupDaysNavigation();
+
+function stateFromTabs(tabs) {
+    let activeIndex = 1;
+    for (let i = 0; i < tabs.length; i++) {
+        if (tabs[i].className === "active") {
+            activeIndex = i;
+        }
+    }
+    let name, mainRoute, detailRoute;
+    //TODO proper routes
+    if (activeIndex == 1) {
+        name = STATE.PLAN;
+        mainRoute = routes.plan;
+        detailRoute = routes.dayPlan;
+    } else {
+        name = STATE.HISTORY;
+        mainRoute = routes.history;
+        detailRoute = routes.history;
+    }
+    return {
+        name: name,
+        mainRoute: mainRoute,
+        detailRoute: detailRoute
+    };
+}
 
 function setupMonthsNavigation() {
     let date = new SmartDate();
@@ -19,7 +52,7 @@ function setupMonthsNavigation() {
             date.subtractMonth(1);
             let newYearMonth = date.asYearMonth();
             date.addMonth(1);
-            prev[0].onclick = () => router.replaceWithParams(routes.plan, 
+            prev[0].onclick = () => router.replaceWithParams(state.mainRoute,
                 dateTimeParams.yearMonthAsParams(newYearMonth.year, newYearMonth.month));
         }
     }
@@ -27,7 +60,7 @@ function setupMonthsNavigation() {
     if (next.length > 0) {
         date.addMonth(1);
         let newYearMonth = date.asYearMonth();
-        next[0].onclick = () => router.replaceWithParams(routes.plan,
+        next[0].onclick = () => router.replaceWithParams(state.mainRoute,
             dateTimeParams.yearMonthAsParams(newYearMonth.year, newYearMonth.month));
     }
 }
@@ -39,7 +72,7 @@ function setupDaysNavigation() {
         let className = days[i].children[0].className;
         if (className !== notAvailableClass) {
             days[i].onclick = () => router.forwardWithParams(
-                routes.dayPlan,  dateTimeParams.yearMonthDayAsParams(yearMonth.year, yearMonth.month, i + 1)
+                state.detailRoute, dateTimeParams.yearMonthDayAsParams(yearMonth.year, yearMonth.month, i + 1)
             );
         }
     }

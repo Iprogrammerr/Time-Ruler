@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 
 <head>
-    <title>Plan</title>
+    <title th:text="${title}"></title>
     <link rel="stylesheet" type="text/css" href="style.css" />
     <style>
         @media screen and (max-width: 720px) {
@@ -38,8 +38,8 @@
 <body class="marginless">
     <div class="tab">
         <button>Today</button>
-        <button class="active">Plan</button>
-        <button>History</button>
+        <button th:class="${plan}? active">Plan</button>
+        <button th:class="!${plan}? active">History</button>
         <button>Profile</button>
     </div>
     <div class="calendar">
@@ -73,6 +73,6 @@
         </ul>
     </div>
 </body>
-<script src="plan.js" type="module"></script>
+<script src="calendar.js" type="module"></script>
 
 </html>

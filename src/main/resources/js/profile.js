@@ -2,7 +2,7 @@ import {setupTabsNavigation} from "./app.js";
 import {router} from "./app.js";
 import {routes} from "./app.js";
 
-setupTabsNavigation(document.querySelector("div"), 3);
+setupTabsNavigation(document.querySelector("div"));
 window.addEventListener("submit", e => e.preventDefault());
 document.getElementById("save").onclick = () => {
     //save

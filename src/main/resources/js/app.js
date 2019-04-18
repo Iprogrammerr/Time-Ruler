@@ -1,7 +1,7 @@
 import { Router } from "./navigation/router.js";
 import { HttpConnections } from "./http/http-connections.js";
 import { UrlParams } from "./http/url-params.js";
-import {DateTimeParams} from "./http/date-time-params.js";
+import { DateTimeParams } from "./http/date-time-params.js";
 import { Validations } from "./validation/validations.js";
 
 const host = "http://127.0.0.1:8080/";
@@ -37,8 +37,14 @@ export const errors = {
     passwordsMismatch: "Given passwords differ"
 };
 
-export function setupTabsNavigation(tabsContainer, activeIndex) {
+export function setupTabsNavigation(tabsContainer) {
     let tabs = tabsContainer.children;
+    let activeIndex = 0;
+    for (let i = 0; i < tabs.length; i++) {
+        if (tabs[i].className === "active") {
+            activeIndex = i;
+        }
+    }
     if (activeIndex != 0) {
         tabs[0].onclick = () => router.forward(routes.today);
     }
@@ -46,7 +52,7 @@ export function setupTabsNavigation(tabsContainer, activeIndex) {
         tabs[1].onclick = () => router.forwardWithParams(routes.plan, dateTimeParams.currentYearMonthAsParams());
     }
     if (activeIndex != 2) {
-        tabs[2].onclick = () => router.forward(routes.history);
+        tabs[2].onclick = () => router.forwardWithParams(routes.history, dateTimeParams.currentYearMonthAsParams());
     }
     if (activeIndex != 3) {
         tabs[3].onclick = () => router.forward(routes.profile);
