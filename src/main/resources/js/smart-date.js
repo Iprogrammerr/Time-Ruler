@@ -12,7 +12,7 @@ export function SmartDate(date = new Date()) {
 
     function getUTCMonth() {
         return _date.getUTCMonth() + 1;
-    }
+    };
 
     this.isBefore = (year, month) => {
         let currentYear = _date.getUTCFullYear();

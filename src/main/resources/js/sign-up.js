@@ -37,15 +37,15 @@ function isFormValid() {
        setError(errorsParagraphs[2], errors.passwordsMismatch); 
     }
     return valid;
-}
+};
 
 function clearErrors() {
     for (let ep of errorsParagraphs) {
         ep.style.display = "none";
     }
-}
+};
 
 function setError(errorComponent, message) {
     errorComponent.style.display = "block";
     errorComponent.innerHTML = message;
-}
+};

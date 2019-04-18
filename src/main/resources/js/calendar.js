@@ -1,4 +1,4 @@
-import { setupTabsNavigation } from "./app.js";
+import { tabsNavigation } from "./app.js";
 import { router } from "./app.js";
 import { routes } from "./app.js";
 import { dateTimeParams } from "./app.js";
@@ -10,20 +10,12 @@ const STATE = {
 };
 
 const yearMonth = dateTimeParams.currentYearMonthFromUrl();
-let tabs = document.querySelector("div");
-const state = stateFromTabs(tabs.children);
-
-setupTabsNavigation(tabs);
+tabsNavigation.setup(document.querySelector("div"));
+const state = stateFromActive(tabsNavigation.activeIndex());
 setupMonthsNavigation();
 setupDaysNavigation();
 
-function stateFromTabs(tabs) {
-    let activeIndex = 1;
-    for (let i = 0; i < tabs.length; i++) {
-        if (tabs[i].className === "active") {
-            activeIndex = i;
-        }
-    }
+function stateFromActive(activeIndex) {
     let name, mainRoute, detailRoute;
     //TODO proper routes
     if (activeIndex == 1) {

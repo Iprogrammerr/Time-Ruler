@@ -1,3 +1,3 @@
-import {setupTabsNavigation} from "./app.js";
+import { tabsNavigation } from "./app.js";
 
-setupTabsNavigation(document.querySelector("div"));
+tabsNavigation.setup(document.querySelector("div"));
