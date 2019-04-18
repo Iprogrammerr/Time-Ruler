@@ -60,7 +60,7 @@ public class DayPlanRespondent implements Respondent {
         if (day < 0 || day > MAX_DAY_VALUE) {
             day = 1;
         }
-        long date = new SmartDate(System.currentTimeMillis()).withOffset(offset, day);
+        long date = new SmartDate(System.currentTimeMillis()).ofYearMonthSeconds(offset, day);
         Map<String, Object> params = new HashMap<>();
         List<Activity> dayActivities = activities.ofUserDate(identity.value(context.req), date);
         params.put(DATE_TEMPLATE_PARAM, dateFormat.format(date));

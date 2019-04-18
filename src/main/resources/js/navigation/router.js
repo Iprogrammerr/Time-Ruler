@@ -6,27 +6,27 @@ export function Router(root = "http://127.0.0.1:8080/") {
         location.href = `${_root}${route}`;
     };
 
-    this.forwardWithParams = (route, ...params) => {
+    this.forwardWithParams = (route, params) => {
         location.href = `${_root}${route}${paramsString(params)}`;
-    }
+    };
 
     function paramsString(params) {
-        let paramsString = params.length > 0 ? "?" : "";
-        for (let [i, p] of params.entries()) {
-            if (i > 0) {
-                paramsString += `&${p.key}=${p.value}`;
+        let paramsString = params.size > 0 ? "?" : "";
+        for (let [k, v] of params) {
+            if (paramsString.length > 1) {
+                paramsString += `&${k}=${v}`;
             } else {
-                paramsString += `${p.key}=${p.value}`;
+                paramsString += `${k}=${v}`;
             }
         }
         return paramsString;
-    }
+    };
 
     this.replace = (route) => {
         location.replace(`${_root}${route}`);
     };
 
-    this.replaceWithParams = (route, ...params) => {
+    this.replaceWithParams = (route, params) => {
         location.replace(`${_root}${route}${paramsString(params)}`);
     };
 }   

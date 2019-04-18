@@ -1,6 +1,7 @@
 package com.iprogrammerr.time.ruler.respondent.plan;
 
 import com.iprogrammerr.time.ruler.model.Identity;
+import com.iprogrammerr.time.ruler.model.SmartDate;
 import com.iprogrammerr.time.ruler.model.day.Day;
 import com.iprogrammerr.time.ruler.model.day.Days;
 import com.iprogrammerr.time.ruler.model.rendering.CalendarDay;
@@ -11,6 +12,7 @@ import io.javalin.Context;
 import io.javalin.Javalin;
 
 import java.net.HttpURLConnection;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
@@ -23,9 +25,11 @@ import java.util.concurrent.TimeUnit;
 public class PlanRespondent implements Respondent {
 
     private static final long DAY_SECONDS = TimeUnit.DAYS.toSeconds(1);
-    private static final int MAX_OFFSET_VALUE = 120;
+    private static final int MAX_YEAR_OFFSET_VALUE = 100;
+    private static final int MAX_MONTH_VALUE = 12;
     private static final String PLAN = "plan";
-    private static final String OFFSET_PARAM = "offset";
+    private static final String YEAR_PARAM = "year";
+    private static final String MONTH_PARAM = "month";
     private static final String PREV_TEMPLATE = "prev";
     private static final String NEXT_TEMPLATE = "next";
     private static final String MONTH_TEMPLATE = "month";
@@ -58,17 +62,28 @@ public class PlanRespondent implements Respondent {
     //TODO more universal validation mechanism?
     //TODO limit or not next availability?
     private void renderCalendar(Context context) {
-        int offset = context.queryParam(OFFSET_PARAM, Integer.class, "0").get();
-        if (offset < 0 || offset > MAX_OFFSET_VALUE) {
-            offset = 0;
+        ZonedDateTime currentDate = ZonedDateTime.now(ZoneOffset.UTC);
+        int currentYear = currentDate.getYear();
+        int maxYear = currentYear + MAX_YEAR_OFFSET_VALUE;
+        int requestedYear = context.queryParam(YEAR_PARAM, Integer.class, String.valueOf(currentYear)).get();
+        if (requestedYear < currentYear || requestedYear > maxYear) {
+            requestedYear = currentYear;
         }
-        ZonedDateTime currentDate = ZonedDateTime.now().plusMonths(offset);
+        int currentMonth = currentDate.getMonthValue();
+        int requestedMonth = context.queryParam(MONTH_PARAM, Integer.class, String.valueOf(currentMonth)).get();
+        if (requestedMonth < 1 || requestedMonth > MAX_MONTH_VALUE) {
+            requestedMonth = currentMonth;
+        }
+
         Map<String, Object> params = new HashMap<>();
-        params.put(PREV_TEMPLATE, offset > 0);
-        params.put(NEXT_TEMPLATE, offset < MAX_OFFSET_VALUE);
-        params.put(MONTH_TEMPLATE, currentDate.getMonth().getDisplayName(TextStyle.FULL, Locale.US));
-        params.put(YEAR_TEMPLATE, currentDate.getYear());
-        params.put(DAYS_TEMPLATE, calendarDays(context, currentDate, offset > 0));
+        params.put(PREV_TEMPLATE, requestedMonth > currentMonth || requestedYear > currentYear);
+        params.put(NEXT_TEMPLATE, currentYear < maxYear);
+        ZonedDateTime withOffset = new SmartDate(currentDate).ofYearMonth(requestedYear, requestedMonth);
+        params.put(MONTH_TEMPLATE, withOffset.getMonth().getDisplayName(TextStyle.FULL, Locale.US));
+        params.put(YEAR_TEMPLATE, withOffset.getYear());
+        boolean hasOffset = requestedYear != currentYear || requestedMonth != currentMonth;
+        params.put(DAYS_TEMPLATE, calendarDays(context, withOffset, hasOffset));
+
         viewsTemplates.render(context, PLAN, params);
     }
 

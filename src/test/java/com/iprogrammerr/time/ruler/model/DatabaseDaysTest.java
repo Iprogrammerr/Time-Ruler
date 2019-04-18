@@ -15,6 +15,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
 public class DatabaseDaysTest {
@@ -40,7 +41,7 @@ public class DatabaseDaysTest {
     public void returnsEmptyUserFromList() {
         long id = 1;
         MatcherAssert.assertThat(
-            "Should return an empty list", days.userFrom(id, System.currentTimeMillis()), Matchers.empty()
+            "Should return an empty list", days.userFrom(id, Instant.now().getEpochSecond()), Matchers.empty()
         );
     }
 
@@ -52,8 +53,8 @@ public class DatabaseDaysTest {
     private void returnsProperUserList(boolean from) {
         User user = new RandomUsers().user();
         long id = users.create(user.name, user.email, user.password);
-        long firstDate = System.currentTimeMillis();
-        long secondDate = firstDate + TimeUnit.DAYS.toMillis(1);
+        long firstDate = Instant.now().getEpochSecond();
+        long secondDate = firstDate + TimeUnit.DAYS.toSeconds(1);
         long firstId = days.createForUser(id, firstDate);
         long secondId = days.createForUser(id, secondDate);
         MatcherAssert.assertThat(
@@ -67,7 +68,7 @@ public class DatabaseDaysTest {
     public void returnsEmptyUserToList() {
         long id = 2;
         MatcherAssert.assertThat(
-            "Should return an empty list", days.userTo(id, System.currentTimeMillis()), Matchers.empty()
+            "Should return an empty list", days.userTo(id, Instant.now().getEpochSecond()), Matchers.empty()
         );
     }
 
@@ -80,7 +81,7 @@ public class DatabaseDaysTest {
     public void createsForUser() {
         User user = new RandomUsers().user();
         long userId = users.create(user.name, user.email, user.password);
-        long date = System.currentTimeMillis();
+        long date = Instant.now().getEpochSecond();
         long dayId = days.createForUser(userId, date);
         MatcherAssert.assertThat(
             "Created day should be equal to expected", days.userFrom(userId, date),
@@ -91,7 +92,7 @@ public class DatabaseDaysTest {
     @Test
     public void returnsFalseOfUserDayIfEmpty() {
         MatcherAssert.assertThat(
-            "Should return false if asked about non existing day", days.ofUserExists(1, System.currentTimeMillis()),
+            "Should return false if asked about non existing day", days.ofUserExists(1, Instant.now().getEpochSecond()),
             Matchers.equalTo(false)
         );
     }
@@ -100,7 +101,7 @@ public class DatabaseDaysTest {
     public void returnsFalseOfAnotherUserDayIfExists() {
         User user = new RandomUsers().user();
         long userId = users.create(user.name, user.email, user.password);
-        long date = System.currentTimeMillis();
+        long date = Instant.now().getEpochSecond();
         days.createForUser(userId, date);
         MatcherAssert.assertThat(
             "Should return false if asked about existing another user day", days.ofUserExists(userId + 1, date),
@@ -112,7 +113,7 @@ public class DatabaseDaysTest {
     public void returnsTrueOfUserDayIfExists() {
         User user = new RandomUsers().user();
         long userId = users.create(user.name, user.email, user.password);
-        long date = System.currentTimeMillis();
+        long date = Instant.now().getEpochSecond();
         days.createForUser(userId, date);
         MatcherAssert.assertThat(
             "Should return true if asked about existing day", days.ofUserExists(userId, date),

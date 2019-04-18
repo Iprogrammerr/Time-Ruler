@@ -17,6 +17,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.Instant;
 import java.util.List;
 
 public class DatabaseActivitiesTest {
@@ -60,7 +61,7 @@ public class DatabaseActivitiesTest {
         User user = new RandomUsers().user();
         long id = users.create(user.name, user.email, user.password);
         MatcherAssert.assertThat(
-            "Is not empty", activities.ofUserDate(id, System.currentTimeMillis()), Matchers.empty()
+            "Is not empty", activities.ofUserDate(id, Instant.now().getEpochSecond()), Matchers.empty()
         );
     }
 
@@ -74,8 +75,8 @@ public class DatabaseActivitiesTest {
         long id = users.create(user.name, user.email, user.password);
         MatcherAssert.assertThat(
             "Is not empty",
-            planned ? activities.ofUserDatePlanned(id, System.currentTimeMillis()) :
-                activities.ofUserDateDone(id, System.currentTimeMillis()),
+            planned ? activities.ofUserDatePlanned(id, Instant.now().getEpochSecond()) :
+                activities.ofUserDateDone(id, Instant.now().getEpochSecond()),
             Matchers.empty()
         );
     }
@@ -91,7 +92,7 @@ public class DatabaseActivitiesTest {
         RandomActivities randomActivities = new RandomActivities();
         User user = randomUsers.user();
         long userId = users.create(user.name, user.email, user.password);
-        long date = System.currentTimeMillis();
+        long date = Instant.now().getEpochSecond();
         long dayId = days.createForUser(userId, date);
         insertUserWithActivity(randomUsers, randomActivities, date);
 
@@ -122,7 +123,7 @@ public class DatabaseActivitiesTest {
         RandomActivities randomActivities = new RandomActivities();
         User user = randomUsers.user();
         long userId = users.create(user.name, user.email, user.password);
-        long date = System.currentTimeMillis();
+        long date = Instant.now().getEpochSecond();
         long dayId = days.createForUser(userId, date);
         insertUserWithActivity(randomUsers, randomActivities, date);
 

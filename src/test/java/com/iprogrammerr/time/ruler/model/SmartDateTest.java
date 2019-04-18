@@ -4,66 +4,61 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
-import java.util.Calendar;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Random;
 
+//TODO simplify this tests
 public class SmartDateTest {
 
     @Test
-    public void returnsDateWithTimeOffset() {
+    public void returnsShiftedDateByTime() {
         Random random = new Random();
         int hour = random.nextInt(24);
         int minute = random.nextInt(60);
         int second = random.nextInt(60);
-        Calendar calendar = Calendar.getInstance();
-        SmartDate date = new SmartDate(calendar.getTimeInMillis());
-        shiftCalendar(calendar, hour, minute, second);
+        ZonedDateTime dateTime = ZonedDateTime.now();
+        SmartDate date = new SmartDate(dateTime);
+        dateTime = dateTime.withHour(hour).withMinute(minute).withSecond(second);
         MatcherAssert.assertThat(
-            "Does not return properly shifted date by time", calendar.getTimeInMillis(),
-            Matchers.equalTo(date.withOffset(hour, minute, second))
+            "Does not return properly shifted date by time", dateTime.toEpochSecond(),
+            Matchers.equalTo(date.ofTime(hour, minute, second))
         );
-    }
-
-    private void shiftCalendar(Calendar calendar, int hour, int minute, int second) {
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, minute);
-        calendar.set(Calendar.SECOND, second);
     }
 
     @Test
     public void returnsDayBeginning() {
-        Calendar calendar = Calendar.getInstance();
-        SmartDate date = new SmartDate(calendar.getTimeInMillis());
-        shiftCalendar(calendar, 0, 0, 0);
+        ZonedDateTime dateTime = ZonedDateTime.now(ZoneOffset.UTC);
+        SmartDate date = new SmartDate(dateTime.toEpochSecond());
+        dateTime = dateTime.withHour(0).withMinute(0).withSecond(0);
         MatcherAssert.assertThat(
-            "Does not return day beginning", calendar.getTimeInMillis(),
+            "Does not return day beginning", dateTime.toEpochSecond(),
             Matchers.equalTo(date.dayBeginning())
         );
     }
 
     @Test
     public void returnsDayEnd() {
-        Calendar calendar = Calendar.getInstance();
-        SmartDate date = new SmartDate(calendar.getTimeInMillis());
-        shiftCalendar(calendar, 23, 59, 59);
+        ZonedDateTime dateTime = ZonedDateTime.now(ZoneOffset.UTC);
+        SmartDate date = new SmartDate(dateTime.toEpochSecond());
+        dateTime = dateTime.withHour(23).withMinute(59).withSecond(59);
         MatcherAssert.assertThat(
-            "Does not return day end", calendar.getTimeInMillis(),
+            "Does not return day end", dateTime.toEpochSecond(),
             Matchers.equalTo(date.dayEnd())
         );
     }
 
     @Test
-    public void returnsDateWithOffset() {
+    public void returnsShiftedDate() {
         Random random = new Random();
-        int monthOffset = random.nextInt(100);
-        int dayOffset = random.nextInt(31);
-        Calendar calendar = Calendar.getInstance();
-        SmartDate date = new SmartDate(calendar.getTimeInMillis());
-        calendar.add(Calendar.MONTH, monthOffset);
-        calendar.set(Calendar.DAY_OF_MONTH, dayOffset);
+        ZonedDateTime dateTime = ZonedDateTime.now();
+        SmartDate date = new SmartDate(dateTime);
+        int year = dateTime.getYear() + random.nextInt(100);
+        int month = 1 + random.nextInt(12);
+        dateTime = dateTime.withYear(year).withMonth(month);
         MatcherAssert.assertThat(
-            "Does not return properly shifted date", calendar.getTimeInMillis(),
-            Matchers.equalTo(date.withOffset(monthOffset, dayOffset))
+            "Does not return properly shifted date", dateTime.toEpochSecond(),
+            Matchers.equalTo(date.ofYearMonthSeconds(year, month))
         );
     }
 }

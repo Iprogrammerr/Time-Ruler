@@ -1,40 +1,34 @@
 import { setupTabsNavigation } from "./app.js";
 import { router } from "./app.js";
 import { routes } from "./app.js";
-import { params } from "./app.js";
+import { dateTimeParams } from "./app.js";
+import { SmartDate } from "./smart-date.js";
 
-const offset = offsetFromQuery();
+const yearMonth = dateTimeParams.currentYearMonthFromUrl();
 setupTabsNavigation(document.querySelector("div"), 1);
 setupMonthsNavigation();
 setupDaysNavigation();
 
-function offsetFromQuery() {
-    let offset;
-    let query = location.search;
-    if (query.length > 0) {
-        let queryParams = query.substring(1).split("&");
-        for (let p of queryParams) {
-            let keyValue = p.split("=");
-            if (keyValue[0] === params.offset) {
-                offset = isNaN(keyValue[1]) ? 0 : parseInt(keyValue[1]);
-            }
-        }
-    } else {
-        offset = 0;
-    }
-    return offset;
-}
-
 function setupMonthsNavigation() {
-    if (offset > 0) {
+    let date = new SmartDate();
+    let currentYearMonth = date.asYearMonth();
+    date.setYearMonth(yearMonth.year, yearMonth.month);
+    if (date.isAfter(currentYearMonth.year, currentYearMonth.month)) {
         let prev = document.getElementsByClassName("prev");
         if (prev.length > 0) {
-            prev[0].onclick = () => router.replaceWithParams(routes.plan, { key: params.offset, value: offset - 1 });
+            date.subtractMonth(1);
+            let newYearMonth = date.asYearMonth();
+            date.addMonth(1);
+            prev[0].onclick = () => router.replaceWithParams(routes.plan, 
+                dateTimeParams.yearMonthAsParams(newYearMonth.year, newYearMonth.month));
         }
     }
     let next = document.getElementsByClassName("next");
     if (next.length > 0) {
-        next[0].onclick = () => router.replaceWithParams(routes.plan, { key: params.offset, value: offset + 1 });
+        date.addMonth(1);
+        let newYearMonth = date.asYearMonth();
+        next[0].onclick = () => router.replaceWithParams(routes.plan,
+            dateTimeParams.yearMonthAsParams(newYearMonth.year, newYearMonth.month));
     }
 }
 
@@ -45,7 +39,7 @@ function setupDaysNavigation() {
         let className = days[i].children[0].className;
         if (className !== notAvailableClass) {
             days[i].onclick = () => router.forwardWithParams(
-                routes.dayPlan, { key: params.offset, value: offset }, { key: params.day, value: i + 1 }
+                routes.dayPlan,  dateTimeParams.yearMonthDayAsParams(yearMonth.year, yearMonth.month, i + 1)
             );
         }
     }

@@ -1,37 +1,44 @@
 package com.iprogrammerr.time.ruler.model;
 
-import java.util.Calendar;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 public class SmartDate {
 
-    private final long date;
+    private final ZonedDateTime date;
 
-    public SmartDate(long date) {
+    public SmartDate(ZonedDateTime date) {
         this.date = date;
     }
 
-    public long withOffset(int month, int day) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(date);
-        calendar.add(Calendar.MONTH, month);
-        calendar.set(Calendar.DAY_OF_MONTH, day);
-        return calendar.getTimeInMillis();
+    public SmartDate(long date) {
+        this(ZonedDateTime.ofInstant(Instant.ofEpochSecond(date), ZoneOffset.UTC));
     }
 
-    public long withOffset(int hour, int minute, int second) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(date);
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, minute);
-        calendar.set(Calendar.SECOND, second);
-        return calendar.getTimeInMillis();
+    public long ofYearMonthSeconds(int year, int month) {
+        return ofYearMonth(year, month).toEpochSecond();
+    }
+
+    public ZonedDateTime ofYearMonth(int year, int month) {
+        return ZonedDateTime.of(
+            year, month, date.getDayOfMonth(),
+            date.getHour(), date.getMinute(), date.getSecond(), 0, date.getZone()
+        );
+    }
+
+    public long ofTime(int hour, int minute, int second) {
+        return ZonedDateTime.of(
+            date.getYear(), date.getMonthValue(), date.getDayOfMonth(),
+            hour, minute, second, 0, date.getZone()
+        ).toEpochSecond();
     }
 
     public long dayBeginning() {
-        return withOffset(0, 0, 0);
+        return ofTime(0, 0, 0);
     }
 
     public long dayEnd() {
-        return withOffset(23, 59, 59);
+        return ofTime(23, 59, 59);
     }
 }
