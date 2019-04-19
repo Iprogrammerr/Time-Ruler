@@ -80,10 +80,9 @@ public class CalendarRespondent implements Respondent {
     private void renderToFutureCalendar(Context context) {
         ZonedDateTime currentDate = ZonedDateTime.now(ZoneOffset.UTC);
         int currentYear = currentDate.getYear();
-        int maxYear = currentYear + MAX_YEAR_OFFSET_VALUE;
-        YearMonthDay yearMonth = new YearMonthDay(context.queryParamMap());
+        YearMonthDay yearMonth = new YearMonthDay(context.queryParamMap(), currentYear + MAX_YEAR_OFFSET_VALUE);
         int requestedYear = yearMonth.year(currentYear);
-        if (requestedYear < currentYear || requestedYear > maxYear) {
+        if (requestedYear < currentYear) {
             requestedYear = currentYear;
         }
         ZonedDateTime withOffset = new SmartDate(currentDate)
@@ -91,7 +90,7 @@ public class CalendarRespondent implements Respondent {
         renderCalendar(
             context, PLAN_TITLE, true,
             withOffset.isAfter(currentDate),
-            currentYear < maxYear,
+            currentYear < yearMonth.maxYear,
             withOffset.getMonth().getDisplayName(TextStyle.FULL, Locale.US),
             withOffset.getYear(), calendarDays(context, withOffset, false)
         );
@@ -183,10 +182,10 @@ public class CalendarRespondent implements Respondent {
         ZonedDateTime currentDate = ZonedDateTime.now(ZoneOffset.UTC);
         int currentYear = currentDate.getYear();
         int currentMonth = currentDate.getMonthValue();
-        YearMonthDay yearMonth = new YearMonthDay(context.queryParamMap());
+        YearMonthDay yearMonth = new YearMonthDay(context.queryParamMap(), currentYear);
         int minYear = firstDate.getYear();
         int requestedYear = yearMonth.year(currentYear);
-        if (requestedYear < minYear || requestedYear > currentYear) {
+        if (requestedYear < minYear) {
             requestedYear = currentYear;
         }
         int requestedMonth = yearMonth.month(currentMonth);

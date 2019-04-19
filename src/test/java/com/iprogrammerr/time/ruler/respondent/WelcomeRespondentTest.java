@@ -17,5 +17,6 @@ public class WelcomeRespondentTest {
         MatcherAssert.assertThat(
             "Does not return welcome view", views.view(""), Matchers.equalTo(javalinContext.read())
         );
+
     }
 }

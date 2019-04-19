@@ -19,11 +19,11 @@ import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.user.Users;
 import com.iprogrammerr.time.ruler.respondent.ActivityRespondent;
 import com.iprogrammerr.time.ruler.respondent.CalendarRespondent;
+import com.iprogrammerr.time.ruler.respondent.DayPlanRespondent;
 import com.iprogrammerr.time.ruler.respondent.ProfileRespondent;
 import com.iprogrammerr.time.ruler.respondent.TodayRespondent;
 import com.iprogrammerr.time.ruler.respondent.UsersRespondent;
 import com.iprogrammerr.time.ruler.respondent.WelcomeRespondent;
-import com.iprogrammerr.time.ruler.respondent.DayPlanRespondent;
 import com.iprogrammerr.time.ruler.view.HtmlViews;
 import com.iprogrammerr.time.ruler.view.HtmlViewsTemplates;
 import com.iprogrammerr.time.ruler.view.Views;
@@ -41,8 +41,7 @@ import java.text.SimpleDateFormat;
 
 public class App {
 
-    //TODO develop/production profiles?
-    public static void main(String[] args) throws Exception {
+    public static void main(String... args) throws Exception {
         Configuration configuration = Configuration.fromCmd(args);
         File root = new File(configuration.resourcesPath());
 
