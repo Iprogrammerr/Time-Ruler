@@ -8,20 +8,23 @@ import io.javalin.Javalin;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 
-public class TodayRespondent implements Respondent {
+public class TodayRespondent implements GroupedRespondent {
 
     private static final String TODAY = "today";
     private final Identity<Long> identity;
     private final ViewsTemplates viewsTemplates;
+    private String groupedToday;
 
     public TodayRespondent(Identity<Long> identity, ViewsTemplates viewsTemplates) {
         this.identity = identity;
         this.viewsTemplates = viewsTemplates;
+        this.groupedToday = TODAY;
     }
 
     @Override
-    public void init(Javalin app) {
-        app.get(TODAY, this::showMainPage);
+    public void init(String group, Javalin app) {
+        groupedToday = group + TODAY;
+        app.get(groupedToday, this::showMainPage);
     }
 
     //TODO render with proper data
@@ -34,6 +37,6 @@ public class TodayRespondent implements Respondent {
     }
 
     public void redirect(Context context) {
-        context.redirect(TODAY);
+        context.redirect(groupedToday);
     }
 }

@@ -11,7 +11,6 @@ import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
-import java.net.HttpURLConnection;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -23,18 +22,15 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class CalendarRespondent implements Respondent {
+public class CalendarRespondent implements GroupedRespondent {
 
     private static final long DAY_SECONDS = TimeUnit.DAYS.toSeconds(1);
     private static final int MAX_YEAR_OFFSET_VALUE = 100;
-    private static final int MAX_MONTH_VALUE = 12;
     private static final String PLAN = "plan";
     private static final String PLAN_TITLE = "Plan";
     private static final String HISTORY = "history";
     private static final String HISTORY_TITLE = "History";
     private static final String CALENDAR = "calendar";
-    private static final String YEAR_PARAM = "year";
-    private static final String MONTH_PARAM = "month";
     private static final String TITLE_TEMPLATE = "title";
     private static final String PLAN_TEMPLATE = "plan";
     private static final String PREV_TEMPLATE = "prev";
@@ -53,30 +49,21 @@ public class CalendarRespondent implements Respondent {
     }
 
     @Override
-    public void init(Javalin app) {
-        app.get(PLAN, this::showPlan);
-        app.get(HISTORY, this::showHistory);
+    public void init(String group, Javalin app) {
+        app.get(group + PLAN, this::showPlan);
+        app.get(group + HISTORY, this::showHistory);
     }
 
     private void showPlan(Context context) {
-        if (identity.isValid(context.req)) {
-            renderToFutureCalendar(context);
-        } else {
-            context.status(HttpURLConnection.HTTP_UNAUTHORIZED);
-        }
+        renderToFutureCalendar(context);
     }
 
     private void showHistory(Context context) {
-        if (identity.isValid(context.req)) {
-            long firstDate = days.userFirstDate(identity.value(context.req));
-            Instant dateInstant = firstDate == 0 ? Instant.now() : Instant.ofEpochSecond(firstDate);
-            renderToPastCalendar(context, ZonedDateTime.ofInstant(dateInstant, ZoneOffset.UTC));
-        } else {
-            context.status(HttpURLConnection.HTTP_UNAUTHORIZED);
-        }
+        long firstDate = days.userFirstDate(identity.value(context.req));
+        Instant dateInstant = firstDate == 0 ? Instant.now() : Instant.ofEpochSecond(firstDate);
+        renderToPastCalendar(context, ZonedDateTime.ofInstant(dateInstant, ZoneOffset.UTC));
     }
 
-    //TODO more universal validation mechanism?
     private void renderToFutureCalendar(Context context) {
         ZonedDateTime currentDate = ZonedDateTime.now(ZoneOffset.UTC);
         int currentYear = currentDate.getYear();

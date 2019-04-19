@@ -28,6 +28,7 @@ import com.iprogrammerr.time.ruler.view.HtmlViews;
 import com.iprogrammerr.time.ruler.view.HtmlViewsTemplates;
 import com.iprogrammerr.time.ruler.view.Views;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
+import io.javalin.ForbiddenResponse;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinThymeleaf;
 import io.javalin.staticfiles.Location;
@@ -35,7 +36,6 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
 
 import java.io.File;
-import java.net.HttpURLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -86,14 +86,21 @@ public class App {
         DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, viewsTemplates, activities, dateFormat);
         ActivityRespondent activityRespondent = new ActivityRespondent(identity, viewsTemplates);
 
-        welcomeRespondent.init(app);
-        dashboardRespondent.init(app);
-        usersRespondent.init(app);
-        calendarRespondent.init(app);
-        profileRespondent.init(app);
-        dayPlanRespondent.init(app);
-        activityRespondent.init(app);
+        String userGroup = "user/";
 
+        welcomeRespondent.init(app);
+        usersRespondent.init(app);
+        dashboardRespondent.init(userGroup, app);
+        calendarRespondent.init(userGroup, app);
+        profileRespondent.init(userGroup, app);
+        dayPlanRespondent.init(userGroup, app);
+        activityRespondent.init(userGroup, app);
+
+        app.before(userGroup + "*", ctx -> {
+           if (!identity.isValid(ctx.req)) {
+               throw new ForbiddenResponse();
+           }
+        });
         //TODO handle exceptions
         app.exception(Exception.class, (e, ctx) -> {
             ctx.status(500);
@@ -102,7 +109,7 @@ public class App {
             ctx.html(message);
         });
         //TODO proper pages per http code
-        app.error(HttpURLConnection.HTTP_UNAUTHORIZED, ctx -> {
+        app.exception(ForbiddenResponse.class, (e, ctx) -> {
             ctx.html("You are not allowed to see this page");
         });
         app.start(configuration.port());

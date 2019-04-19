@@ -5,10 +5,9 @@ import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
-import java.net.HttpURLConnection;
 import java.util.HashMap;
 
-public class ActivityRespondent implements Respondent {
+public class ActivityRespondent implements GroupedRespondent {
 
     private static final String ACTIVITY = "activity";
     private final Identity<Long> identity;
@@ -20,20 +19,12 @@ public class ActivityRespondent implements Respondent {
     }
 
     @Override
-    public void init(Javalin app) {
-        app.get(ACTIVITY, this::showActivityPage);
-    }
-
-    private void showActivityPage(Context context) {
-        if (identity.isValid(context.req)) {
-            renderActivityPage(context);
-        } else {
-            context.status(HttpURLConnection.HTTP_UNAUTHORIZED);
-        }
+    public void init(String group, Javalin app) {
+        app.get(group + ACTIVITY, this::showActivity);
     }
 
     //TODO render with proper params
-    private void renderActivityPage(Context context) {
+    private void showActivity(Context context) {
         templates.render(context, ACTIVITY, new HashMap<>());
     }
 }

@@ -6,17 +6,18 @@ import { Validations } from "./validation/validations.js";
 import { TabsNavigation } from "./navigation/tabs-navigation.js";
 
 const host = "http://127.0.0.1:8080/";
+const userRoutePrefix = "user/";
 
 export const routes = {
     signIn: "sign-in",
     signUp: "sign-up",
     signOut: "sign-out",
-    today: "today",
-    plan: "plan",
-    history: "history",
-    profile: "profile",
-    dayPlan: "plan/day",
-    activity: "activity"
+    today: `${userRoutePrefix}today`,
+    plan: `${userRoutePrefix}plan`,
+    history: `${userRoutePrefix}history`,
+    profile: `${userRoutePrefix}profile`,
+    dayPlan: `${userRoutePrefix}plan/day`,
+    activity: `${userRoutePrefix}activity`
 };
 
 export const endpoints = {
