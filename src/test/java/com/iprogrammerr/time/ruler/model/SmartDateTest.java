@@ -32,7 +32,7 @@ public class SmartDateTest {
         SmartDate date = new SmartDate(dateTime.toEpochSecond());
         dateTime = dateTime.withHour(0).withMinute(0).withSecond(0);
         MatcherAssert.assertThat(
-            "Does not return day beginning", dateTime.toEpochSecond(),
+            "Does not return day start", dateTime.toEpochSecond(),
             Matchers.equalTo(date.dayBeginning())
         );
     }

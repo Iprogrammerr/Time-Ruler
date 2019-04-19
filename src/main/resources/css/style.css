@@ -199,7 +199,8 @@ ul.activities li:hover {
     position: absolute;
     top: 50%;
     right: 0%;
-    padding: 12px 16px;
+    padding: 16px 16px;
+    text-align: center;
     transform: translate(0%, -50%);
 }
 
