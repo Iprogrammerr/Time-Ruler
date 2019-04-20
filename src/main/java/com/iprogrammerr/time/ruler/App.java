@@ -28,6 +28,7 @@ import com.iprogrammerr.time.ruler.view.HtmlViews;
 import com.iprogrammerr.time.ruler.view.HtmlViewsTemplates;
 import com.iprogrammerr.time.ruler.view.Views;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
+import io.javalin.BadRequestResponse;
 import io.javalin.ForbiddenResponse;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinThymeleaf;
@@ -84,7 +85,8 @@ public class App {
         CalendarRespondent calendarRespondent = new CalendarRespondent(identity, viewsTemplates, days);
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, viewsTemplates);
         DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, viewsTemplates, activities, dateFormat);
-        ActivityRespondent activityRespondent = new ActivityRespondent(identity, viewsTemplates, dayPlanRespondent);
+        ActivityRespondent activityRespondent = new ActivityRespondent(identity, viewsTemplates, dayPlanRespondent,
+            days, activities);
 
         String userGroup = "user/";
 
@@ -111,6 +113,9 @@ public class App {
         //TODO proper pages per http code
         app.exception(ForbiddenResponse.class, (e, ctx) -> {
             ctx.html("You are not allowed to see this page");
+        });
+        app.exception(BadRequestResponse.class, (e, ctx) -> {
+           ctx.html("Bad request");
         });
         app.start(configuration.port());
     }

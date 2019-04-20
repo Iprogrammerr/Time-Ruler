@@ -6,7 +6,7 @@ public class ValidateablePassword implements Validateable<String> {
     private final int minLength;
 
     public ValidateablePassword(String password, int minLength) {
-        this.password = password == null ? "" : password;
+        this.password = password;
         this.minLength = minLength;
     }
 

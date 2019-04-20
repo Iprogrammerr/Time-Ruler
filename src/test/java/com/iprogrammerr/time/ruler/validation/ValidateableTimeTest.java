@@ -6,19 +6,21 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
+import java.time.Instant;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class ValidateableTimeTest {
 
     private static final int MAX_HOUR_VALUE = 24;
-    private static final int MAX_MINUTE_VALUE = 60;
+    private static final int MAX_MINUTES_VALUE = 60;
 
     @Test
     public void returnsTrueWithValidTime() {
         Random random = new Random();
         int hour = random.nextInt(MAX_HOUR_VALUE);
-        int minute = random.nextInt(MAX_MINUTE_VALUE);
-        ValidateableTime time = new ValidateableTime(formattedTime(hour, minute));
+        int minutes = random.nextInt(MAX_MINUTES_VALUE);
+        ValidateableTime time = new ValidateableTime(formattedTime(hour, minutes));
         MatcherAssert.assertThat("Does not accept valid time", time.isValid(), Matchers.equalTo(true));
     }
 
@@ -30,11 +32,11 @@ public class ValidateableTimeTest {
     public void returnsFalseWithBeyondLimitValues() {
         Random random = new Random();
         int hour = random.nextInt();
-        int minute = random.nextInt(MAX_MINUTE_VALUE);
+        int minutes = random.nextInt(MAX_MINUTES_VALUE);
         if (hour < MAX_HOUR_VALUE) {
-            minute += MAX_MINUTE_VALUE;
+            minutes += MAX_MINUTES_VALUE;
         }
-        ValidateableTime time = new ValidateableTime(formattedTime(hour, minute));
+        ValidateableTime time = new ValidateableTime(formattedTime(hour, minutes));
         MatcherAssert.assertThat("Accepts invalid time", time.isValid(), Matchers.equalTo(false));
     }
 
@@ -42,7 +44,7 @@ public class ValidateableTimeTest {
     public void returnsFalseWithoutProperSeparator() {
         Random random = new Random();
         int hour = random.nextInt(MAX_HOUR_VALUE);
-        int minute = random.nextInt(MAX_MINUTE_VALUE);
+        int minute = random.nextInt(MAX_MINUTES_VALUE);
         ValidateableTime time = new ValidateableTime(String.format("%d%d", hour, minute));
         MatcherAssert.assertThat("Accepts time without proper separator", time.isValid(), Matchers.equalTo(false));
     }
@@ -57,10 +59,15 @@ public class ValidateableTimeTest {
     public void returnsUnchangedIfValid() {
         Random random = new Random();
         int hour = random.nextInt(MAX_HOUR_VALUE);
-        int minute = random.nextInt(MAX_MINUTE_VALUE);
-        String time = formattedTime(hour, minute);
+        int minutes = random.nextInt(MAX_MINUTES_VALUE);
+        String time = formattedTime(hour, minutes);
         ValidateableTime validateableTime = new ValidateableTime(time);
-        MatcherAssert.assertThat("Does not returns unchanged time", validateableTime.value(), Matchers.equalTo(time));
+        MatcherAssert.assertThat(
+            "Does not returns unchanged time", validateableTime.value(),
+            Matchers.equalTo(
+                Instant.ofEpochSecond(TimeUnit.HOURS.toSeconds(hour) + TimeUnit.MINUTES.toSeconds(minutes))
+            )
+        );
     }
 
     @Test

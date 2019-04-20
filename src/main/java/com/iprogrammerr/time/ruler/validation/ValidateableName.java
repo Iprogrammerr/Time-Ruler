@@ -9,7 +9,7 @@ public class ValidateableName implements Validateable<String> {
     private final Initialization<Boolean> valid;
 
     public ValidateableName(String name, int minLength) {
-        this.name = name == null ? "" : name;
+        this.name = name;
         this.minLength = minLength;
         this.valid = new Initialization<>(() -> {
             boolean valid = name.length() >= minLength;

@@ -2,23 +2,37 @@ package com.iprogrammerr.time.ruler.validation;
 
 import com.iprogrammerr.time.ruler.model.Initialization;
 
-public class ValidateableTime implements Validateable<String> {
+import java.time.Instant;
+import java.util.concurrent.TimeUnit;
+
+public class ValidateableTime implements Validateable<Instant> {
 
     private static final String HH_MM_SEPARATOR = ":";
     private static final int MAX_HOUR = 24;
     private static final int MAX_MINUTE = 60;
     private final String time;
+    private final Initialization<Instant> mappedTime;
     private final Initialization<Boolean> valid;
 
     public ValidateableTime(String time) {
-        this.time = time == null ? "" : time;
+        this.time = time;
+        this.mappedTime = new Initialization<>(() -> {
+            String[] hourMinutes = this.time.split(HH_MM_SEPARATOR);
+            int hour = Integer.parseInt(hourMinutes[0].trim());
+            if (hour < 0 || hour >= MAX_HOUR) {
+                throw new RuntimeException(String.format("%d is not a valid hour value", hour));
+            }
+            int minutes = Integer.parseInt(hourMinutes[1].trim());
+            if (minutes < 0 || minutes >= MAX_MINUTE) {
+                throw new RuntimeException(String.format("%d is not a valid minutes value", minutes));
+            }
+            return Instant.ofEpochSecond(TimeUnit.HOURS.toSeconds(hour) + TimeUnit.MINUTES.toSeconds(minutes));
+        });
         this.valid = new Initialization<>(() -> {
             boolean valid;
             try {
-                String[] hourMinutes = this.time.split(HH_MM_SEPARATOR);
-                int hour = Integer.parseInt(hourMinutes[0].trim());
-                int minutes = Integer.parseInt(hourMinutes[1].trim());
-                valid = (hour >= 0 && hour < MAX_HOUR) && (minutes >= 0 && minutes < MAX_MINUTE);
+                mappedTime.value();
+                valid = true;
             } catch (Exception e) {
                 valid = false;
             }
@@ -26,10 +40,11 @@ public class ValidateableTime implements Validateable<String> {
         });
     }
 
+
     @Override
-    public String value() {
+    public Instant value() {
         if (isValid()) {
-            return time;
+            return mappedTime.value();
         }
         throw new RuntimeException(String.format("%s is not a valid time", time));
     }

@@ -9,7 +9,7 @@ public class ValidateableEmail implements Validateable<String> {
     private final Initialization<Boolean> valid;
 
     public ValidateableEmail(String email) {
-        this.email = email == null ? "" : email;
+        this.email = email;
         this.valid = new Initialization<>(() -> {
             int atIndex = email.indexOf('@');
             int dotIndex = email.indexOf('.');

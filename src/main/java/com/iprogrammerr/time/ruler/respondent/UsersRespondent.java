@@ -83,9 +83,9 @@ public class UsersRespondent implements Respondent {
     }
 
     public void signUp(Context context) {
-        ValidateableEmail email = new ValidateableEmail(context.formParam(FORM_EMAIL));
-        ValidateableName name = new ValidateableName(context.formParam(FORM_LOGIN));
-        ValidateablePassword password = new ValidateablePassword(context.formParam(FORM_PASSWORD));
+        ValidateableEmail email = new ValidateableEmail(context.formParam(FORM_EMAIL, ""));
+        ValidateableName name = new ValidateableName(context.formParam(FORM_LOGIN, ""));
+        ValidateablePassword password = new ValidateablePassword(context.formParam(FORM_PASSWORD, ""));
         if (email.isValid() && name.isValid() && password.isValid()) {
             createUser(email.value(), name.value(), password.value());
             context.html(SIGN_UP_SUCCESS);
@@ -109,10 +109,10 @@ public class UsersRespondent implements Respondent {
 
 
     public void signIn(Context context) {
-        String emailOrLogin = context.formParam(FORM_EMAIL_LOGIN);
+        String emailOrLogin = context.formParam(FORM_EMAIL_LOGIN, "");
         ValidateableEmail email = new ValidateableEmail(emailOrLogin);
         ValidateableName name = new ValidateableName(emailOrLogin);
-        ValidateablePassword password = new ValidateablePassword(context.formParam(FORM_PASSWORD));
+        ValidateablePassword password = new ValidateablePassword(context.formParam(FORM_PASSWORD, ""));
         if ((email.isValid() || name.isValid()) && password.isValid()) {
             signInOrSetError(context, email.isValid() ? email.value() : name.value(), hashing.hash(password.value()));
         } else {
