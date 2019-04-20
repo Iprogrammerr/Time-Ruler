@@ -75,7 +75,7 @@ public class DayPlanRespondent implements GroupedRespondent {
         return viewActivities;
     }
 
-    public void redirect(Context context) {
+    public void redirect(Context context, int year, int month, int day) {
         //TODO date?
         context.redirect(DAY_PLAN);
     }

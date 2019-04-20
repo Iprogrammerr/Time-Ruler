@@ -1,6 +1,7 @@
 package com.iprogrammerr.time.ruler.respondent;
 
 import com.iprogrammerr.time.ruler.model.Identity;
+import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import io.javalin.Context;
 import io.javalin.Javalin;
@@ -11,6 +12,10 @@ import java.util.Map;
 
 public class ActivityRespondent implements GroupedRespondent {
 
+    private static final String FORM_NAME = "name";
+    private static final String FORM_START_TIME = "start";
+    private static final String FORM_END_TIME = "end";
+    private static final String FORM_DESCRIPTION = "description";
     private static final String ACTIVITY = "activity";
     private static final String ID = "id";
     private final Identity<Long> identity;
@@ -42,8 +47,10 @@ public class ActivityRespondent implements GroupedRespondent {
     }
 
     private void createActivity(Context context) {
-        printFormParams(context);
-        dayPlanRespondent.redirect(context);
+        ValidateableName name = new ValidateableName(context.queryParam(FORM_NAME));
+
+        //TODO proper values
+        dayPlanRespondent.redirect(context, 0, 0, 0);
     }
 
     private void printFormParams(Context context) {
@@ -58,6 +65,7 @@ public class ActivityRespondent implements GroupedRespondent {
 
     private void saveActivity(Context context) {
         printFormParams(context);
-        dayPlanRespondent.redirect(context);
+        //TODO proper values
+        dayPlanRespondent.redirect(context, 0, 0,0 );
     }
 }
