@@ -17,6 +17,19 @@ export function DateTimeParams(urlParams, paramsKeys) {
         };
     };
 
+    this.currentYearMonthDayFromUrl = () => {
+        let yearMonthDay = new SmartDate().asYearMonthDay();
+        return this.yearMonthDayFromUrl(yearMonthDay.year, yearMonthDay.month, yearMonthDay.day);
+    };
+
+    this.yearMonthDayFromUrl = (defaultYear, defaultMonth, defaultDay) => {
+        return {
+            year: _urlParams.getOrDefault(_paramsKeys.year, defaultYear),
+            month: _urlParams.getOrDefault(_paramsKeys.month, defaultMonth),
+            day: _urlParams.getOrDefault(_paramsKeys.day, defaultDay)
+        };
+    };
+
     this.yearMonthAsParams = (year, month) => params([_paramsKeys.year, _paramsKeys.month], [year, month])
 
     this.currentYearMonthAsParams = () => {

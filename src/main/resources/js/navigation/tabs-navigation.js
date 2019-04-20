@@ -1,13 +1,15 @@
 import { routes } from "../app.js";
 import { dateTimeParams } from "../app.js";
+import { SmartDate } from "../smart-date.js";
 
 export function TabsNavigation(router, activeClassName = "active") {
 
     const _router = router;
     const _activeClassName = activeClassName;
     var _activeIndex = 0;
+    var _yearMonth = new SmartDate().asYearMonth();
 
-    this.setup = (tabsContainer) => {
+    this.setup = (tabsContainer, allActive = true) => {
         let tabs = tabsContainer.children;
         _activeIndex = 0;
         for (let i = 0; i < tabs.length; i++) {
@@ -15,19 +17,24 @@ export function TabsNavigation(router, activeClassName = "active") {
                 _activeIndex = i;
             }
         }
-        if (_activeIndex != 0) {
+        if (_activeIndex != 0 || allActive) {
             tabs[0].onclick = () => router.forward(routes.today);
         }
-        if (_activeIndex != 1) {
-            tabs[1].onclick = () => router.forwardWithParams(routes.plan, dateTimeParams.currentYearMonthAsParams());
+        if (_activeIndex != 1 || allActive) {
+            tabs[1].onclick = () => router.forwardWithParams(routes.plan, dateTimeParams.yearMonthAsParams(_yearMonth.year, _yearMonth.month));
         }
-        if (_activeIndex != 2) {
-            tabs[2].onclick = () => router.forwardWithParams(routes.history, dateTimeParams.currentYearMonthAsParams());
+        if (_activeIndex != 2 || allActive) {
+            tabs[2].onclick = () => router.forwardWithParams(routes.history, dateTimeParams.yearMonthAsParams(_yearMonth.year, _yearMonth.month));
         }
-        if (_activeIndex != 3) {
+        if (_activeIndex != 3 || allActive) {
             tabs[3].onclick = () => router.forward(routes.profile);
         }
     };
 
     this.activeIndex = () => _activeIndex;
+
+    this.setYearMonth = (year, month) => {
+        _yearMonth.year = year;
+        _yearMonth.month = month;
+    };
 }

@@ -84,7 +84,7 @@ public class App {
         CalendarRespondent calendarRespondent = new CalendarRespondent(identity, viewsTemplates, days);
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, viewsTemplates);
         DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, viewsTemplates, activities, dateFormat);
-        ActivityRespondent activityRespondent = new ActivityRespondent(identity, viewsTemplates);
+        ActivityRespondent activityRespondent = new ActivityRespondent(identity, viewsTemplates, dayPlanRespondent);
 
         String userGroup = "user/";
 
@@ -97,9 +97,9 @@ public class App {
         activityRespondent.init(userGroup, app);
 
         app.before(userGroup + "*", ctx -> {
-           if (!identity.isValid(ctx.req)) {
-               throw new ForbiddenResponse();
-           }
+            if (!identity.isValid(ctx.req)) {
+                throw new ForbiddenResponse();
+            }
         });
         //TODO handle exceptions
         app.exception(Exception.class, (e, ctx) -> {

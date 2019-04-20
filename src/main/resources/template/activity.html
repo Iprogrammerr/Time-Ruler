@@ -3,13 +3,33 @@
 
 <head>
     <title th:text="${title}"></title>
-    <link rel="stylesheet" type="text/css" href="../style.css" />
+    <link rel="stylesheet" type="text/css" href="/style.css" />
 </head>
 
-<body>
-    <button id="recent">Recent</button>
-    <button id="save">Save</button>
+<body class="marginless">
+    <!--TODO which tab should be active?-->
+    <div class="tab">
+        <button>Today</button>
+        <button class="active">Plan</button>
+        <button>History</button>
+        <button>Profile</button>
+    </div>
+    <div class="centered-h">
+        <form>
+            <p>Name</p>
+            <input type="text" name="name" th:value="${name}"></input>
+            <p>Start</p>
+            <input type="time" name="start" th:value="${start}"></input>
+            <p>End</p>
+            <input type="time" name="end" th:value="${end}"></input>
+            <p>Description</p>
+            <textarea name="description"></textarea>
+            </br>
+            <input id="save" type="submit" value="Save"></input>
+        </form>
+        <button id="recent">Recent</button>
+    </div>
 </body>
-<script src="../activity.js" type="module"></script>
+<script src="/activity.js" type="module"></script>
 
 </html>

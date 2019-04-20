@@ -17,6 +17,10 @@ body {
     margin: 16px;
 }
 
+.centered-h {
+    text-align:center;
+}
+
 .centered {
     width: 100%;
     position: absolute;

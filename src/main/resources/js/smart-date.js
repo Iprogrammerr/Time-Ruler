@@ -48,4 +48,12 @@ export function SmartDate(date = new Date()) {
             month: getUTCMonth()
         };
     };
+
+    this.asYearMonthDay = () => {
+        return {
+            year: _date.getUTCFullYear(),
+            month: getUTCMonth(),
+            day: _date.getUTCDate()
+        };
+    };
 }

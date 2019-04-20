@@ -23,7 +23,8 @@ export const routes = {
 export const endpoints = {
     signIn: `${host}sign-in`,
     signUp: `${host}sign-up`,
-    signOut: `${host}sign-out`
+    signOut: `${host}sign-out`,
+    saveActivity: `${host}${userRoutePrefix}activity`
 };
 
 export const paramsKeys = {
