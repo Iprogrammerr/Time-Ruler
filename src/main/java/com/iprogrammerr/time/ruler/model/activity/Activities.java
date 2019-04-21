@@ -11,4 +11,6 @@ public interface Activities {
     List<Activity> ofUserDateDone(long id, long date);
 
     long create(Activity activity);
+
+    Activity activity(long id);
 }

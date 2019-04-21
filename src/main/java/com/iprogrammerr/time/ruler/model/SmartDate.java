@@ -21,9 +21,12 @@ public class SmartDate {
     }
 
     public ZonedDateTime ofYearMonth(int year, int month) {
+        return ofYearMonthDay(year, month, date.getDayOfMonth());
+    }
+
+    public ZonedDateTime ofYearMonthDay(int year, int month, int day) {
         return ZonedDateTime.of(
-            year, month, date.getDayOfMonth(),
-            date.getHour(), date.getMinute(), date.getSecond(), date.getNano(), date.getZone()
+            year, month, day, date.getHour(), date.getMinute(), date.getSecond(), date.getNano(), date.getZone()
         );
     }
 

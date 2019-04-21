@@ -1,6 +1,7 @@
 package com.iprogrammerr.time.ruler.respondent;
 
 import com.iprogrammerr.time.ruler.model.Identity;
+import com.iprogrammerr.time.ruler.model.SmartDate;
 import com.iprogrammerr.time.ruler.model.YearMonthDay;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
@@ -23,7 +24,11 @@ import java.util.Map;
 
 public class ActivityRespondent implements GroupedRespondent {
 
+    //TODO messages layer
     private static final int MAX_YEAR_OFFSET_VALUE = 100;
+    private static final String INVALID_NAME_TEMPLATE = "invalidName";
+    private static final String INVALID_START_TIME_TEMPLATE = "invalidStartTime";
+    private static final String INVALID_END_TIME_TEMPLATE = "invalidEndTime";
     private static final String FORM_NAME = "name";
     private static final String FORM_START_TIME = "start";
     private static final String FORM_END_TIME = "end";
@@ -31,6 +36,7 @@ public class ActivityRespondent implements GroupedRespondent {
     private static final String FORM_DONE = "done";
     private static final String ACTIVITY = "activity";
     private static final String ID = "id";
+    private static final String ACTIVITY_WITH_ID = ACTIVITY + "/:" + ID;
     private final Identity<Long> identity;
     private final ViewsTemplates templates;
     private final DayPlanRespondent dayPlanRespondent;
@@ -49,9 +55,9 @@ public class ActivityRespondent implements GroupedRespondent {
     @Override
     public void init(String group, Javalin app) {
         app.get(group + ACTIVITY, this::showEmptyActivity);
-        app.get(group + ACTIVITY + "/:id", this::showActivity);
+        app.get(group + ACTIVITY_WITH_ID, this::showActivity);
         app.post(group + ACTIVITY, this::createActivity);
-        app.post(group + ACTIVITY + "/:id", this::saveActivity);
+        app.post(group + ACTIVITY_WITH_ID, this::saveActivity);
     }
 
     private void showEmptyActivity(Context context) {
@@ -65,9 +71,9 @@ public class ActivityRespondent implements GroupedRespondent {
     }
 
     private void createActivity(Context context) {
-        ValidateableName name = new ValidateableName(context.queryParam(FORM_NAME, ""));
-        ValidateableTime start = new ValidateableTime(context.queryParam(FORM_START_TIME, ""));
-        ValidateableTime end = new ValidateableTime(context.queryParam(FORM_END_TIME, ""));
+        ValidateableName name = new ValidateableName(context.formParam(FORM_NAME, ""));
+        ValidateableTime start = new ValidateableTime(context.formParam(FORM_START_TIME, ""));
+        ValidateableTime end = new ValidateableTime(context.formParam(FORM_END_TIME, ""));
         String description = context.queryParam(FORM_DESCRIPTION, "");
         //TODO proper values
         if (name.isValid() && start.isValid() && end.isValid()) {
@@ -81,45 +87,57 @@ public class ActivityRespondent implements GroupedRespondent {
             Activity activity = new Activity(name.value(), day.id, (int) startTime.getEpochSecond(),
                 (int) endTime.getEpochSecond(), done);
             createActivity(activity, description, activities.ofUserDate(identity.value(context.req), day.date));
-            ZonedDateTime requestedDate = ZonedDateTime.ofInstant(Instant.ofEpochSecond(day.date), ZoneOffset.UTC);
-            dayPlanRespondent.redirect(context, requestedDate.getYear(), requestedDate.getMonthValue(),
-                requestedDate.getDayOfMonth());
+            ZonedDateTime dayDate = ZonedDateTime.ofInstant(Instant.ofEpochSecond(day.date), ZoneOffset.UTC);
+            dayPlanRespondent.redirect(context, dayDate.getYear(), dayDate.getMonthValue(),
+                dayDate.getDayOfMonth());
         } else {
-            //TODO render the same page with errors
-            dayPlanRespondent.redirect(context, 0, 0, 0);
+            //TODO proper messages
+            Map<String, String> errors = new HashMap<>();
+            if (!name.isValid()) {
+                errors.put(INVALID_NAME_TEMPLATE, "Invalid name");
+            }
+            if (!start.isValid()) {
+                errors.put(INVALID_START_TIME_TEMPLATE, "Invalid time format, expected: HH:MM");
+            }
+            if (!end.isValid()) {
+                errors.put(INVALID_END_TIME_TEMPLATE, "Invalid time format, expected: HH:MM");
+            }
+            templates.render(context, ACTIVITY, errors);
+
         }
     }
 
-    //TODO create or get
     private Day existingOrNew(Context context) {
         ZonedDateTime now = ZonedDateTime.now(Clock.systemUTC());
         YearMonthDay yearMonthDay = new YearMonthDay(context.queryParamMap(), now.getYear() + MAX_YEAR_OFFSET_VALUE);
+        long userId = identity.value(context.req);
+        long date = new SmartDate(now)
+            .ofYearMonthDay(yearMonthDay.year(now.getYear()), yearMonthDay.month(now.getMonthValue()),
+                yearMonthDay.day(now.getDayOfMonth()))
+            .toEpochSecond();
         Day day;
-        if (days.ofUserExists(identity.value(context.req), now.toEpochSecond())) {
-
+        if (days.ofUserExists(userId, date)) {
+            day = days.ofUser(userId, date);
         } else {
-
+            day = new Day(days.createForUser(userId, date), userId, date);
         }
-        return null;
+        return day;
     }
 
     private void createActivity(Activity activity, String description, List<Activity> dayActivities) {
-
-    }
-
-    private void printFormParams(Context context) {
-        System.out.println("Printing...");
-        for (Map.Entry<String, List<String>> entry : context.formParamMap().entrySet()) {
-            System.out.println(entry.getKey() + ":");
-            for (String value : entry.getValue()) {
-                System.out.println(value);
+        for (Activity da : dayActivities) {
+            if (activity.intersects(da)) {
+                throw new BadRequestResponse("New activity intersects with existing one");
             }
+        }
+        long id = activities.create(activity);
+        if (!description.isEmpty()) {
+            //TODO create description
         }
     }
 
+    //TODO implementation - will we have id?
     private void saveActivity(Context context) {
-        printFormParams(context);
-        //TODO proper values
-        dayPlanRespondent.redirect(context, 0, 0, 0);
+
     }
 }

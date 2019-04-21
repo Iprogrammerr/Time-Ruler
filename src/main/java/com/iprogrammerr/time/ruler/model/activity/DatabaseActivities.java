@@ -57,6 +57,16 @@ public class DatabaseActivities implements Activities {
         );
     }
 
+    @Override
+    public Activity activity(long id) {
+        return session.select(r -> {
+            if (r.next()) {
+                return new Activity(r);
+            }
+            throw new RuntimeException(String.format("There is no activity associated with %d id", id));
+        }, "SELECT * from activity WHERE id = ?", id);
+    }
+
     private enum ActivitiesFilter {
         ALL, DONE, PLANNED
     }

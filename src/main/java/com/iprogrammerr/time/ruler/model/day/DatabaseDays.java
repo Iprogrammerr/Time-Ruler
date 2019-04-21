@@ -63,4 +63,16 @@ public class DatabaseDays implements Days {
             return min;
         }, "SELECT MIN(date) from day WHERE user_id = ?", id);
     }
+
+    @Override
+    public Day ofUser(long id, long date) {
+        SmartDate smartDate = new SmartDate(date);
+        return session.select(r -> {
+                if (r.next()) {
+                    return new Day(r);
+                }
+                throw new RuntimeException(String.format("There is no day associated user %d and date %d", id, date));
+            }, "SELECT * from day WHERE user_id = ? AND date >= ? AND date <= ?",
+            id, smartDate.dayBeginning(), smartDate.dayEnd());
+    }
 }

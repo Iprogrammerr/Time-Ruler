@@ -44,6 +44,11 @@ public class Activity {
         return new Activity(id, name, dayId, startTime, endTime, done);
     }
 
+    public boolean intersects(Activity other) {
+        //TODO implementation
+        return false;
+    }
+
     @Override
     public boolean equals(Object other) {
         boolean equal = false;

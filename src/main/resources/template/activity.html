@@ -17,10 +17,13 @@
     <div class="centered-h">
         <form>
             <p>Name</p>
+            <p th:text="${invalidName}" class="error-visible"></p>
             <input type="text" name="name" th:value="${name}"></input>
             <p>Start</p>
+            <p th:text="${invalidStartTime}" class="error-visible"></p>
             <input type="time" name="start" th:value="${start}"></input>
             <p>End</p>
+            <p th:text="${invalidEndTime}" class="error-visible"></p>
             <input type="time" name="end" th:value="${end}"></input>
             <p>Description</p>
             <textarea name="description"></textarea>

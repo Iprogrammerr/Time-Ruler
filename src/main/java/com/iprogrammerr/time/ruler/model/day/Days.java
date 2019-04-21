@@ -13,4 +13,6 @@ public interface Days {
     boolean ofUserExists(long id, long date);
 
     long userFirstDate(long id);
+
+    Day ofUser(long id, long date);
 }
