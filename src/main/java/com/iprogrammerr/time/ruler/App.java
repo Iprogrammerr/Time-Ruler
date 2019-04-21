@@ -10,6 +10,7 @@ import com.iprogrammerr.time.ruler.email.EmailServer;
 import com.iprogrammerr.time.ruler.email.Emails;
 import com.iprogrammerr.time.ruler.model.Hashing;
 import com.iprogrammerr.time.ruler.model.Identity;
+import com.iprogrammerr.time.ruler.model.Messages;
 import com.iprogrammerr.time.ruler.model.SessionIdentity;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.DatabaseActivities;
@@ -54,7 +55,11 @@ public class App {
         FileTemplateResolver resolver = new FileTemplateResolver();
         resolver.setCacheable(false);
         engine.setTemplateResolver(resolver);
+        Messages messages = new Messages();
+        messages.init("messages.properties");
+        engine.setMessageResolver(messages);
         JavalinThymeleaf.configure(engine);
+
         Views views = new HtmlViews(new File(root, "html"));
         ViewsTemplates viewsTemplates = new HtmlViewsTemplates(new File(root, "template"));
         Database database = new SqlDatabase(configuration.databaseUser(), configuration.databasePassword(),
@@ -115,7 +120,7 @@ public class App {
             ctx.html("You are not allowed to see this page");
         });
         app.exception(BadRequestResponse.class, (e, ctx) -> {
-           ctx.html("Bad request");
+            ctx.html(String.format("Bad request: %s", e.getMessage()));
         });
         app.start(configuration.port());
     }

@@ -91,20 +91,16 @@ public class ActivityRespondent implements GroupedRespondent {
             dayPlanRespondent.redirect(context, dayDate.getYear(), dayDate.getMonthValue(),
                 dayDate.getDayOfMonth());
         } else {
-            //TODO proper messages
-            Map<String, String> errors = new HashMap<>();
-            if (!name.isValid()) {
-                errors.put(INVALID_NAME_TEMPLATE, "Invalid name");
-            }
-            if (!start.isValid()) {
-                errors.put(INVALID_START_TIME_TEMPLATE, "Invalid time format, expected: HH:MM");
-            }
-            if (!end.isValid()) {
-                errors.put(INVALID_END_TIME_TEMPLATE, "Invalid time format, expected: HH:MM");
-            }
-            templates.render(context, ACTIVITY, errors);
-
+            renderActivityWithErrors(context, name.isValid(), start.isValid(), end.isValid());
         }
+    }
+
+    private void renderActivityWithErrors(Context context, boolean nameValid, boolean startValid, boolean endValid) {
+        Map<String, Object> errors = new HashMap<>();
+        errors.put(INVALID_NAME_TEMPLATE, !nameValid);
+        errors.put(INVALID_START_TIME_TEMPLATE, !startValid);
+        errors.put(INVALID_END_TIME_TEMPLATE, !endValid);
+        templates.render(context, ACTIVITY, errors);
     }
 
     private Day existingOrNew(Context context) {
