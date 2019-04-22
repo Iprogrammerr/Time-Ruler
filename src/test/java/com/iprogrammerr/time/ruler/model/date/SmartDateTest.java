@@ -1,4 +1,4 @@
-package com.iprogrammerr.time.ruler.model;
+package com.iprogrammerr.time.ruler.model.date;
 
 import com.iprogrammerr.time.ruler.model.date.SmartDate;
 import org.hamcrest.MatcherAssert;

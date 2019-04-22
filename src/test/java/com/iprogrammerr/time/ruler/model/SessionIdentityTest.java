@@ -1,6 +1,7 @@
 package com.iprogrammerr.time.ruler.model;
 
 import com.iprogrammerr.time.ruler.matcher.ThrowsMatcher;
+import com.iprogrammerr.time.ruler.model.session.SessionIdentity;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;

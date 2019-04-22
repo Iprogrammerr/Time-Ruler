@@ -40,6 +40,10 @@ export const errors = {
     passwordsMismatch: "Given passwords differ"
 };
 
+export const hiddenInputKeys = {
+    done: "done",
+    utcOffset: "utcOffset"
+};
 
 
 export const router = new Router(host);
@@ -48,6 +52,3 @@ export const httpConnections = new HttpConnections();
 export const urlParams = new UrlParams();
 export const dateTimeParams = new DateTimeParams(urlParams, paramsKeys);
 export const validations = new Validations();
-//TODO move to separate module
-const utcOffset = new Date().getTimezoneOffset() * 60;
-document.cookie = `utcOffset=${utcOffset}`;

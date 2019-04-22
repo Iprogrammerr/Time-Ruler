@@ -1,4 +1,6 @@
-package com.iprogrammerr.time.ruler.model;
+package com.iprogrammerr.time.ruler.model.session;
+
+import com.iprogrammerr.time.ruler.model.Identity;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;

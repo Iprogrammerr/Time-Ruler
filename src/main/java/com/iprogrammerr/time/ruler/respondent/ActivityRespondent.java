@@ -1,12 +1,13 @@
 package com.iprogrammerr.time.ruler.respondent;
 
 import com.iprogrammerr.time.ruler.model.Identity;
-import com.iprogrammerr.time.ruler.model.date.SmartDate;
-import com.iprogrammerr.time.ruler.model.date.YearMonthDay;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
+import com.iprogrammerr.time.ruler.model.date.SmartDate;
+import com.iprogrammerr.time.ruler.model.date.YearMonthDay;
 import com.iprogrammerr.time.ruler.model.day.Day;
 import com.iprogrammerr.time.ruler.model.day.Days;
+import com.iprogrammerr.time.ruler.model.session.UtcOffsetAttribute;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateableTime;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
@@ -24,7 +25,6 @@ import java.util.Map;
 
 public class ActivityRespondent implements GroupedRespondent {
 
-    //TODO messages layer
     private static final int MAX_YEAR_OFFSET_VALUE = 100;
     private static final String INVALID_NAME_TEMPLATE = "invalidName";
     private static final String INVALID_START_TIME_TEMPLATE = "invalidStartTime";
@@ -44,14 +44,16 @@ public class ActivityRespondent implements GroupedRespondent {
     private final DayPlanRespondent dayPlanRespondent;
     private final Days days;
     private final Activities activities;
+    private final UtcOffsetAttribute offsetAttribute;
 
     public ActivityRespondent(Identity<Long> identity, ViewsTemplates templates, DayPlanRespondent dayPlanRespondent,
-        Days days, Activities activities) {
+        Days days, Activities activities, UtcOffsetAttribute offsetAttribute) {
         this.identity = identity;
         this.templates = templates;
         this.dayPlanRespondent = dayPlanRespondent;
         this.days = days;
         this.activities = activities;
+        this.offsetAttribute = offsetAttribute;
     }
 
     @Override
@@ -63,8 +65,9 @@ public class ActivityRespondent implements GroupedRespondent {
     }
 
     private void showEmptyActivity(Context context) {
-        ZonedDateTime now = ZonedDateTime.now(Clock.systemUTC());
-        String time = String.format("%02d:%02d", now.getHour(), now.getMinute());
+        int utcOffset = offsetAttribute.from(context.req.getSession());
+        ZonedDateTime clientDate = ZonedDateTime.now(Clock.systemUTC()).plusSeconds(utcOffset);
+        String time = String.format("%02d:%02d", clientDate.getHour(), clientDate.getMinute());
         Map<String, String> params = new HashMap<>();
         params.put(START_TIME_TEMPLATE, time);
         params.put(END_TIME_TEMPLATE, time);
@@ -74,6 +77,7 @@ public class ActivityRespondent implements GroupedRespondent {
     //TODO render with proper params
     private void showActivity(Context context) {
         int id = context.pathParam(ID, Integer.class).get();
+
         templates.render(context, ACTIVITY, new HashMap<>());
     }
 

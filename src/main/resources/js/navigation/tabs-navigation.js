@@ -9,7 +9,7 @@ export function TabsNavigation(router, activeClassName = "active") {
     var _activeIndex = 0;
     var _yearMonth = new SmartDate().asYearMonth();
 
-    this.setup = (tabsContainer, allActive = true) => {
+    this.setup = (tabsContainer, allActive = false) => {
         let tabs = tabsContainer.children;
         _activeIndex = 0;
         for (let i = 0; i < tabs.length; i++) {

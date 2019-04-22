@@ -3,6 +3,7 @@ package com.iprogrammerr.time.ruler.respondent;
 import com.iprogrammerr.time.ruler.email.Emails;
 import com.iprogrammerr.time.ruler.model.Hashing;
 import com.iprogrammerr.time.ruler.model.Identity;
+import com.iprogrammerr.time.ruler.model.session.UtcOffsetAttribute;
 import com.iprogrammerr.time.ruler.model.user.User;
 import com.iprogrammerr.time.ruler.model.user.Users;
 import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
@@ -22,7 +23,6 @@ import java.util.Map;
 
 public class UsersRespondent implements Respondent {
 
-    private static final String SESSION_COOKIE_KEY = "JSESSIONID";
     private static final String SIGN_UP = "sign-up";
     private static final String SIGN_UP_SUCCESS = "sign-up-success";
     private static final String SIGN_UP_FAILURE = "sign-up-failure";
@@ -32,6 +32,7 @@ public class UsersRespondent implements Respondent {
     private static final String FORM_EMAIL_LOGIN = "emailLogin";
     private static final String FORM_LOGIN = "login";
     private static final String FORM_PASSWORD = "password";
+    private static final String FORM_UTC_OFFSET = "utcOffset";
     private static final String ACTIVATION = "activation";
     private static final String MESSAGE_TEMPLATE = "message";
     private static final String EMAIL_LOGIN_TEMPLATE = "emailLogin";
@@ -46,11 +47,10 @@ public class UsersRespondent implements Respondent {
     private final Hashing hashing;
     private final Emails emails;
     private final Identity<Long> identity;
+    private final UtcOffsetAttribute offsetAttribute;
 
-    public UsersRespondent(
-        TodayRespondent respondent, Views views, ViewsTemplates templates,
-        Users users, Hashing hashing, Emails emails, Identity<Long> identity
-    ) {
+    public UsersRespondent(TodayRespondent respondent, Views views, ViewsTemplates templates, Users users,
+        Hashing hashing, Emails emails, Identity<Long> identity, UtcOffsetAttribute offsetAttribute) {
         this.respondent = respondent;
         this.views = views;
         this.templates = templates;
@@ -58,6 +58,7 @@ public class UsersRespondent implements Respondent {
         this.hashing = hashing;
         this.emails = emails;
         this.identity = identity;
+        this.offsetAttribute = offsetAttribute;
     }
 
     @Override
@@ -106,8 +107,7 @@ public class UsersRespondent implements Respondent {
     private String userHash(String email, String name, long id) {
         return hashing.hash(email, name, String.valueOf(id));
     }
-
-
+    
     public void signIn(Context context) {
         String emailOrLogin = context.formParam(FORM_EMAIL_LOGIN, "");
         ValidateableEmail email = new ValidateableEmail(emailOrLogin);
@@ -125,6 +125,8 @@ public class UsersRespondent implements Respondent {
             User user = users.byEmailOrName(emailOrName);
             if (passwordHash.equals(user.password)) {
                 identity.create(user.id, context.req);
+                int utcOffset = context.formParam(FORM_UTC_OFFSET, Integer.class).get();
+                offsetAttribute.to(context.req.getSession(), utcOffset);
                 respondent.redirect(context);
             } else {
                 renderSignIn(context, emailOrName, false);

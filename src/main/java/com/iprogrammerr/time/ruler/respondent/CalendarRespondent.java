@@ -183,7 +183,7 @@ public class CalendarRespondent implements GroupedRespondent {
         }
         renderCalendar(
             context, HISTORY_TITLE, false,
-            requestedDate.isAfter(firstDate),
+            requestedDate.isAfter(firstDate) && firstDate.getMonthValue() < requestedDate.getMonthValue(),
             requestedDate.isBefore(currentDate),
             requestedDate.getMonth().getDisplayName(TextStyle.FULL, Locale.US),
             requestedDate.getYear(), calendarDays(context, requestedDate, true)

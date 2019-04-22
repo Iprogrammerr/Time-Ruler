@@ -11,11 +11,12 @@ import com.iprogrammerr.time.ruler.email.Emails;
 import com.iprogrammerr.time.ruler.model.Hashing;
 import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.Messages;
-import com.iprogrammerr.time.ruler.model.SessionIdentity;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.DatabaseActivities;
 import com.iprogrammerr.time.ruler.model.day.DatabaseDays;
 import com.iprogrammerr.time.ruler.model.day.Days;
+import com.iprogrammerr.time.ruler.model.session.SessionIdentity;
+import com.iprogrammerr.time.ruler.model.session.UtcOffsetAttribute;
 import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.user.Users;
 import com.iprogrammerr.time.ruler.respondent.ActivityRespondent;
@@ -40,7 +41,6 @@ import org.thymeleaf.templateresolver.FileTemplateResolver;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Map;
 
 public class App {
 
@@ -82,17 +82,18 @@ public class App {
         Identity<Long> identity = new SessionIdentity();
 
         DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        UtcOffsetAttribute offsetAttribute = new UtcOffsetAttribute();
 
         WelcomeRespondent welcomeRespondent = new WelcomeRespondent(views);
         TodayRespondent dashboardRespondent = new TodayRespondent(identity, viewsTemplates);
         UsersRespondent usersRespondent = new UsersRespondent(
-            dashboardRespondent, views, viewsTemplates, users, hashing, emails, identity
+            dashboardRespondent, views, viewsTemplates, users, hashing, emails, identity, offsetAttribute
         );
         CalendarRespondent calendarRespondent = new CalendarRespondent(identity, viewsTemplates, days);
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, viewsTemplates);
         DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, viewsTemplates, activities, dateFormat);
         ActivityRespondent activityRespondent = new ActivityRespondent(identity, viewsTemplates, dayPlanRespondent,
-            days, activities);
+            days, activities, offsetAttribute);
 
         String userGroup = "user/";
 

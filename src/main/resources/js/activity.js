@@ -1,5 +1,7 @@
 import { endpoints } from "./app.js";
 import { tabsNavigation } from "./app.js";
+import { hiddenInputKeys } from "./app.js";
+import { FormAction } from "./http/form-action.js";
 
 tabsNavigation.setup(document.querySelector("div"));
 const activityId = activityIdFromPath();
@@ -10,15 +12,7 @@ document.getElementById("recent").onclick = () => console.log("Show recent...");
 const saveActivity = document.getElementById("save");
 saveActivity.onclick = () => {
     if (isFormValid()) {
-        form.action = `${endpoints.saveActivity}`;
-        form.method = "POST";
-        console.log(`Method = ${form.method}`);
-        let hidden = document.createElement("input");
-        hidden.setAttribute("type", "hidden");
-        hidden.setAttribute("name", "done");
-        hidden.setAttribute("value", false);
-        form.appendChild(hidden);
-        form.submit();
+        new FormAction(form).submit(`${endpoints.saveActivity}`, {key: hiddenInputKeys.done, value: false});
         saveActivity.disabled = true;
     }
 };
@@ -35,8 +29,9 @@ function activityIdFromPath() {
         }
     }
     return id;
-}
+};
 
+//TODO validate form
 function isFormValid() {
     return true;
-}
+};

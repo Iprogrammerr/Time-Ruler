@@ -1,6 +1,8 @@
 import { endpoints } from "./app.js";
 import { validations } from "./app.js";
 import { errors } from "./app.js";
+import { hiddenInputKeys } from "./app.js";
+import { FormAction } from "./http/form-action.js";
 
 const emailLoginError = document.getElementById("emailLoginError");
 const passwordError = document.getElementById("passwordError");
@@ -11,11 +13,13 @@ const signIn = document.getElementById("signIn");
 addEventListener("submit", e => e.preventDefault());
 signIn.onclick = () => {
     if (isFormValid()) {
-        form.action = `${endpoints.signIn}`;
-        form.method = "POST";
-        form.submit();
+        new FormAction(form).submit(`${endpoints.signIn}`, {key: hiddenInputKeys.utcOffset, value: utcOffset()});
         signIn.disabled = true;
     }
+};
+
+function utcOffset() {
+    return -(new Date().getTimezoneOffset() * 60);
 };
 
 function isFormValid() {
@@ -32,14 +36,14 @@ function isFormValid() {
         setError(passwordError, errors.invalidPassword);
     }
     return valid;
-}
+};
 
 function clearErrors() {
     emailLoginError.style.display = "none";
     passwordError.style.display = "none";
-}
+};
 
 function setError(errorComponent, message) {
     errorComponent.style.display = "block";
     errorComponent.innerHTML = message;
-}
+};
