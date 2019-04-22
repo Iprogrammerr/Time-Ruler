@@ -34,12 +34,11 @@ public class UsersRespondent implements Respondent {
     private static final String FORM_PASSWORD = "password";
     private static final String FORM_UTC_OFFSET = "utcOffset";
     private static final String ACTIVATION = "activation";
-    private static final String MESSAGE_TEMPLATE = "message";
     private static final String EMAIL_LOGIN_TEMPLATE = "emailLogin";
     private static final String INVALID_EMAIL_LOGIN_TEMPLATE = "invalidEmailLogin";
     private static final String INVALID_PASSWORD_TEMPLATE = "invalidPassword";
-    private static final String ACTIVATION_CONGRATULATIONS = "Your account has been activated, now you can sign in!";
-    private static final String SIGN_OUT_FAREWELL = "Always take charge of your time.";
+    private static final String ACTIVATION_TEMPLATE = "activation";
+    private static final String SIGN_OUT_TEMPLATE = "signOut";
     private final TodayRespondent respondent;
     private final Views views;
     private final ViewsTemplates templates;
@@ -63,7 +62,7 @@ public class UsersRespondent implements Respondent {
 
     @Override
     public void init(Javalin app) {
-        app.get(SIGN_UP, ctx -> ctx.html(views.view(SIGN_UP)));
+        app.get(SIGN_UP, ctx -> templates.render(ctx, SIGN_UP));
         app.get(SIGN_IN, this::renderSignIn);
         app.get(SIGN_OUT, this::signOut);
         app.post(SIGN_UP, this::signUp);
@@ -107,7 +106,7 @@ public class UsersRespondent implements Respondent {
     private String userHash(String email, String name, long id) {
         return hashing.hash(email, name, String.valueOf(id));
     }
-    
+
     public void signIn(Context context) {
         String emailOrLogin = context.formParam(FORM_EMAIL_LOGIN, "");
         ValidateableEmail email = new ValidateableEmail(emailOrLogin);
@@ -140,9 +139,10 @@ public class UsersRespondent implements Respondent {
         renderSignIn(context, "", false);
     }
 
-    private void renderValidSignInWithMessage(Context context, String message) {
+    private void renderValidSignInWithMessage(Context context, boolean activationCongratulations, boolean signOutFarewell) {
         Map<String, Object> params = new HashMap<>();
-        params.put(MESSAGE_TEMPLATE, message);
+        params.put(ACTIVATION_TEMPLATE, activationCongratulations);
+        params.put(SIGN_OUT_TEMPLATE, signOutFarewell);
         templates.render(context, SIGN_IN, params);
     }
 
@@ -171,7 +171,7 @@ public class UsersRespondent implements Respondent {
             }
         }
         if (activated) {
-            renderValidSignInWithMessage(context, ACTIVATION_CONGRATULATIONS);
+            renderValidSignInWithMessage(context, true, false);
         } else {
             throw new RuntimeException("Given activation link is invalid");
         }
@@ -189,6 +189,6 @@ public class UsersRespondent implements Respondent {
                 context.cookie(c);
             }
         }
-        renderValidSignInWithMessage(context, SIGN_OUT_FAREWELL);
+        renderValidSignInWithMessage(context, false, true);
     }
 }

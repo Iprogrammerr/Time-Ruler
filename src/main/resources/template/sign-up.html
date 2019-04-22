@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
 
 <head>
     <title>Sign up</title>
@@ -16,16 +16,16 @@
     <h1>Sign up to get started</h1>
     <form>
         <p>Email</p>
-        <p class="error">Error</p>
+        <p class="error" th:text="#{invalidEmail}"></p>
         <input type="email" name="email"></input>
         <p>Login</p>
-        <p class="error">Error</p>
+        <p class="error" th:text="#{invalidLogin}"></p>
         <input type="text" name="login"></input>
         <p>Password</p>
-        <p class="error">Error</p>
+        <p class="error" th:text="#{invalidPassword}"></p>
         <input type="password" name="password"></input>
         <p>Password, once again</p>
-        <p class="error">Error</p>
+        <p class="error" th:text="#{passwordsMismatch}"></p>
         <input type="password" name="repassword"></input>
         </br>
         <input id="signUp" type="submit" value="Sign up"></input>

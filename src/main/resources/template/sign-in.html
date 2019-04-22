@@ -14,12 +14,13 @@
 
 <body>
     <form class="centered">
-        <h1 th:text="${message}"></h1>
+        <h1 th:text="${activation}? #{activationCongratulations}"></h1>
+        <h1 th:text="${signOut}? #{signOutFarewell}"></h1>
         <p>Email/Login</p>
-        <p th:class="${invalidEmailLogin} ? error-visible : error" id="emailLoginError">Invalid email or login</p>
+        <p th:class="${invalidEmailLogin} ? error-visible : error" id="emailLoginError" th:text="#{invalidEmailLogin}"></p>
         <input type="text" name="emailLogin" th:value="${emailLogin}"></input>
         <p>Password</p> 
-        <p th:class="${invalidPassword} ? error-visible : error" id="passwordError">Invalid password</p>
+        <p th:class="${invalidPassword} ? error-visible : error" id="passwordError" th:text="#{invalidPassword}"></p>
         <input type="password" name="password" th:value="${password}"></input>
         </br>
         <input id="signIn" type="submit" value="Sign in"></input>
