@@ -2,7 +2,6 @@ package com.iprogrammerr.time.ruler.model;
 
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.messageresolver.IMessageResolver;
-import sun.plugin2.message.Message;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -18,7 +17,7 @@ public class Messages implements IMessageResolver {
     }
 
     public void init(String resource) {
-        try (InputStream is = Message.class.getResourceAsStream("/" + resource)) {
+        try (InputStream is = Messages.class.getResourceAsStream("/" + resource)) {
             Properties properties = new Properties();
             properties.load(is);
             init(properties);

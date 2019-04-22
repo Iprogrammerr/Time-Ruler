@@ -1,4 +1,6 @@
-package com.iprogrammerr.time.ruler.model;
+package com.iprogrammerr.time.ruler.model.date;
+
+import com.iprogrammerr.time.ruler.model.TypedMap;
 
 import java.util.List;
 import java.util.Map;

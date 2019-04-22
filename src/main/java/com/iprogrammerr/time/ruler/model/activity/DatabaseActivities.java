@@ -2,7 +2,7 @@ package com.iprogrammerr.time.ruler.model.activity;
 
 import com.iprogrammerr.time.ruler.database.DatabaseSession;
 import com.iprogrammerr.time.ruler.database.Record;
-import com.iprogrammerr.time.ruler.model.SmartDate;
+import com.iprogrammerr.time.ruler.model.date.SmartDate;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,7 @@
 package com.iprogrammerr.time.ruler.model;
 
 import com.iprogrammerr.time.ruler.matcher.ThrowsMatcher;
+import com.iprogrammerr.time.ruler.model.date.YearMonthDay;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;

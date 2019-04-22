@@ -1,8 +1,8 @@
 package com.iprogrammerr.time.ruler.respondent;
 
 import com.iprogrammerr.time.ruler.model.Identity;
-import com.iprogrammerr.time.ruler.model.SmartDate;
-import com.iprogrammerr.time.ruler.model.YearMonthDay;
+import com.iprogrammerr.time.ruler.model.date.SmartDate;
+import com.iprogrammerr.time.ruler.model.date.YearMonthDay;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
 import com.iprogrammerr.time.ruler.model.rendering.ForListActivity;

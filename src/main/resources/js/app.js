@@ -48,3 +48,6 @@ export const httpConnections = new HttpConnections();
 export const urlParams = new UrlParams();
 export const dateTimeParams = new DateTimeParams(urlParams, paramsKeys);
 export const validations = new Validations();
+//TODO move to separate module
+const utcOffset = new Date().getTimezoneOffset() * 60;
+document.cookie = `utcOffset=${utcOffset}`;

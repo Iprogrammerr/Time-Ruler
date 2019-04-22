@@ -1,8 +1,8 @@
 package com.iprogrammerr.time.ruler.respondent;
 
 import com.iprogrammerr.time.ruler.model.Identity;
-import com.iprogrammerr.time.ruler.model.SmartDate;
-import com.iprogrammerr.time.ruler.model.YearMonthDay;
+import com.iprogrammerr.time.ruler.model.date.SmartDate;
+import com.iprogrammerr.time.ruler.model.date.YearMonthDay;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
 import com.iprogrammerr.time.ruler.model.day.Day;
@@ -29,6 +29,8 @@ public class ActivityRespondent implements GroupedRespondent {
     private static final String INVALID_NAME_TEMPLATE = "invalidName";
     private static final String INVALID_START_TIME_TEMPLATE = "invalidStartTime";
     private static final String INVALID_END_TIME_TEMPLATE = "invalidEndTime";
+    private static final String START_TIME_TEMPLATE = "start";
+    private static final String END_TIME_TEMPLATE = "end";
     private static final String FORM_NAME = "name";
     private static final String FORM_START_TIME = "start";
     private static final String FORM_END_TIME = "end";
@@ -61,7 +63,12 @@ public class ActivityRespondent implements GroupedRespondent {
     }
 
     private void showEmptyActivity(Context context) {
-        templates.render(context, ACTIVITY, new HashMap<>());
+        ZonedDateTime now = ZonedDateTime.now(Clock.systemUTC());
+        String time = String.format("%02d:%02d", now.getHour(), now.getMinute());
+        Map<String, String> params = new HashMap<>();
+        params.put(START_TIME_TEMPLATE, time);
+        params.put(END_TIME_TEMPLATE, time);
+        templates.render(context, ACTIVITY, params);
     }
 
     //TODO render with proper params
