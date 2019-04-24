@@ -10,7 +10,7 @@ import com.iprogrammerr.time.ruler.respondent.TodayRespondent;
 import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateablePassword;
-import com.iprogrammerr.time.ruler.view.user.SigningInView;
+import com.iprogrammerr.time.ruler.view.rendering.SigningInView;
 import io.javalin.Context;
 import io.javalin.Javalin;
 

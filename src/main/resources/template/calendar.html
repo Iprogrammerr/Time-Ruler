@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 
 <head>
-    <title th:text="${title}"></title>
+    <title th:text="${plan}? #{planTitle} : #{historyTitle}"></title>
     <link rel="stylesheet" type="text/css" href="../style.css" />
     <style>
         @media screen and (max-width: 720px) {

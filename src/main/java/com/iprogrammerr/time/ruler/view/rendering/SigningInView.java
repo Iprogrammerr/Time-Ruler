@@ -1,4 +1,4 @@
-package com.iprogrammerr.time.ruler.view.user;
+package com.iprogrammerr.time.ruler.view.rendering;
 
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 

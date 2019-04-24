@@ -7,7 +7,7 @@ import com.iprogrammerr.time.ruler.model.day.Day;
 import com.iprogrammerr.time.ruler.model.day.Days;
 import com.iprogrammerr.time.ruler.model.rendering.CalendarDay;
 import com.iprogrammerr.time.ruler.model.rendering.DayState;
-import com.iprogrammerr.time.ruler.view.ViewsTemplates;
+import com.iprogrammerr.time.ruler.view.rendering.CalendarView;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
@@ -16,10 +16,8 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class CalendarRespondent implements GroupedRespondent {
@@ -27,24 +25,14 @@ public class CalendarRespondent implements GroupedRespondent {
     private static final long DAY_SECONDS = TimeUnit.DAYS.toSeconds(1);
     private static final int MAX_YEAR_OFFSET_VALUE = 100;
     private static final String PLAN = "plan";
-    private static final String PLAN_TITLE = "Plan";
     private static final String HISTORY = "history";
-    private static final String HISTORY_TITLE = "History";
-    private static final String CALENDAR = "calendar";
-    private static final String TITLE_TEMPLATE = "title";
-    private static final String PLAN_TEMPLATE = "plan";
-    private static final String PREV_TEMPLATE = "prev";
-    private static final String NEXT_TEMPLATE = "next";
-    private static final String MONTH_TEMPLATE = "month";
-    private static final String YEAR_TEMPLATE = "year";
-    private static final String DAYS_TEMPLATE = "days";
     private final Identity<Long> identity;
-    private final ViewsTemplates viewsTemplates;
+    private final CalendarView calendarView;
     private final Days days;
 
-    public CalendarRespondent(Identity<Long> identity, ViewsTemplates viewsTemplates, Days days) {
+    public CalendarRespondent(Identity<Long> identity, CalendarView calendarView, Days days) {
         this.identity = identity;
-        this.viewsTemplates = viewsTemplates;
+        this.calendarView = calendarView;
         this.days = days;
     }
 
@@ -74,26 +62,10 @@ public class CalendarRespondent implements GroupedRespondent {
         }
         ZonedDateTime withOffset = new SmartDate(currentDate)
             .ofYearMonth(requestedYear, yearMonth.month(currentDate.getMonthValue()));
-        renderCalendar(
-            context, PLAN_TITLE, true,
-            withOffset.isAfter(currentDate),
-            currentYear < yearMonth.maxYear,
+        context.html(calendarView.rendered(true, withOffset.isAfter(currentDate), currentYear < yearMonth.maxYear,
             withOffset.getMonth().getDisplayName(TextStyle.FULL, Locale.US),
-            withOffset.getYear(), calendarDays(context, withOffset, false)
+            withOffset.getYear(), calendarDays(context, withOffset, false))
         );
-    }
-
-    private void renderCalendar(Context context, String title, boolean plan, boolean hasPrevious, boolean hasNext,
-        String month, int year, List<CalendarDay> days) {
-        Map<String, Object> params = new HashMap<>();
-        params.put(TITLE_TEMPLATE, title);
-        params.put(PLAN_TEMPLATE, plan);
-        params.put(PREV_TEMPLATE, hasPrevious);
-        params.put(NEXT_TEMPLATE, hasNext);
-        params.put(MONTH_TEMPLATE, month);
-        params.put(YEAR_TEMPLATE, year);
-        params.put(DAYS_TEMPLATE, days);
-        context.html(viewsTemplates.rendered(CALENDAR, params));
     }
 
     private List<CalendarDay> calendarDays(Context context, ZonedDateTime currentDate, boolean fromPast) {
@@ -181,12 +153,9 @@ public class CalendarRespondent implements GroupedRespondent {
             requestedMonth = firstDate.getMonthValue();
             requestedDate = requestedDate.withMonth(requestedMonth);
         }
-        renderCalendar(
-            context, HISTORY_TITLE, false,
+        context.html(calendarView.rendered(false,
             requestedDate.isAfter(firstDate) && firstDate.getMonthValue() < requestedDate.getMonthValue(),
-            requestedDate.isBefore(currentDate),
-            requestedDate.getMonth().getDisplayName(TextStyle.FULL, Locale.US),
-            requestedDate.getYear(), calendarDays(context, requestedDate, true)
-        );
+            requestedDate.isBefore(currentDate), requestedDate.getMonth().getDisplayName(TextStyle.FULL, Locale.US),
+            requestedDate.getYear(), calendarDays(context, requestedDate, true)));
     }
 }

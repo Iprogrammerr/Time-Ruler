@@ -32,7 +32,8 @@ import com.iprogrammerr.time.ruler.view.HtmlViews;
 import com.iprogrammerr.time.ruler.view.HtmlViewsTemplates;
 import com.iprogrammerr.time.ruler.view.Views;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
-import com.iprogrammerr.time.ruler.view.user.SigningInView;
+import com.iprogrammerr.time.ruler.view.rendering.CalendarView;
+import com.iprogrammerr.time.ruler.view.rendering.SigningInView;
 import io.javalin.BadRequestResponse;
 import io.javalin.ForbiddenResponse;
 import io.javalin.Javalin;
@@ -65,6 +66,7 @@ public class App {
         ViewsTemplates viewsTemplates = new HtmlViewsTemplates(new File(root, "template"), engine);
 
         SigningInView signingInView = new SigningInView(viewsTemplates);
+        CalendarView calendarView = new CalendarView(viewsTemplates);
 
         Database database = new SqlDatabase(configuration.databaseUser(), configuration.databasePassword(),
             configuration.jdbcUrl());
@@ -93,7 +95,7 @@ public class App {
             hashing, identity, offsetAttribute);
         SigningUpRespondent signingUpRespondent = new SigningUpRespondent(viewsTemplates, users, hashing, emails);
         SigningOutRespondent signingOutRespondent = new SigningOutRespondent(signingInView);
-        CalendarRespondent calendarRespondent = new CalendarRespondent(identity, viewsTemplates, days);
+        CalendarRespondent calendarRespondent = new CalendarRespondent(identity, calendarView, days);
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, viewsTemplates);
         DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, viewsTemplates, activities, dateFormat);
         ActivityRespondent activityRespondent = new ActivityRespondent(identity, viewsTemplates, dayPlanRespondent,

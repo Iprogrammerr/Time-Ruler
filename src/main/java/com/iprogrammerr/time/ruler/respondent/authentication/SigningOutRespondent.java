@@ -1,7 +1,7 @@
 package com.iprogrammerr.time.ruler.respondent.authentication;
 
 import com.iprogrammerr.time.ruler.respondent.Respondent;
-import com.iprogrammerr.time.ruler.view.user.SigningInView;
+import com.iprogrammerr.time.ruler.view.rendering.SigningInView;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
