@@ -45,8 +45,8 @@ public class Activity {
     }
 
     public boolean intersects(Activity other) {
-        //TODO implementation
-        return false;
+        return (startTime <= other.startTime && endTime >= other.endTime) ||
+            (startTime > other.startTime && endTime < other.endTime);
     }
 
     @Override

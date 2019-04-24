@@ -4,6 +4,7 @@ import com.iprogrammerr.time.ruler.TestDatabaseSetup;
 import com.iprogrammerr.time.ruler.database.DatabaseSession;
 import com.iprogrammerr.time.ruler.database.QueryTemplates;
 import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
+import com.iprogrammerr.time.ruler.matcher.ThrowsMatcher;
 import com.iprogrammerr.time.ruler.mock.RandomActivities;
 import com.iprogrammerr.time.ruler.mock.RandomUsers;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
@@ -19,6 +20,7 @@ import org.junit.Test;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Random;
 
 public class DatabaseActivitiesTest {
 
@@ -107,10 +109,10 @@ public class DatabaseActivitiesTest {
         );
     }
 
-    private void insertUserWithActivity(RandomUsers randomUsers, RandomActivities randomActivities, long date) {
+    private long insertUserWithActivity(RandomUsers randomUsers, RandomActivities randomActivities, long date) {
         User user = randomUsers.user();
         long id = users.create(user.name, user.email, user.password);
-        activities.create(randomActivities.activity(days.createForUser(id, date)));
+        return activities.create(randomActivities.activity(days.createForUser(id, date)));
     }
 
     @Test
@@ -146,5 +148,25 @@ public class DatabaseActivitiesTest {
     @Test
     public void returnsListOfUserDateDone() {
         returnsListOfUserDate(false);
+    }
+
+    @Test
+    public void returnsActivityFromId() {
+        Random random = new Random();
+        User user = new RandomUsers(random).user();
+        long userId = users.create(user.name, user.email, user.password);
+        Activity activity = new RandomActivities(random).activity(days.createForUser(userId,
+            Instant.now().getEpochSecond()));
+        long activityId = activities.create(activity);
+        MatcherAssert.assertThat("Should return newly created activity", activity.withId(activityId),
+            Matchers.equalTo(activities.activity(activityId)));
+    }
+
+    @Test
+    public void throwsExceptionIfThereIsNoActivityWithGivenId() {
+        long id = new Random().nextLong();
+        String message = String.format("There is no activity associated with %d id", id);
+        MatcherAssert.assertThat("Does not throw exception with proper message", () -> activities.activity(id),
+            new ThrowsMatcher(message));
     }
 }
