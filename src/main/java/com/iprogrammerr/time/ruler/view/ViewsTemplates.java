@@ -1,12 +1,10 @@
 package com.iprogrammerr.time.ruler.view;
 
-import io.javalin.Context;
-
 import java.util.Map;
 
 public interface ViewsTemplates {
 
-    void render(Context context, String name, Map<String, ?> params);
+    String rendered(String name, Map<String, Object> params);
 
-    void render(Context context, String name);
+    String rendered(String name);
 }

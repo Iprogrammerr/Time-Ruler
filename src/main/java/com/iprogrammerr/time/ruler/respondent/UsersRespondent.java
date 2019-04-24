@@ -62,7 +62,7 @@ public class UsersRespondent implements Respondent {
 
     @Override
     public void init(Javalin app) {
-        app.get(SIGN_UP, ctx -> templates.render(ctx, SIGN_UP));
+        app.get(SIGN_UP, ctx -> ctx.html(templates.rendered(SIGN_UP)));
         app.get(SIGN_IN, this::renderSignIn);
         app.get(SIGN_OUT, this::signOut);
         app.post(SIGN_UP, this::signUp);
@@ -70,6 +70,7 @@ public class UsersRespondent implements Respondent {
     }
 
     private void renderSignIn(Context context) {
+
         String activation = context.queryParam(ACTIVATION, "");
         if (activation.isEmpty()) {
             if (context.req.getSession(false) == null) {
@@ -143,7 +144,7 @@ public class UsersRespondent implements Respondent {
         Map<String, Object> params = new HashMap<>();
         params.put(ACTIVATION_TEMPLATE, activationCongratulations);
         params.put(SIGN_OUT_TEMPLATE, signOutFarewell);
-        templates.render(context, SIGN_IN, params);
+        context.html(templates.rendered(SIGN_IN, params));
     }
 
     private void renderSignIn(Context context, String invalidEmailLogin, boolean invalidPassword) {
@@ -155,7 +156,7 @@ public class UsersRespondent implements Respondent {
             params.put(INVALID_EMAIL_LOGIN_TEMPLATE, false);
         }
         params.put(INVALID_PASSWORD_TEMPLATE, invalidPassword);
-        templates.render(context, SIGN_IN, params);
+        context.html(templates.rendered(SIGN_IN, params));
     }
 
     //TODO simplify update, handle exceptions

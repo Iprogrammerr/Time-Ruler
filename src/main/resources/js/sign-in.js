@@ -1,6 +1,5 @@
 import { endpoints } from "./app.js";
 import { validations } from "./app.js";
-import { errors } from "./app.js";
 import { hiddenInputKeys } from "./app.js";
 import { FormAction } from "./http/form-action.js";
 

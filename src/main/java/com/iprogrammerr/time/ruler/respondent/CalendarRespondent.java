@@ -93,7 +93,7 @@ public class CalendarRespondent implements GroupedRespondent {
         params.put(MONTH_TEMPLATE, month);
         params.put(YEAR_TEMPLATE, year);
         params.put(DAYS_TEMPLATE, days);
-        viewsTemplates.render(context, CALENDAR, params);
+        context.html(viewsTemplates.rendered(CALENDAR, params));
     }
 
     private List<CalendarDay> calendarDays(Context context, ZonedDateTime currentDate, boolean fromPast) {

@@ -1,6 +1,5 @@
 package com.iprogrammerr.time.ruler.model.date;
 
-import com.iprogrammerr.time.ruler.model.date.SmartDate;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;

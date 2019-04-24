@@ -68,17 +68,16 @@ public class ActivityRespondent implements GroupedRespondent {
         int utcOffset = offsetAttribute.from(context.req.getSession());
         ZonedDateTime clientDate = ZonedDateTime.now(Clock.systemUTC()).plusSeconds(utcOffset);
         String time = String.format("%02d:%02d", clientDate.getHour(), clientDate.getMinute());
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put(START_TIME_TEMPLATE, time);
         params.put(END_TIME_TEMPLATE, time);
-        templates.render(context, ACTIVITY, params);
+        context.html(templates.rendered(ACTIVITY, params));
     }
 
     //TODO render with proper params
     private void showActivity(Context context) {
         int id = context.pathParam(ID, Integer.class).get();
-
-        templates.render(context, ACTIVITY, new HashMap<>());
+        context.html(templates.rendered(ACTIVITY, new HashMap<>()));
     }
 
     private void createActivity(Context context) {
@@ -111,7 +110,7 @@ public class ActivityRespondent implements GroupedRespondent {
         errors.put(INVALID_NAME_TEMPLATE, !nameValid);
         errors.put(INVALID_START_TIME_TEMPLATE, !startValid);
         errors.put(INVALID_END_TIME_TEMPLATE, !endValid);
-        templates.render(context, ACTIVITY, errors);
+        context.html(templates.rendered(ACTIVITY, errors));
     }
 
     private Day existingOrNew(Context context) {

@@ -63,7 +63,7 @@ public class DayPlanRespondent implements GroupedRespondent {
         Map<String, Object> params = new HashMap<>();
         params.put(DATE_TEMPLATE_PARAM, dateFormat.format(date.toEpochMilli()));
         params.put(ACTIVITIES_TEMPLATE_PARAM, dayActivities(identity.value(context.req), date.getEpochSecond()));
-        templates.render(context, DAY_PLAN_TEMPLATE, params);
+        context.html(templates.rendered(DAY_PLAN_TEMPLATE, params));
     }
 
     private List<ForListActivity> dayActivities(long id, long date) {

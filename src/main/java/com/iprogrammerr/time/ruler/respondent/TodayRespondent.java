@@ -30,7 +30,7 @@ public class TodayRespondent implements GroupedRespondent {
     //TODO render with proper data
     private void showMainPage(Context context) {
         if (identity.isValid(context.req)) {
-            viewsTemplates.render(context, TODAY, new HashMap<>());
+            context.html(viewsTemplates.rendered(TODAY, new HashMap<>()));
         } else {
             context.status(HttpURLConnection.HTTP_UNAUTHORIZED);
         }

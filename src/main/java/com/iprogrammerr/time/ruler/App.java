@@ -33,7 +33,6 @@ import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import io.javalin.BadRequestResponse;
 import io.javalin.ForbiddenResponse;
 import io.javalin.Javalin;
-import io.javalin.rendering.template.JavalinThymeleaf;
 import io.javalin.staticfiles.Location;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
@@ -59,10 +58,9 @@ public class App {
         Messages messages = new Messages();
         messages.init("messages.properties");
         engine.setMessageResolver(messages);
-        JavalinThymeleaf.configure(engine);
-
         Views views = new HtmlViews(new File(root, "html"));
-        ViewsTemplates viewsTemplates = new HtmlViewsTemplates(new File(root, "template"));
+        ViewsTemplates viewsTemplates = new HtmlViewsTemplates(new File(root, "template"), engine);
+
         Database database = new SqlDatabase(configuration.databaseUser(), configuration.databasePassword(),
             configuration.jdbcUrl());
         DatabaseSession session = new SqlDatabaseSession(database, new QueryTemplates());

@@ -33,9 +33,9 @@ public class ProfileRespondent implements GroupedRespondent {
     //TODO render with proper data
     private void showProfile(Context context) {
         User user = users.user(identity.value(context.req));
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put(EMAIL_TEMPLATE, user.email);
         params.put(NAME_TEMPLATE, user.name);
-        viewsTemplates.render(context, PROFILE, params);
+        context.html(viewsTemplates.rendered(PROFILE, params));
     }
 }
