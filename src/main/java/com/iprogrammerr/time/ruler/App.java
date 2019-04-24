@@ -24,12 +24,15 @@ import com.iprogrammerr.time.ruler.respondent.CalendarRespondent;
 import com.iprogrammerr.time.ruler.respondent.DayPlanRespondent;
 import com.iprogrammerr.time.ruler.respondent.ProfileRespondent;
 import com.iprogrammerr.time.ruler.respondent.TodayRespondent;
-import com.iprogrammerr.time.ruler.respondent.UsersRespondent;
 import com.iprogrammerr.time.ruler.respondent.WelcomeRespondent;
+import com.iprogrammerr.time.ruler.respondent.authentication.SigningInRespondent;
+import com.iprogrammerr.time.ruler.respondent.authentication.SigningOutRespondent;
+import com.iprogrammerr.time.ruler.respondent.authentication.SigningUpRespondent;
 import com.iprogrammerr.time.ruler.view.HtmlViews;
 import com.iprogrammerr.time.ruler.view.HtmlViewsTemplates;
 import com.iprogrammerr.time.ruler.view.Views;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
+import com.iprogrammerr.time.ruler.view.user.SigningInView;
 import io.javalin.BadRequestResponse;
 import io.javalin.ForbiddenResponse;
 import io.javalin.Javalin;
@@ -61,6 +64,8 @@ public class App {
         Views views = new HtmlViews(new File(root, "html"));
         ViewsTemplates viewsTemplates = new HtmlViewsTemplates(new File(root, "template"), engine);
 
+        SigningInView signingInView = new SigningInView(viewsTemplates);
+
         Database database = new SqlDatabase(configuration.databaseUser(), configuration.databasePassword(),
             configuration.jdbcUrl());
         DatabaseSession session = new SqlDatabaseSession(database, new QueryTemplates());
@@ -83,10 +88,11 @@ public class App {
         UtcOffsetAttribute offsetAttribute = new UtcOffsetAttribute();
 
         WelcomeRespondent welcomeRespondent = new WelcomeRespondent(views);
-        TodayRespondent dashboardRespondent = new TodayRespondent(identity, viewsTemplates);
-        UsersRespondent usersRespondent = new UsersRespondent(
-            dashboardRespondent, views, viewsTemplates, users, hashing, emails, identity, offsetAttribute
-        );
+        TodayRespondent todayRespondent = new TodayRespondent(identity, viewsTemplates);
+        SigningInRespondent signingInRespondent = new SigningInRespondent(todayRespondent, signingInView, users,
+            hashing, identity, offsetAttribute);
+        SigningUpRespondent signingUpRespondent = new SigningUpRespondent(viewsTemplates, users, hashing, emails);
+        SigningOutRespondent signingOutRespondent = new SigningOutRespondent(signingInView);
         CalendarRespondent calendarRespondent = new CalendarRespondent(identity, viewsTemplates, days);
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, viewsTemplates);
         DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, viewsTemplates, activities, dateFormat);
@@ -96,8 +102,10 @@ public class App {
         String userGroup = "user/";
 
         welcomeRespondent.init(app);
-        usersRespondent.init(app);
-        dashboardRespondent.init(userGroup, app);
+        signingInRespondent.init(app);
+        signingUpRespondent.init(app);
+        signingOutRespondent.init(app);
+        todayRespondent.init(userGroup, app);
         calendarRespondent.init(userGroup, app);
         profileRespondent.init(userGroup, app);
         dayPlanRespondent.init(userGroup, app);
