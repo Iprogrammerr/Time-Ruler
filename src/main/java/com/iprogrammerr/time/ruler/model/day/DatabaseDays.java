@@ -71,7 +71,7 @@ public class DatabaseDays implements Days {
                 if (r.next()) {
                     return new Day(r);
                 }
-                throw new RuntimeException(String.format("There is no day associated user %d and date %d", id, date));
+                throw new RuntimeException(String.format("There is no day associated with %d user and %d date", id, date));
             }, "SELECT * from day WHERE user_id = ? AND date >= ? AND date <= ?",
             id, smartDate.dayBeginning(), smartDate.dayEnd());
     }

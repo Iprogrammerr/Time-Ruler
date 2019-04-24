@@ -7,10 +7,12 @@ public class ThrowsMatcher extends TypeSafeMatcher<ThrowsMatcher.UnreliableRunna
 
     private final Class<? extends Exception> exception;
     private final String message;
+    private String actualMessage;
 
     public ThrowsMatcher(Class<? extends Exception> exception, String message) {
         this.exception = exception;
         this.message = message;
+        this.actualMessage = "";
     }
 
     public ThrowsMatcher(String message) {
@@ -33,7 +35,8 @@ public class ThrowsMatcher extends TypeSafeMatcher<ThrowsMatcher.UnreliableRunna
         } catch (Exception e) {
             matched = exception.isAssignableFrom(e.getClass());
             if (!message.isEmpty()) {
-                matched &= e.getMessage().contains(message);
+                actualMessage = e.getMessage();
+                matched &= actualMessage.contains(message);
             }
         }
         return matched;
@@ -46,9 +49,8 @@ public class ThrowsMatcher extends TypeSafeMatcher<ThrowsMatcher.UnreliableRunna
 
     @Override
     protected void describeMismatchSafely(UnreliableRunnable item, Description description) {
-        description.appendText(
-            String.format("Given function does not throws %s with %s message", exception, message)
-        );
+        description.appendText(String.format("Given function does not throws %s with %s message. It returns %s instead",
+            exception, message, actualMessage));
     }
 
 

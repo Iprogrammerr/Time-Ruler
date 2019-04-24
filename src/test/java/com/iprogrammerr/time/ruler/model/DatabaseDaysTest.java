@@ -4,6 +4,7 @@ import com.iprogrammerr.time.ruler.TestDatabaseSetup;
 import com.iprogrammerr.time.ruler.database.DatabaseSession;
 import com.iprogrammerr.time.ruler.database.QueryTemplates;
 import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
+import com.iprogrammerr.time.ruler.matcher.ThrowsMatcher;
 import com.iprogrammerr.time.ruler.mock.RandomUsers;
 import com.iprogrammerr.time.ruler.model.day.DatabaseDays;
 import com.iprogrammerr.time.ruler.model.day.Day;
@@ -139,5 +140,24 @@ public class DatabaseDaysTest {
         days.createForUser(userId, date);
         days.createForUser(userId, min);
         MatcherAssert.assertThat("Should return min value", days.userFirstDate(userId), Matchers.equalTo(min));
+    }
+
+    @Test
+    public void returnsFromUserDate() {
+        User user = new RandomUsers().user();
+        Day day = new Day(users.create(user.name, user.email, user.password), Instant.now().getEpochSecond());
+        long dayId = days.createForUser(day.userId, day.date);
+        MatcherAssert.assertThat("Should return newly created day", days.ofUser(dayId, day.date),
+            Matchers.equalTo(new Day(dayId, day.userId, day.date)));
+    }
+
+    @Test
+    public void throwsExceptionIfThereIsNoUserWithGivenDate() {
+        Random random = new Random();
+        long id = random.nextInt();
+        long date = Instant.now().getEpochSecond();
+        String message = String.format("There is no day associated with %d user and %d date", id, date);
+        MatcherAssert.assertThat("Does not throw exception with proper message", () -> days.ofUser(id, date),
+            new ThrowsMatcher(message));
     }
 }

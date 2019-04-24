@@ -20,6 +20,11 @@ public class Day {
         this.date = date;
     }
 
+
+    public Day(long userId, long date) {
+        this(0, userId, date);
+    }
+
     public Day(ResultSet result) throws Exception {
         this(result.getLong(ID), result.getLong(USER_ID), result.getLong(DATE));
     }
