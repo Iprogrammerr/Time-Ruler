@@ -17,25 +17,15 @@ public class DatabaseDays implements Days {
     }
 
     @Override
-    public List<Day> userFrom(long id, long date) {
+    public List<Day> userRange(long id, long from, long to) {
         return session.select(r -> {
-            List<Day> days = new ArrayList<>();
-            while (r.next()) {
-                days.add(new Day(r));
-            }
-            return days;
-        }, "SELECT * from day where date >= ?", new SmartDate(date).dayBeginning());
-    }
-
-    @Override
-    public List<Day> userTo(long id, long date) {
-        return session.select(r -> {
-            List<Day> days = new ArrayList<>();
-            while (r.next()) {
-                days.add(new Day(r));
-            }
-            return days;
-        }, "SELECT * from day where date <= ? ORDER BY date ASC", new SmartDate(date).dayEnd());
+                List<Day> days = new ArrayList<>();
+                while (r.next()) {
+                    days.add(new Day(r));
+                }
+                return days;
+            }, "SELECT * from day where date>= ? AND date <= ? ORDER BY date ASC",
+            new SmartDate(from).dayBeginning(), new SmartDate(to).dayEnd());
     }
 
     @Override

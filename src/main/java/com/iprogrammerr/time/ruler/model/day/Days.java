@@ -4,9 +4,7 @@ import java.util.List;
 
 public interface Days {
 
-    List<Day> userFrom(long id, long date);
-
-    List<Day> userTo(long id, long date);
+    List<Day> userRange(long id, long from, long to);
 
     long createForUser(long id, long date);
 

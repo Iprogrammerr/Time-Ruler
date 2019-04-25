@@ -11,13 +11,16 @@ import com.iprogrammerr.time.ruler.view.rendering.CalendarView;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 public class CalendarRespondent implements GroupedRespondent {
@@ -69,12 +72,10 @@ public class CalendarRespondent implements GroupedRespondent {
     }
 
     private List<CalendarDay> calendarDays(Context context, ZonedDateTime currentDate, boolean fromPast) {
-        long id = identity.value(context.req);
-        List<Day> plannedDays = fromPast ? days.userTo(id, currentDate.toEpochSecond()) :
-            days.userFrom(id, currentDate.toEpochSecond());
         int daysNumber = currentDate.toLocalDate().lengthOfMonth();
         List<CalendarDay> calendarDays = new ArrayList<>(daysNumber);
         int plannedDayIdx = 0;
+        List<Day> plannedDays = daysForCalendar(identity.value(context.req), currentDate, fromPast);
         long monthStart = monthStart(currentDate);
         for (int i = 0; i < daysNumber; i++) {
             long dayStart = monthStart + (DAY_SECONDS * i);
@@ -89,6 +90,18 @@ public class CalendarRespondent implements GroupedRespondent {
             calendarDays.add(new CalendarDay(i + 1, state));
         }
         return calendarDays;
+    }
+
+    private List<Day> daysForCalendar(long userId, ZonedDateTime requestedDate, boolean fromPast) {
+        List<Day> daysForCalendar;
+        if (fromPast) {
+            daysForCalendar = days.userRange(userId, requestedDate.withDayOfMonth(1).toEpochSecond(),
+                requestedDate.toEpochSecond());
+        } else {
+            daysForCalendar = days.userRange(userId, requestedDate.toEpochSecond(),
+                requestedDate.withDayOfMonth(requestedDate.toLocalDate().lengthOfMonth()).toEpochSecond());
+        }
+        return daysForCalendar;
     }
 
     private long monthStart(ZonedDateTime currentDate) {
@@ -119,16 +132,14 @@ public class CalendarRespondent implements GroupedRespondent {
     private DayState dayStateForPast(long dayStart, long dayEnd, long plannedDay) {
         DayState state;
         long currentDay = Instant.now().getEpochSecond();
-        if (dayEnd < currentDay) {
+        if (isBetween(dayStart, dayEnd, plannedDay)) {
+            state = DayState.PLANNED;
+        } else if (dayEnd < currentDay) {
             state = DayState.AVAILABLE;
         } else if (isBetween(dayStart, dayEnd, currentDay)) {
             state = DayState.CURRENT;
         } else {
-            if (isBetween(dayStart, dayEnd, plannedDay)) {
-                state = DayState.PLANNED;
-            } else {
-                state = DayState.NOT_AVAILABLE;
-            }
+            state = DayState.NOT_AVAILABLE;
         }
         return state;
     }

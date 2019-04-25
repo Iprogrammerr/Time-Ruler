@@ -40,43 +40,25 @@ public class DatabaseDaysTest {
     }
 
     @Test
-    public void returnsEmptyUserFromList() {
+    public void returnsEmptyUserRangeList() {
         long id = 1;
+        long from = Instant.now().getEpochSecond();
         MatcherAssert.assertThat(
-            "Should return an empty list", days.userFrom(id, Instant.now().getEpochSecond()), Matchers.empty()
+            "Should return an empty list", days.userRange(id, from, from + 1), Matchers.empty()
         );
     }
 
     @Test
-    public void returnsProperUserFromList() {
-        returnsProperUserList(true);
-    }
-
-    private void returnsProperUserList(boolean from) {
+    public void returnsProperUserRangeList() {
         User user = new RandomUsers().user();
         long id = users.create(user.name, user.email, user.password);
         long firstDate = Instant.now().getEpochSecond();
         long secondDate = firstDate + TimeUnit.DAYS.toSeconds(1);
         long firstId = days.createForUser(id, firstDate);
         long secondId = days.createForUser(id, secondDate);
-        MatcherAssert.assertThat(
-            "Should return a list that contains expected elements",
-            from ? days.userFrom(id, firstDate) : days.userTo(id, secondDate),
-            Matchers.contains(new Day(firstId, id, firstDate), new Day(secondId, id, secondDate))
-        );
-    }
-
-    @Test
-    public void returnsEmptyUserToList() {
-        long id = 2;
-        MatcherAssert.assertThat(
-            "Should return an empty list", days.userTo(id, Instant.now().getEpochSecond()), Matchers.empty()
-        );
-    }
-
-    @Test
-    public void returnsProperUserToList() {
-        returnsProperUserList(false);
+        MatcherAssert.assertThat("Should return a list that contains expected elements",
+            days.userRange(id, firstDate, secondDate),
+            Matchers.contains(new Day(firstId, id, firstDate), new Day(secondId, id, secondDate)));
     }
 
     @Test
@@ -86,8 +68,8 @@ public class DatabaseDaysTest {
         long date = Instant.now().getEpochSecond();
         long dayId = days.createForUser(userId, date);
         MatcherAssert.assertThat(
-            "Created day should be equal to expected", days.userFrom(userId, date),
-            Matchers.contains(new Day(dayId, userId, date))
+            "Created day should be equal to expected", days.ofUser(userId, date),
+            Matchers.equalTo(new Day(dayId, userId, date))
         );
     }
 
