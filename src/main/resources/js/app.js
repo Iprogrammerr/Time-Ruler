@@ -1,7 +1,7 @@
 import { Router } from "./navigation/router.js";
 import { HttpConnections } from "./http/http-connections.js";
 import { UrlParams } from "./http/url-params.js";
-import { DateTimeParams } from "./http/date-time-params.js";
+import { DateTimeParams } from "./date/date-time-params.js";
 import { Validations } from "./validation/validations.js";
 import { TabsNavigation } from "./navigation/tabs-navigation.js";
 
@@ -17,7 +17,8 @@ export const routes = {
     history: `${userRoutePrefix}history`,
     profile: `${userRoutePrefix}profile`,
     dayPlan: `${userRoutePrefix}plan/day`,
-    activity: `${userRoutePrefix}activity`
+    activity: `${userRoutePrefix}activity`,
+    dayPlanExecution: `${userRoutePrefix}day-plan-execution`
 };
 
 export const endpoints = {

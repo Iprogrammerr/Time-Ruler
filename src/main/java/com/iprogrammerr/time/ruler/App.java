@@ -21,18 +21,20 @@ import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.user.Users;
 import com.iprogrammerr.time.ruler.respondent.ActivityRespondent;
 import com.iprogrammerr.time.ruler.respondent.CalendarRespondent;
-import com.iprogrammerr.time.ruler.respondent.DayPlanRespondent;
 import com.iprogrammerr.time.ruler.respondent.ProfileRespondent;
 import com.iprogrammerr.time.ruler.respondent.TodayRespondent;
 import com.iprogrammerr.time.ruler.respondent.WelcomeRespondent;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningInRespondent;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningOutRespondent;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningUpRespondent;
+import com.iprogrammerr.time.ruler.respondent.day.DayPlanExecutionRespondent;
+import com.iprogrammerr.time.ruler.respondent.day.DayPlanRespondent;
 import com.iprogrammerr.time.ruler.view.HtmlViews;
 import com.iprogrammerr.time.ruler.view.HtmlViewsTemplates;
 import com.iprogrammerr.time.ruler.view.Views;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import com.iprogrammerr.time.ruler.view.rendering.CalendarView;
+import com.iprogrammerr.time.ruler.view.rendering.DayPlanExecutionView;
 import com.iprogrammerr.time.ruler.view.rendering.SigningInView;
 import io.javalin.BadRequestResponse;
 import io.javalin.ForbiddenResponse;
@@ -67,6 +69,7 @@ public class App {
 
         SigningInView signingInView = new SigningInView(viewsTemplates);
         CalendarView calendarView = new CalendarView(viewsTemplates);
+        DayPlanExecutionView dayPlanExecutionView = new DayPlanExecutionView(viewsTemplates);
 
         Database database = new SqlDatabase(configuration.databaseUser(), configuration.databasePassword(),
             configuration.jdbcUrl());
@@ -100,6 +103,8 @@ public class App {
         DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, viewsTemplates, activities, dateFormat);
         ActivityRespondent activityRespondent = new ActivityRespondent(identity, viewsTemplates, dayPlanRespondent,
             days, activities, offsetAttribute);
+        DayPlanExecutionRespondent dayPlanExecutionRespondent = new DayPlanExecutionRespondent(identity,
+            dayPlanExecutionView, activities, dateFormat);
 
         String userGroup = "user/";
 
@@ -112,6 +117,7 @@ public class App {
         profileRespondent.init(userGroup, app);
         dayPlanRespondent.init(userGroup, app);
         activityRespondent.init(userGroup, app);
+        dayPlanExecutionRespondent.init(userGroup, app);
 
         app.before(userGroup + "*", ctx -> {
             if (!identity.isValid(ctx.req)) {

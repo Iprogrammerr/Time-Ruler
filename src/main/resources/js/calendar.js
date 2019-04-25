@@ -2,7 +2,7 @@ import { tabsNavigation } from "./app.js";
 import { router } from "./app.js";
 import { routes } from "./app.js";
 import { dateTimeParams } from "./app.js";
-import { SmartDate } from "./smart-date.js";
+import { SmartDate } from "./date/smart-date.js";
 
 const STATE = {
     PLAN: "plan",
@@ -25,7 +25,7 @@ function stateFromActive(activeIndex) {
     } else {
         name = STATE.HISTORY;
         mainRoute = routes.history;
-        detailRoute = routes.history;
+        detailRoute = routes.dayPlanExecution;
     }
     return {
         name: name,
@@ -63,9 +63,8 @@ function setupDaysNavigation() {
     for (let i = 0; i < days.length; i++) {
         let className = days[i].children[0].className;
         if (className !== notAvailableClass) {
-            days[i].onclick = () => router.forwardWithParams(
-                state.detailRoute, dateTimeParams.yearMonthDayAsParams(yearMonth.year, yearMonth.month, i + 1)
-            );
+            let params = dateTimeParams.yearMonthDayAsParams(yearMonth.year, yearMonth.month, i + 1);
+            days[i].onclick = () => router.forwardWithParams(state.detailRoute, params);
         }
     }
 }

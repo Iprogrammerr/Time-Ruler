@@ -212,3 +212,10 @@ ul.activities li:hover {
     background: #bbb;
 }
 
+.two-columns-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto auto;
+    padding: 12px;
+    grid-gap: 8px;
+}

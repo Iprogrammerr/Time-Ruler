@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title th:text="${history}? #{historyDayTitle} : #{todayTitle}"></title>
+    <link rel="stylesheet" type="text/css" href="/style.css" />
+</head>
+
+<body class="marginless">
+    <div class="tab">
+        <button th:class="!${history}? active">Today</button>
+        <button>Plan</button>
+        <button th:class="${history}? active">History</button>
+        <button>Profile</button>
+    </div>
+    <div class="two-columns-grid">
+        <div class="centered-h">
+            <p th:if="${plannedActivities.size()} == 0" th:text="#{emptyPlanMessage}"></p>
+            <ul class="activities">
+                <li th:each="pa : ${plannedActivities}">
+                    <div th:utext="|${pa.start} - ${pa.end}|"></div>
+                    <div th:text="${pa.name}"></div>
+                    <span class="close">&times;</span>
+                </li>
+            </ul>
+            <button id="addPlan" th:text="#{addMessage}"></button>
+        </div>
+        <div class="centered-h">
+            <p th:if="${executedActivities.size()} == 0" th:text="#{emptyExecutionMessage}"></p>
+            <ul class="activities">
+                <li th:each="ea : ${executedActivities}">
+                    <div th:utext="|${ea.start} - ${ea.end}|"></div>
+                    <div th:text="${ea.name}"></div>
+                    <span class="close">&times;</span>
+                </li>
+            </ul>
+            <button id="addExecution" th:text="#{addMessage}"></button>
+        </div>
+    </div>
+</body>
+<script src="/day-plan-execution.js" type="module"></script>
+
+</html>

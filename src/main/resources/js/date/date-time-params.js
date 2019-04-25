@@ -1,4 +1,4 @@
-import { SmartDate } from "../smart-date.js";
+import { SmartDate } from "./smart-date.js";
 
 export function DateTimeParams(urlParams, paramsKeys) {
 

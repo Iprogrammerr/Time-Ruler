@@ -1,4 +1,4 @@
-package com.iprogrammerr.time.ruler.respondent;
+package com.iprogrammerr.time.ruler.respondent.day;
 
 import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.date.SmartDate;
@@ -6,6 +6,7 @@ import com.iprogrammerr.time.ruler.model.date.YearMonthDay;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
 import com.iprogrammerr.time.ruler.model.rendering.ForListActivity;
+import com.iprogrammerr.time.ruler.respondent.GroupedRespondent;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import io.javalin.Context;
 import io.javalin.Javalin;

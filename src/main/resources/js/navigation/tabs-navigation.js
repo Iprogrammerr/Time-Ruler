@@ -1,6 +1,6 @@
 import { routes } from "../app.js";
 import { dateTimeParams } from "../app.js";
-import { SmartDate } from "../smart-date.js";
+import { SmartDate } from "../date/smart-date.js";
 
 export function TabsNavigation(router, activeClassName = "active") {
 

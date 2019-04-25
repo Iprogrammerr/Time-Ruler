@@ -8,6 +8,7 @@ import com.iprogrammerr.time.ruler.model.date.YearMonthDay;
 import com.iprogrammerr.time.ruler.model.day.Day;
 import com.iprogrammerr.time.ruler.model.day.Days;
 import com.iprogrammerr.time.ruler.model.session.UtcOffsetAttribute;
+import com.iprogrammerr.time.ruler.respondent.day.DayPlanRespondent;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateableTime;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
