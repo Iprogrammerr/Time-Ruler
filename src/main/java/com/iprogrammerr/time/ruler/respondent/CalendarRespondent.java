@@ -11,16 +11,13 @@ import com.iprogrammerr.time.ruler.view.rendering.CalendarView;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
-import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 public class CalendarRespondent implements GroupedRespondent {

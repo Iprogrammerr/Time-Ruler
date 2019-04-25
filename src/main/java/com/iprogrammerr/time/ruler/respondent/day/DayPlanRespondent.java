@@ -1,13 +1,13 @@
 package com.iprogrammerr.time.ruler.respondent.day;
 
 import com.iprogrammerr.time.ruler.model.Identity;
-import com.iprogrammerr.time.ruler.model.date.SmartDate;
-import com.iprogrammerr.time.ruler.model.date.YearMonthDay;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
+import com.iprogrammerr.time.ruler.model.date.SmartDate;
+import com.iprogrammerr.time.ruler.model.date.YearMonthDay;
 import com.iprogrammerr.time.ruler.model.rendering.ForListActivity;
 import com.iprogrammerr.time.ruler.respondent.GroupedRespondent;
-import com.iprogrammerr.time.ruler.view.ViewsTemplates;
+import com.iprogrammerr.time.ruler.view.rendering.DayPlanView;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
@@ -17,26 +17,22 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+//TODO remove reading year/month/day code duplication
 public class DayPlanRespondent implements GroupedRespondent {
 
     private static final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
     private static final int MAX_YEAR_OFFSET_VALUE = 100;
-    private static final String DAY_PLAN_TEMPLATE = "day-plan";
-    private static final String DATE_TEMPLATE_PARAM = "date";
-    private static final String ACTIVITIES_TEMPLATE_PARAM = "activities";
     private static final String DAY_PLAN = "plan/day";
     private final Identity<Long> identity;
-    private final ViewsTemplates templates;
+    private final DayPlanView view;
     private final Activities activities;
     private final DateFormat dateFormat;
 
-    public DayPlanRespondent(Identity<Long> identity, ViewsTemplates templates, Activities activities, DateFormat dateFormat) {
+    public DayPlanRespondent(Identity<Long> identity, DayPlanView view, Activities activities, DateFormat dateFormat) {
         this.identity = identity;
-        this.templates = templates;
+        this.view = view;
         this.activities = activities;
         this.dateFormat = dateFormat;
     }
@@ -61,14 +57,12 @@ public class DayPlanRespondent implements GroupedRespondent {
             day = maxDay;
         }
         Instant date = Instant.ofEpochSecond(requestedDate.withDayOfMonth(day).toEpochSecond());
-        Map<String, Object> params = new HashMap<>();
-        params.put(DATE_TEMPLATE_PARAM, dateFormat.format(date.toEpochMilli()));
-        params.put(ACTIVITIES_TEMPLATE_PARAM, dayActivities(identity.value(context.req), date.getEpochSecond()));
-        context.html(templates.rendered(DAY_PLAN_TEMPLATE, params));
+        context.html(view.rendered(dateFormat.format(date.toEpochMilli()),
+            plannedActivities(identity.value(context.req), date.getEpochSecond())));
     }
 
-    private List<ForListActivity> dayActivities(long id, long date) {
-        List<Activity> dayActivities = activities.ofUserDate(id, date);
+    private List<ForListActivity> plannedActivities(long id, long date) {
+        List<Activity> dayActivities = activities.ofUserDatePlanned(id, date);
         List<ForListActivity> viewActivities = new ArrayList<>(dayActivities.size());
         for (Activity a : dayActivities) {
             viewActivities.add(new ForListActivity(a, TIME_FORMAT));

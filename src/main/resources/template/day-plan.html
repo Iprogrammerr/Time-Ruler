@@ -2,21 +2,20 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 
 <head>
-    <title>Day plan</title>
+    <title th:text="#{dayPlanTitle}"></title>
     <link rel="stylesheet" type="text/css" href="/style.css" />
 </head>
 
 <body class="marginless">
-    <!--TODO which tab should be active?-->
     <div class="tab">
         <button>Today</button>
         <button class="active">Plan</button>
         <button>History</button>
         <button>Profile</button>
     </div>
-    <div class="centered-h">
+    <div class="centered-h" style="padding: 8px 16px">
         <h1 th:text=${date}></h1>
-        <p th:if="${activities.size()} == 0">You have not planned any activity. Start by clicking a button below</p>
+        <p th:if="${activities.isEmpty()}" th:text="#{emptyPlanMessage}"></p>
         <ul class="activities">
             <li th:each="a : ${activities}">
                 <div th:utext="|${a.start} - ${a.end}|"></div>
@@ -24,7 +23,7 @@
                 <span class="close">&times;</span>
             </li>
         </ul>
-        <button id="add">Add</button>
+        <button id="add" th:text="#{addActivity}"></button>
     </div>
 </body>
 <script src="/day-plan.js" type="module"></script>

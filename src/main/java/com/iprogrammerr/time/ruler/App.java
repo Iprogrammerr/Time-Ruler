@@ -35,6 +35,7 @@ import com.iprogrammerr.time.ruler.view.Views;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import com.iprogrammerr.time.ruler.view.rendering.CalendarView;
 import com.iprogrammerr.time.ruler.view.rendering.DayPlanExecutionView;
+import com.iprogrammerr.time.ruler.view.rendering.DayPlanView;
 import com.iprogrammerr.time.ruler.view.rendering.SigningInView;
 import io.javalin.BadRequestResponse;
 import io.javalin.ForbiddenResponse;
@@ -46,6 +47,7 @@ import org.thymeleaf.templateresolver.FileTemplateResolver;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 public class App {
 
@@ -70,6 +72,7 @@ public class App {
         SigningInView signingInView = new SigningInView(viewsTemplates);
         CalendarView calendarView = new CalendarView(viewsTemplates);
         DayPlanExecutionView dayPlanExecutionView = new DayPlanExecutionView(viewsTemplates);
+        DayPlanView dayPlanView = new DayPlanView(viewsTemplates);
 
         Database database = new SqlDatabase(configuration.databaseUser(), configuration.databasePassword(),
             configuration.jdbcUrl());
@@ -90,6 +93,7 @@ public class App {
         Identity<Long> identity = new SessionIdentity();
 
         DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         UtcOffsetAttribute offsetAttribute = new UtcOffsetAttribute();
 
         WelcomeRespondent welcomeRespondent = new WelcomeRespondent(views);
@@ -100,7 +104,7 @@ public class App {
         SigningOutRespondent signingOutRespondent = new SigningOutRespondent(signingInView);
         CalendarRespondent calendarRespondent = new CalendarRespondent(identity, calendarView, days);
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, viewsTemplates);
-        DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, viewsTemplates, activities, dateFormat);
+        DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, dayPlanView, activities, dateFormat);
         ActivityRespondent activityRespondent = new ActivityRespondent(identity, viewsTemplates, dayPlanRespondent,
             days, activities, offsetAttribute);
         DayPlanExecutionRespondent dayPlanExecutionRespondent = new DayPlanExecutionRespondent(identity,
