@@ -11,7 +11,7 @@ import com.iprogrammerr.time.ruler.model.session.UtcOffsetAttribute;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanRespondent;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateableTime;
-import com.iprogrammerr.time.ruler.view.ViewsTemplates;
+import com.iprogrammerr.time.ruler.view.rendering.ActivityView;
 import io.javalin.BadRequestResponse;
 import io.javalin.Context;
 import io.javalin.Javalin;
@@ -20,18 +20,11 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ActivityRespondent implements GroupedRespondent {
 
     private static final int MAX_YEAR_OFFSET_VALUE = 100;
-    private static final String INVALID_NAME_TEMPLATE = "invalidName";
-    private static final String INVALID_START_TIME_TEMPLATE = "invalidStartTime";
-    private static final String INVALID_END_TIME_TEMPLATE = "invalidEndTime";
-    private static final String START_TIME_TEMPLATE = "start";
-    private static final String END_TIME_TEMPLATE = "end";
     private static final String FORM_NAME = "name";
     private static final String FORM_START_TIME = "start";
     private static final String FORM_END_TIME = "end";
@@ -41,16 +34,16 @@ public class ActivityRespondent implements GroupedRespondent {
     private static final String ID = "id";
     private static final String ACTIVITY_WITH_ID = ACTIVITY + "/:" + ID;
     private final Identity<Long> identity;
-    private final ViewsTemplates templates;
+    private final ActivityView view;
     private final DayPlanRespondent dayPlanRespondent;
     private final Days days;
     private final Activities activities;
     private final UtcOffsetAttribute offsetAttribute;
 
-    public ActivityRespondent(Identity<Long> identity, ViewsTemplates templates, DayPlanRespondent dayPlanRespondent,
+    public ActivityRespondent(Identity<Long> identity, ActivityView view, DayPlanRespondent dayPlanRespondent,
         Days days, Activities activities, UtcOffsetAttribute offsetAttribute) {
         this.identity = identity;
-        this.templates = templates;
+        this.view = view;
         this.dayPlanRespondent = dayPlanRespondent;
         this.days = days;
         this.activities = activities;
@@ -59,26 +52,22 @@ public class ActivityRespondent implements GroupedRespondent {
 
     @Override
     public void init(String group, Javalin app) {
-        app.get(group + ACTIVITY, this::showEmptyActivity);
+        app.get(group + ACTIVITY, this::showEmpty);
         app.get(group + ACTIVITY_WITH_ID, this::showActivity);
         app.post(group + ACTIVITY, this::createActivity);
         app.post(group + ACTIVITY_WITH_ID, this::saveActivity);
     }
 
-    private void showEmptyActivity(Context context) {
+    private void showEmpty(Context context) {
         int utcOffset = offsetAttribute.from(context.req.getSession());
         ZonedDateTime clientDate = ZonedDateTime.now(Clock.systemUTC()).plusSeconds(utcOffset);
-        String time = String.format("%02d:%02d", clientDate.getHour(), clientDate.getMinute());
-        Map<String, Object> params = new HashMap<>();
-        params.put(START_TIME_TEMPLATE, time);
-        params.put(END_TIME_TEMPLATE, time);
-        context.html(templates.rendered(ACTIVITY, params));
+        context.html(view.renderEmpty(clientDate.getHour(), clientDate.getMinute()));
     }
 
     //TODO render with proper params
     private void showActivity(Context context) {
         int id = context.pathParam(ID, Integer.class).get();
-        context.html(templates.rendered(ACTIVITY, new HashMap<>()));
+        context.html(view.renderedFilled("", "", "", ""));
     }
 
     private void createActivity(Context context) {
@@ -102,16 +91,8 @@ public class ActivityRespondent implements GroupedRespondent {
             dayPlanRespondent.redirect(context, dayDate.getYear(), dayDate.getMonthValue(),
                 dayDate.getDayOfMonth());
         } else {
-            renderActivityWithErrors(context, name.isValid(), start.isValid(), end.isValid());
+            context.html(view.renderWithErrors(!name.isValid(), !start.isValid(), !end.isValid()));
         }
-    }
-
-    private void renderActivityWithErrors(Context context, boolean nameValid, boolean startValid, boolean endValid) {
-        Map<String, Object> errors = new HashMap<>();
-        errors.put(INVALID_NAME_TEMPLATE, !nameValid);
-        errors.put(INVALID_START_TIME_TEMPLATE, !startValid);
-        errors.put(INVALID_END_TIME_TEMPLATE, !endValid);
-        context.html(templates.rendered(ACTIVITY, errors));
     }
 
     private Day existingOrNew(Context context) {

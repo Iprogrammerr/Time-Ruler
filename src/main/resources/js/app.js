@@ -25,7 +25,6 @@ export const endpoints = {
     signIn: `${host}sign-in`,
     signUp: `${host}sign-up`,
     signOut: `${host}sign-out`,
-    saveActivity: `${host}${userRoutePrefix}activity`
 };
 
 export const paramsKeys = {
@@ -39,10 +38,14 @@ export const hiddenInputKeys = {
     utcOffset: "utcOffset"
 };
 
-
 export const router = new Router(host);
 export const tabsNavigation = new TabsNavigation(router);
 export const httpConnections = new HttpConnections();
 export const urlParams = new UrlParams();
 export const dateTimeParams = new DateTimeParams(urlParams, paramsKeys);
 export const validations = new Validations();
+
+export const parametrizedRoutes = {
+    createActivity: (year, month, day) => router.routeWithParams(routes.activity, dateTimeParams.yearMonthDayAsParams(year, month, day)),
+    updateActivity: (id) => router.fullRoute(routes.activity) + `/${id}`
+};

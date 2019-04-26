@@ -33,6 +33,7 @@ import com.iprogrammerr.time.ruler.view.HtmlViews;
 import com.iprogrammerr.time.ruler.view.HtmlViewsTemplates;
 import com.iprogrammerr.time.ruler.view.Views;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
+import com.iprogrammerr.time.ruler.view.rendering.ActivityView;
 import com.iprogrammerr.time.ruler.view.rendering.CalendarView;
 import com.iprogrammerr.time.ruler.view.rendering.DayPlanExecutionView;
 import com.iprogrammerr.time.ruler.view.rendering.DayPlanView;
@@ -73,6 +74,7 @@ public class App {
         CalendarView calendarView = new CalendarView(viewsTemplates);
         DayPlanExecutionView dayPlanExecutionView = new DayPlanExecutionView(viewsTemplates);
         DayPlanView dayPlanView = new DayPlanView(viewsTemplates);
+        ActivityView activityView = new ActivityView(viewsTemplates);
 
         Database database = new SqlDatabase(configuration.databaseUser(), configuration.databasePassword(),
             configuration.jdbcUrl());
@@ -105,7 +107,7 @@ public class App {
         CalendarRespondent calendarRespondent = new CalendarRespondent(identity, calendarView, days);
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, viewsTemplates);
         DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, dayPlanView, activities, dateFormat);
-        ActivityRespondent activityRespondent = new ActivityRespondent(identity, viewsTemplates, dayPlanRespondent,
+        ActivityRespondent activityRespondent = new ActivityRespondent(identity, activityView, dayPlanRespondent,
             days, activities, offsetAttribute);
         DayPlanExecutionRespondent dayPlanExecutionRespondent = new DayPlanExecutionRespondent(identity,
             dayPlanExecutionView, activities, dateFormat);
