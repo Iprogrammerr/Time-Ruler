@@ -5,7 +5,7 @@ import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
 import com.iprogrammerr.time.ruler.model.date.SmartDate;
 import com.iprogrammerr.time.ruler.model.date.YearMonthDay;
-import com.iprogrammerr.time.ruler.model.rendering.ForListActivity;
+import com.iprogrammerr.time.ruler.model.rendering.ForViewActivity;
 import com.iprogrammerr.time.ruler.respondent.GroupedRespondent;
 import com.iprogrammerr.time.ruler.view.rendering.DayPlanExecutionView;
 import io.javalin.Context;
@@ -45,10 +45,10 @@ public class DayPlanExecutionRespondent implements GroupedRespondent {
         ZonedDateTime requestedDate = requestedDate(context);
         List<Activity> dayActivities = activities
             .ofUserDate(identity.value(context.req), requestedDate.toEpochSecond());
-        List<ForListActivity> plannedActivities = new ArrayList<>();
-        List<ForListActivity> executedActivities = new ArrayList<>();
+        List<ForViewActivity> plannedActivities = new ArrayList<>();
+        List<ForViewActivity> executedActivities = new ArrayList<>();
         for (Activity a : dayActivities) {
-            ForListActivity activity = new ForListActivity(a, TIME_FORMAT);
+            ForViewActivity activity = new ForViewActivity(a, TIME_FORMAT);
             if (a.done) {
                 executedActivities.add(activity);
             } else {

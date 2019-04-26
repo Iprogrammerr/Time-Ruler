@@ -4,6 +4,7 @@ import com.iprogrammerr.time.ruler.database.DatabaseSession;
 import com.iprogrammerr.time.ruler.database.Record;
 import com.iprogrammerr.time.ruler.model.date.SmartDate;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +66,11 @@ public class DatabaseActivities implements Activities {
             }
             throw new RuntimeException(String.format("There is no activity associated with %d id", id));
         }, "SELECT * from activity WHERE id = ?", id);
+    }
+
+    @Override
+    public boolean exists(long id) {
+        return session.select(ResultSet::next, "SELECT id from activity WHERE id = ?", id);
     }
 
     private enum ActivitiesFilter {

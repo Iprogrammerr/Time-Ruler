@@ -27,7 +27,7 @@ public class ActivityView {
         this(templates, "activity");
     }
 
-    public String renderEmpty(int hour, int minute) {
+    public String empty(int hour, int minute) {
         Map<String, Object> params = new HashMap<>();
         String time = String.format(TIME_FORMAT, hour, minute);
         params.put(START_TIME_TEMPLATE, time);
@@ -35,7 +35,7 @@ public class ActivityView {
         return templates.rendered(name, params);
     }
 
-    public String renderWithErrors(boolean nameError, boolean startError, boolean endError) {
+    public String withErrors(boolean nameError, boolean startError, boolean endError) {
         Map<String, Object> params = new HashMap<>();
         params.put(INVALID_NAME_TEMPLATE, nameError);
         params.put(INVALID_START_TIME_TEMPLATE, startError);
@@ -43,8 +43,7 @@ public class ActivityView {
         return templates.rendered(name, params);
     }
 
-    //TODO values form
-    public String renderedFilled(String name, String startTime, String endTime, String description) {
+    public String filled(String name, String startTime, String endTime, String description) {
         Map<String, Object> params = new HashMap<>();
         params.put(NAME_TEMPLATE, name);
         params.put(START_TIME_TEMPLATE, startTime);

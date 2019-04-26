@@ -4,6 +4,7 @@ import com.iprogrammerr.time.ruler.TestDatabaseSetup;
 import com.iprogrammerr.time.ruler.database.DatabaseSession;
 import com.iprogrammerr.time.ruler.database.QueryTemplates;
 import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
+import com.iprogrammerr.time.ruler.matcher.ThrowsMatcher;
 import com.iprogrammerr.time.ruler.mock.RandomActivities;
 import com.iprogrammerr.time.ruler.mock.RandomStrings;
 import com.iprogrammerr.time.ruler.mock.RandomUsers;
@@ -71,4 +72,18 @@ public class DatabaseDescriptionsTest {
             descriptions.describedActivity(activity.id), Matchers.equalTo(new DescribedActivity(activity, content)));
     }
 
+    @Test
+    public void returnsActivityWithEmptyDescription() {
+        Activity activity = createActivity();
+        MatcherAssert.assertThat("Does not return activity with empty description",
+            descriptions.describedActivity(activity.id), Matchers.equalTo(new DescribedActivity(activity, "")));
+    }
+
+    @Test
+    public void throwsExceptionIfActivityDoesNotExist() {
+        long id = new Random().nextInt();
+        String message = String.format("There is no activity associated with %d id", id);
+        MatcherAssert.assertThat("Does no throw exception with proper message",
+            () -> descriptions.describedActivity(id), new ThrowsMatcher(message));
+    }
 }

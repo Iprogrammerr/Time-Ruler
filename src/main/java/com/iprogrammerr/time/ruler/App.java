@@ -8,6 +8,7 @@ import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
 import com.iprogrammerr.time.ruler.email.ConfigurableEmailServer;
 import com.iprogrammerr.time.ruler.email.EmailServer;
 import com.iprogrammerr.time.ruler.email.Emails;
+import com.iprogrammerr.time.ruler.model.Formatting;
 import com.iprogrammerr.time.ruler.model.Hashing;
 import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.Messages;
@@ -15,6 +16,8 @@ import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.DatabaseActivities;
 import com.iprogrammerr.time.ruler.model.day.DatabaseDays;
 import com.iprogrammerr.time.ruler.model.day.Days;
+import com.iprogrammerr.time.ruler.model.description.DatabaseDescriptions;
+import com.iprogrammerr.time.ruler.model.description.Descriptions;
 import com.iprogrammerr.time.ruler.model.session.SessionIdentity;
 import com.iprogrammerr.time.ruler.model.session.UtcOffsetAttribute;
 import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
@@ -82,6 +85,7 @@ public class App {
         Users users = new DatabaseUsers(session);
         Days days = new DatabaseDays(session);
         Activities activities = new DatabaseActivities(session);
+        Descriptions descriptions = new DatabaseDescriptions(session);
 
         EmailServer emailServer = new ConfigurableEmailServer(
             configuration.adminEmail(), configuration.adminPassword(),
@@ -96,6 +100,7 @@ public class App {
 
         DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Formatting formatting = new Formatting(new SimpleDateFormat("HH:mm"));
         UtcOffsetAttribute offsetAttribute = new UtcOffsetAttribute();
 
         WelcomeRespondent welcomeRespondent = new WelcomeRespondent(views);
@@ -108,7 +113,7 @@ public class App {
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, viewsTemplates);
         DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, dayPlanView, activities, dateFormat);
         ActivityRespondent activityRespondent = new ActivityRespondent(identity, activityView, dayPlanRespondent,
-            days, activities, offsetAttribute);
+            days, activities, descriptions, offsetAttribute, formatting);
         DayPlanExecutionRespondent dayPlanExecutionRespondent = new DayPlanExecutionRespondent(identity,
             dayPlanExecutionView, activities, dateFormat);
 

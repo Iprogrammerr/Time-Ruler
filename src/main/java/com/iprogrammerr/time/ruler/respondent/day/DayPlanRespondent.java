@@ -5,7 +5,7 @@ import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
 import com.iprogrammerr.time.ruler.model.date.SmartDate;
 import com.iprogrammerr.time.ruler.model.date.YearMonthDay;
-import com.iprogrammerr.time.ruler.model.rendering.ForListActivity;
+import com.iprogrammerr.time.ruler.model.rendering.ForViewActivity;
 import com.iprogrammerr.time.ruler.respondent.GroupedRespondent;
 import com.iprogrammerr.time.ruler.view.rendering.DayPlanView;
 import io.javalin.Context;
@@ -61,11 +61,11 @@ public class DayPlanRespondent implements GroupedRespondent {
             plannedActivities(identity.value(context.req), date.getEpochSecond())));
     }
 
-    private List<ForListActivity> plannedActivities(long id, long date) {
+    private List<ForViewActivity> plannedActivities(long id, long date) {
         List<Activity> dayActivities = activities.ofUserDatePlanned(id, date);
-        List<ForListActivity> viewActivities = new ArrayList<>(dayActivities.size());
+        List<ForViewActivity> viewActivities = new ArrayList<>(dayActivities.size());
         for (Activity a : dayActivities) {
-            viewActivities.add(new ForListActivity(a, TIME_FORMAT));
+            viewActivities.add(new ForViewActivity(a, TIME_FORMAT));
         }
         return viewActivities;
     }

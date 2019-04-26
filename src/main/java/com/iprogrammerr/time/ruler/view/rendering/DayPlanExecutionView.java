@@ -1,6 +1,6 @@
 package com.iprogrammerr.time.ruler.view.rendering;
 
-import com.iprogrammerr.time.ruler.model.rendering.ForListActivity;
+import com.iprogrammerr.time.ruler.model.rendering.ForViewActivity;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 
 import java.util.HashMap;
@@ -24,7 +24,7 @@ public class DayPlanExecutionView {
         this(templates, "day-plan-execution");
     }
 
-    public String rendered(boolean history, List<ForListActivity> plannedActivities, List<ForListActivity> executedActivities) {
+    public String rendered(boolean history, List<ForViewActivity> plannedActivities, List<ForViewActivity> executedActivities) {
         Map<String, Object> params = new HashMap<>();
         params.put(HISTORY_TEMPLATE, history);
         params.put(PLANNED_ACTIVITIES_TEMPLATE, plannedActivities);

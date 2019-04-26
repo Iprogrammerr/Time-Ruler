@@ -1,6 +1,6 @@
 package com.iprogrammerr.time.ruler.view.rendering;
 
-import com.iprogrammerr.time.ruler.model.rendering.ForListActivity;
+import com.iprogrammerr.time.ruler.model.rendering.ForViewActivity;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 
 import java.util.HashMap;
@@ -23,7 +23,7 @@ public class DayPlanView {
         this(templates, "day-plan");
     }
 
-    public String rendered(String date, List<ForListActivity> activities) {
+    public String rendered(String date, List<ForViewActivity> activities) {
         Map<String, Object> params = new HashMap<>();
         params.put(DATE_TEMPLATE, date);
         params.put(ACTIVITIES_TEMPLATE, activities);

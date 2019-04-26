@@ -1,12 +1,16 @@
 package com.iprogrammerr.time.ruler.respondent;
 
+import com.iprogrammerr.time.ruler.model.Formatting;
 import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
+import com.iprogrammerr.time.ruler.model.activity.DescribedActivity;
 import com.iprogrammerr.time.ruler.model.date.SmartDate;
 import com.iprogrammerr.time.ruler.model.date.YearMonthDay;
 import com.iprogrammerr.time.ruler.model.day.Day;
 import com.iprogrammerr.time.ruler.model.day.Days;
+import com.iprogrammerr.time.ruler.model.description.Description;
+import com.iprogrammerr.time.ruler.model.description.Descriptions;
 import com.iprogrammerr.time.ruler.model.session.UtcOffsetAttribute;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanRespondent;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
@@ -38,16 +42,21 @@ public class ActivityRespondent implements GroupedRespondent {
     private final DayPlanRespondent dayPlanRespondent;
     private final Days days;
     private final Activities activities;
+    private final Descriptions descriptions;
     private final UtcOffsetAttribute offsetAttribute;
+    private final Formatting formatting;
 
     public ActivityRespondent(Identity<Long> identity, ActivityView view, DayPlanRespondent dayPlanRespondent,
-        Days days, Activities activities, UtcOffsetAttribute offsetAttribute) {
+        Days days, Activities activities, Descriptions descriptions, UtcOffsetAttribute offsetAttribute,
+        Formatting formatting) {
         this.identity = identity;
         this.view = view;
         this.dayPlanRespondent = dayPlanRespondent;
         this.days = days;
         this.activities = activities;
+        this.descriptions = descriptions;
         this.offsetAttribute = offsetAttribute;
+        this.formatting = formatting;
     }
 
     @Override
@@ -61,13 +70,21 @@ public class ActivityRespondent implements GroupedRespondent {
     private void showEmpty(Context context) {
         int utcOffset = offsetAttribute.from(context.req.getSession());
         ZonedDateTime clientDate = ZonedDateTime.now(Clock.systemUTC()).plusSeconds(utcOffset);
-        context.html(view.renderEmpty(clientDate.getHour(), clientDate.getMinute()));
+        context.html(view.empty(clientDate.getHour(), clientDate.getMinute()));
     }
 
     //TODO render with proper params
     private void showActivity(Context context) {
         int id = context.pathParam(ID, Integer.class).get();
-        context.html(view.renderedFilled("", "", "", ""));
+        if (activities.exists(id)) {
+            DescribedActivity activity = descriptions.describedActivity(id);
+            String startTime = formatting.timeFromSeconds(activity.activity.startTime);
+            String endTime = formatting.timeFromSeconds(activity.activity.endTime);
+            context.html(view.filled(activity.activity.name, startTime,
+                endTime, activity.description));
+        } else {
+            showEmpty(context);
+        }
     }
 
     private void createActivity(Context context) {
@@ -91,7 +108,7 @@ public class ActivityRespondent implements GroupedRespondent {
             dayPlanRespondent.redirect(context, dayDate.getYear(), dayDate.getMonthValue(),
                 dayDate.getDayOfMonth());
         } else {
-            context.html(view.renderWithErrors(!name.isValid(), !start.isValid(), !end.isValid()));
+            context.html(view.withErrors(!name.isValid(), !start.isValid(), !end.isValid()));
         }
     }
 
@@ -120,7 +137,7 @@ public class ActivityRespondent implements GroupedRespondent {
         }
         long id = activities.create(activity);
         if (!description.isEmpty()) {
-            //TODO create description
+            descriptions.create(new Description(id, description));
         }
     }
 

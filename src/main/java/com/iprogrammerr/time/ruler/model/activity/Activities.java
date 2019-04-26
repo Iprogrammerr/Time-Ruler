@@ -13,4 +13,6 @@ public interface Activities {
     long create(Activity activity);
 
     Activity activity(long id);
+
+    boolean exists(long id);
 }
