@@ -52,8 +52,12 @@ public class Messages implements IMessageResolver {
         return message;
     }
 
-    private String absentMessage(String key) {
+    public String absentMessage(String key) {
         return String.format("There is no message associated with %s key", key);
+    }
+
+    public String resolveMessage(String key) {
+        return resolveMessage(null, Messages.class, key, new Object[0]);
     }
 
     @Override
