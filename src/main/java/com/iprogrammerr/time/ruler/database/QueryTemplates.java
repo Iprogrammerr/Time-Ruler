@@ -65,4 +65,10 @@ public class QueryTemplates {
         }
         return builder.append(" where ").append(query(whereTemplate, values)).toString();
     }
+
+    public String delete(String table, String whereTemplate, Object... values) {
+        return new StringBuilder("delete from ").append(table)
+            .append(" where ").append(query(whereTemplate, values))
+            .toString();
+    }
 }

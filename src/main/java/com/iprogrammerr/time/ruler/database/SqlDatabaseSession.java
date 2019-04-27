@@ -57,10 +57,10 @@ public class SqlDatabaseSession implements DatabaseSession {
     }
 
     @Override
-    public void delete(String query) {
+    public void delete(String table, String whereTemplate, Object... values) {
         try (Connection c = database.connection()) {
             Statement statement = c.createStatement();
-            statement.executeUpdate(query);
+            statement.executeUpdate(templates.delete(table, whereTemplate, values));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -10,5 +10,5 @@ public interface DatabaseSession {
 
     void update(Record record, String whereTemplate, Object... values);
 
-    void delete(String query);
+    void delete(String table, String whereTemplate, Object... values);
 }

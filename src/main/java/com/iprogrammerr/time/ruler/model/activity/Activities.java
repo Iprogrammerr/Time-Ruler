@@ -14,6 +14,8 @@ public interface Activities {
 
     void update(Activity activity);
 
+    void delete(long id);
+
     Activity activity(long id);
 
     boolean exists(long id);

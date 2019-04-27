@@ -76,6 +76,11 @@ public class DatabaseActivities implements Activities {
     }
 
     @Override
+    public void delete(long id) {
+        session.delete("activity", "id = ?", id);
+    }
+
+    @Override
     public Activity activity(long id) {
         return session.select(r -> {
             if (r.next()) {

@@ -62,6 +62,7 @@ public class ActivityRespondent implements GroupedRespondent {
         app.get(group + ACTIVITY_WITH_ID, this::showActivity);
         app.post(group + ACTIVITY, this::createActivity);
         app.post(group + ACTIVITY_WITH_ID, this::updateActivity);
+        app.delete(group + ACTIVITY_WITH_ID, this::deleteActivity);
     }
 
     private void showEmpty(Context context) {
@@ -164,5 +165,9 @@ public class ActivityRespondent implements GroupedRespondent {
         if (!description.isEmpty()) {
             descriptions.updateOrCreate(new Description(activity.id, description));
         }
+    }
+
+    private void deleteActivity(Context context) {
+        activities.delete(context.pathParam(ID, Integer.class).get());
     }
 }

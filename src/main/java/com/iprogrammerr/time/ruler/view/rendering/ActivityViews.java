@@ -7,6 +7,7 @@ import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import java.util.HashMap;
 import java.util.Map;
 
+//TODO client time offset
 public class ActivityViews {
 
     private static final String INVALID_NAME_TEMPLATE = "invalidName";

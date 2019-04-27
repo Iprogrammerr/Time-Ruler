@@ -51,5 +51,6 @@ export const validations = new Validations();
 
 export const parametrizedRoutes = {
     createActivity: (date) => router.routeWithParams(routes.activity, dateTimeParams.dateAsParam(date)),
-    updateActivity: (id) => router.fullRoute(routes.activity) + `/${id}`
+    updateActivity: (id) => router.fullRoute(routes.activity) + `/${id}`,
+    deleteActivity: (id) => router.fullRoute(routes.activity) + `/${id}`
 };

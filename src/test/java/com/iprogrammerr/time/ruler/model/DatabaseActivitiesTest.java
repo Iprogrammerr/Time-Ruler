@@ -115,6 +115,10 @@ public class DatabaseActivitiesTest {
         return activities.create(randomActivities.activity(days.createForUser(id, date)));
     }
 
+    private long insertUserWithActity() {
+        return insertUserWithActivity(new RandomUsers(), new RandomActivities(), Instant.now().getEpochSecond());
+    }
+
     @Test
     public void returnsListOfUserDatePlanned() {
         returnsListOfUserDate(true);
@@ -168,5 +172,12 @@ public class DatabaseActivitiesTest {
         String message = String.format("There is no activity associated with %d id", id);
         MatcherAssert.assertThat("Does not throw exception with proper message", () -> activities.activity(id),
             new ThrowsMatcher(message));
+    }
+
+    @Test
+    public void deletesActivity() {
+        long id = insertUserWithActity();
+        activities.delete(id);
+        MatcherAssert.assertThat("Should delete activity", activities.exists(id), Matchers.equalTo(false));
     }
 }

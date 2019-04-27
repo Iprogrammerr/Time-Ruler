@@ -32,7 +32,7 @@ function stateFromActive(activeIndex) {
         mainRoute: mainRoute,
         detailRoute: detailRoute
     };
-}
+};
 
 function setupMonthsNavigation() {
     let date = new SmartDate();
@@ -55,7 +55,7 @@ function setupMonthsNavigation() {
         next[0].onclick = () => router.replaceWithParams(state.mainRoute,
             dateTimeParams.yearMonthAsParams(newYearMonth.year, newYearMonth.month));
     }
-}
+};
 
 function setupDaysNavigation() {
     let notAvailableClass = "not-available";
@@ -67,4 +67,4 @@ function setupDaysNavigation() {
             days[i].onclick = () => router.forwardWithParams(state.detailRoute, param);
         }
     }
-}
+};
