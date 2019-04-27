@@ -2,11 +2,9 @@ package com.iprogrammerr.time.ruler.respondent;
 
 import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.date.SmartDate;
-import com.iprogrammerr.time.ruler.model.date.YearMonthDay;
+import com.iprogrammerr.time.ruler.model.date.YearMonth;
 import com.iprogrammerr.time.ruler.model.day.Day;
 import com.iprogrammerr.time.ruler.model.day.Days;
-import com.iprogrammerr.time.ruler.model.rendering.CalendarDay;
-import com.iprogrammerr.time.ruler.model.rendering.DayState;
 import com.iprogrammerr.time.ruler.view.rendering.CalendarViews;
 import io.javalin.Context;
 import io.javalin.Javalin;
@@ -14,15 +12,10 @@ import io.javalin.Javalin;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.format.TextStyle;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 public class CalendarRespondent implements GroupedRespondent {
 
-    private static final long DAY_SECONDS = TimeUnit.DAYS.toSeconds(1);
     private static final int MAX_YEAR_OFFSET_VALUE = 100;
     private static final String PLAN = "plan";
     private static final String HISTORY = "history";
@@ -55,38 +48,17 @@ public class CalendarRespondent implements GroupedRespondent {
     private void renderToFutureCalendar(Context context) {
         ZonedDateTime currentDate = ZonedDateTime.now(ZoneOffset.UTC);
         int currentYear = currentDate.getYear();
-        YearMonthDay yearMonth = new YearMonthDay(context.queryParamMap(), currentYear + MAX_YEAR_OFFSET_VALUE);
+        YearMonth yearMonth = new YearMonth(context.queryParamMap(), currentYear + MAX_YEAR_OFFSET_VALUE);
         int requestedYear = yearMonth.year(currentYear);
         if (requestedYear < currentYear) {
             requestedYear = currentYear;
         }
-        ZonedDateTime withOffset = new SmartDate(currentDate)
-            .ofYearMonth(requestedYear, yearMonth.month(currentDate.getMonthValue()));
-        context.html(views.view(true, withOffset.isAfter(currentDate), currentYear < yearMonth.maxYear,
-            withOffset.getMonth().getDisplayName(TextStyle.FULL, Locale.US),
-            withOffset.getYear(), calendarDays(context, withOffset, false))
-        );
-    }
-
-    private List<CalendarDay> calendarDays(Context context, ZonedDateTime currentDate, boolean fromPast) {
-        int daysNumber = currentDate.toLocalDate().lengthOfMonth();
-        List<CalendarDay> calendarDays = new ArrayList<>(daysNumber);
-        int plannedDayIdx = 0;
-        List<Day> plannedDays = daysForCalendar(identity.value(context.req), currentDate, fromPast);
-        long monthStart = monthStart(currentDate);
-        for (int i = 0; i < daysNumber; i++) {
-            long dayStart = monthStart + (DAY_SECONDS * i);
-            long dayEnd = dayStart + (DAY_SECONDS - 1);
-            long plannedDay = plannedDayIdx < plannedDays.size() ? plannedDays.get(plannedDayIdx).date : -1;
-            DayState state = fromPast ?
-                dayStateForPast(dayStart, dayEnd, plannedDay) :
-                dayStateForFuture(dayStart, dayEnd, plannedDay);
-            if (state == DayState.PLANNED) {
-                plannedDayIdx++;
-            }
-            calendarDays.add(new CalendarDay(i + 1, state));
-        }
-        return calendarDays;
+        ZonedDateTime requestedDate = currentDate.withYear(requestedYear)
+            .withMonth(yearMonth.month(currentDate.getMonthValue()));
+        List<Day> days = daysForCalendar(identity.value(context.req), requestedDate, false);
+        String view = views.view(true, requestedDate.isAfter(currentDate), currentYear < yearMonth.maxYear,
+            requestedDate, days, false);
+        context.html(view);
     }
 
     private List<Day> daysForCalendar(long userId, ZonedDateTime requestedDate, boolean fromPast) {
@@ -101,53 +73,11 @@ public class CalendarRespondent implements GroupedRespondent {
         return daysForCalendar;
     }
 
-    private long monthStart(ZonedDateTime currentDate) {
-        return ZonedDateTime.of(
-            currentDate.getYear(), currentDate.getMonthValue(), 1,
-            0, 0, 0,
-            0, currentDate.getZone()
-        ).toEpochSecond();
-    }
-
-    private DayState dayStateForFuture(long dayStart, long dayEnd, long plannedDay) {
-        DayState state;
-        long currentDay = Instant.now().getEpochSecond();
-        if (isBetween(dayStart, dayEnd, plannedDay)) {
-            state = DayState.PLANNED;
-        } else if (currentDay > dayEnd) {
-            state = DayState.NOT_AVAILABLE;
-        } else if (isBetween(dayStart, dayEnd, currentDay)) {
-            state = DayState.CURRENT;
-        } else {
-            state = DayState.AVAILABLE;
-        }
-        return state;
-    }
-
-    private DayState dayStateForPast(long dayStart, long dayEnd, long plannedDay) {
-        DayState state;
-        long currentDay = Instant.now().getEpochSecond();
-        if (isBetween(dayStart, dayEnd, plannedDay)) {
-            state = DayState.PLANNED;
-        } else if (dayEnd < currentDay) {
-            state = DayState.AVAILABLE;
-        } else if (isBetween(dayStart, dayEnd, currentDay)) {
-            state = DayState.CURRENT;
-        } else {
-            state = DayState.NOT_AVAILABLE;
-        }
-        return state;
-    }
-
-    private boolean isBetween(long start, long end, long value) {
-        return value >= start && end >= value;
-    }
-
     private void renderToPastCalendar(Context context, ZonedDateTime firstDate) {
         ZonedDateTime currentDate = ZonedDateTime.now(ZoneOffset.UTC);
         int currentYear = currentDate.getYear();
         int currentMonth = currentDate.getMonthValue();
-        YearMonthDay yearMonth = new YearMonthDay(context.queryParamMap(), currentYear);
+        YearMonth yearMonth = new YearMonth(context.queryParamMap(), currentYear);
         int minYear = firstDate.getYear();
         int requestedYear = yearMonth.year(currentYear);
         if (requestedYear < minYear) {
@@ -159,9 +89,12 @@ public class CalendarRespondent implements GroupedRespondent {
             requestedMonth = firstDate.getMonthValue();
             requestedDate = requestedDate.withMonth(requestedMonth);
         }
-        context.html(views.view(false,
+        List<Day> days = daysForCalendar(identity.value(context.req), requestedDate, true);
+        String view = views.view(
+            false,
             requestedDate.isAfter(firstDate) && firstDate.getMonthValue() < requestedDate.getMonthValue(),
-            requestedDate.isBefore(currentDate), requestedDate.getMonth().getDisplayName(TextStyle.FULL, Locale.US),
-            requestedDate.getYear(), calendarDays(context, requestedDate, true)));
+            requestedDate.isBefore(currentDate), requestedDate, days, true
+        );
+        context.html(view);
     }
 }

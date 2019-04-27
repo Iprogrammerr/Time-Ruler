@@ -1,7 +1,6 @@
 package com.iprogrammerr.time.ruler.model.date;
 
 import com.iprogrammerr.time.ruler.matcher.ThrowsMatcher;
-import com.iprogrammerr.time.ruler.model.date.YearMonthDay;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -14,11 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class YearMonthDayTest {
+public class YearMonthTest {
 
     private static final String YEAR = "year";
     private static final String MONTH = "month";
-    private static final String DAY = "day";
     private static final int RANDOM_BOUND = 100;
     private static final int MIN_INVALID_MONTH = 13;
     private static final int MIN_INVALID_DAY = 32;
@@ -29,16 +27,14 @@ public class YearMonthDayTest {
         int maxYear = ZonedDateTime.now().getYear() + random.nextInt(RANDOM_BOUND);
         Integer year = randomYear(maxYear);
         Integer month = randomMonth();
-        Integer day = randomDay();
 
         Map<String, List<String>> source = new HashMap<>();
         source.put(YEAR, Collections.singletonList(year.toString()));
         source.put(MONTH, Collections.singletonList(month.toString()));
-        source.put(DAY, Collections.singletonList(day.toString()));
-        YearMonthDay yearMonthDay = new YearMonthDay(source, maxYear);
+        YearMonth yearMonthDay = new YearMonth(source, maxYear);
 
-        MatcherAssert.assertThat("Does not return proper values", Arrays.asList(year, month, day),
-            Matchers.contains(yearMonthDay.year(year), yearMonthDay.month(month), yearMonthDay.day(day)));
+        MatcherAssert.assertThat("Does not return proper values", Arrays.asList(year, month),
+            Matchers.contains(yearMonthDay.year(year), yearMonthDay.month(month)));
     }
 
     private int randomYear(int bound) {
@@ -53,26 +49,21 @@ public class YearMonthDayTest {
         return 1 + random.nextInt(MIN_INVALID_MONTH - 1);
     }
 
-    private int randomDay() {
-        return 1 + random.nextInt(MIN_INVALID_DAY - 1);
-    }
-
     @Test
     public void returnsDefaultValuesIfEmpty() {
         int maxYear = ZonedDateTime.now().getYear() + random.nextInt(RANDOM_BOUND);
         int year = randomYear(maxYear);
         int month = randomMonth();
-        int day = randomDay();
-        YearMonthDay yearMonthDay = new YearMonthDay(new HashMap<>(), maxYear);
-        MatcherAssert.assertThat("Does not return default values", Arrays.asList(year, month, day),
-            Matchers.contains(yearMonthDay.year(year), yearMonthDay.month(month), yearMonthDay.day(day)));
+        YearMonth yearMonthDay = new YearMonth(new HashMap<>(), maxYear);
+        MatcherAssert.assertThat("Does not return default values", Arrays.asList(year, month),
+            Matchers.contains(yearMonthDay.year(year), yearMonthDay.month(month)));
     }
 
     @Test
     public void throwsExceptionIfDefaultYearIsInvalid() {
         int maxYear = randomYear();
         int invalidYear = inInvalidRange(maxYear + 1);
-        YearMonthDay yearMonthDay = new YearMonthDay(new HashMap<>(), maxYear);
+        YearMonth yearMonthDay = new YearMonth(new HashMap<>(), maxYear);
         String message = String.format(
             "%d is not a proper year value. It has to be in %d - %d range.", invalidYear, 0, maxYear
         );
@@ -87,22 +78,11 @@ public class YearMonthDayTest {
     @Test
     public void throwsExceptionIfDefaultMonthIsInvalid() {
         int invalidMonth = inInvalidRange(MIN_INVALID_MONTH);
-        YearMonthDay yearMonthDay = new YearMonthDay(new HashMap<>(), random.nextInt());
+        YearMonth yearMonthDay = new YearMonth(new HashMap<>(), random.nextInt());
         String message = String.format(
             "%d is not a proper month value. It has to be in %d - %d range.", invalidMonth, 1, MIN_INVALID_MONTH - 1
         );
         MatcherAssert.assertThat("Does not throw exception with proper message", () -> yearMonthDay.month(invalidMonth),
-            new ThrowsMatcher(message));
-    }
-
-    @Test
-    public void throwsExceptionIfDefaultDayIsInvalid() {
-        int invalidDay = inInvalidRange(MIN_INVALID_DAY);
-        YearMonthDay yearMonthDay = new YearMonthDay(new HashMap<>(), random.nextInt());
-        String message = String.format(
-            "%d is not a proper day value. It has to be in %d - %d range.", invalidDay, 1, MIN_INVALID_DAY - 1
-        );
-        MatcherAssert.assertThat("Does not throw exception with proper message", () -> yearMonthDay.day(invalidDay),
             new ThrowsMatcher(message));
     }
 
@@ -113,7 +93,7 @@ public class YearMonthDayTest {
         int defaultYear = randomYear(maxYear);
         Map<String, List<String>> source = new HashMap<>();
         source.put(YEAR, Collections.singletonList(String.valueOf(invalidDay)));
-        YearMonthDay yearMonthDay = new YearMonthDay(source, maxYear);
+        YearMonth yearMonthDay = new YearMonth(source, maxYear);
         MatcherAssert.assertThat("Does not return default year value", yearMonthDay.year(defaultYear),
             Matchers.equalTo(defaultYear));
     }
@@ -124,19 +104,8 @@ public class YearMonthDayTest {
         int defaultMonth = randomMonth();
         Map<String, List<String>> source = new HashMap<>();
         source.put(MONTH, Collections.singletonList(String.valueOf(invalidMonth)));
-        YearMonthDay yearMonthDay = new YearMonthDay(source, randomYear());
+        YearMonth yearMonthDay = new YearMonth(source, randomYear());
         MatcherAssert.assertThat("Does not return default month value", yearMonthDay.month(defaultMonth),
             Matchers.equalTo(defaultMonth));
-    }
-
-    @Test
-    public void returnsDefaultDayIfGivenIsInvalid() {
-        int invalidDay = inInvalidRange(MIN_INVALID_DAY);
-        int defaultDay = randomDay();
-        Map<String, List<String>> source = new HashMap<>();
-        source.put(DAY, Collections.singletonList(String.valueOf(invalidDay)));
-        YearMonthDay yearMonthDay = new YearMonthDay(source, randomYear());
-        MatcherAssert.assertThat("Does not return default day value", yearMonthDay.day(defaultDay),
-            Matchers.equalTo(defaultDay));
     }
 }
