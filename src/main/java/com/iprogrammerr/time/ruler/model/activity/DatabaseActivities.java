@@ -52,9 +52,26 @@ public class DatabaseActivities implements Activities {
     @Override
     public long create(Activity activity) {
         return session.create(
-            new Record(Activity.TABLE).put(Activity.NAME, activity.name)
-                .put(Activity.DAY_ID, activity.dayId).put(Activity.START_TIME, activity.startTime)
-                .put(Activity.END_TIME, activity.endTime).put(Activity.DONE, activity.done)
+            new Record(Activity.TABLE)
+                .put(Activity.NAME, activity.name)
+                .put(Activity.DAY_ID, activity.dayId)
+                .put(Activity.START_TIME, activity.startTime)
+                .put(Activity.END_TIME, activity.endTime)
+                .put(Activity.DONE, activity.done)
+        );
+    }
+
+    @Override
+    public void update(Activity activity) {
+        session.update(
+            new Record(Activity.TABLE)
+                .put(Activity.NAME, activity.name)
+                .put(Activity.DAY_ID, activity.dayId)
+                .put(Activity.START_TIME, activity.startTime)
+                .put(Activity.END_TIME, activity.endTime)
+                .put(Activity.DONE, activity.done)
+            ,
+            "id = ?", activity.id
         );
     }
 

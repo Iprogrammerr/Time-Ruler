@@ -112,7 +112,7 @@ public class App {
         SigningInRespondent signingInRespondent = new SigningInRespondent(todayRespondent, signingInView, users,
             hashing, identity, offsetAttribute);
         SigningUpRespondent signingUpRespondent = new SigningUpRespondent(viewsTemplates, users, hashing, emails);
-        SigningOutRespondent signingOutRespondent = new SigningOutRespondent(signingInView);
+        SigningOutRespondent signingOutRespondent = new SigningOutRespondent(signingInRespondent);
         CalendarRespondent calendarRespondent = new CalendarRespondent(identity, calendarView, days);
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, viewsTemplates);
         DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, dayPlanView, activities,

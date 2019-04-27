@@ -24,6 +24,10 @@ export function Router(root = "http://127.0.0.1:8080/") {
         return paramsString;
     };
 
+    this.forwardWithVariable = (route, variable) => {
+        location.href = `${this.fullRoute(route)}/${variable}`;
+    };
+
     this.routeWithParams = (route, params) => `${this.fullRoute(route)}${paramsString(params)}`;
 
     this.replace = (route) => {

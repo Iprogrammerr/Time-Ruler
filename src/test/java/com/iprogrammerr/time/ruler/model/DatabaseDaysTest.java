@@ -5,7 +5,10 @@ import com.iprogrammerr.time.ruler.database.DatabaseSession;
 import com.iprogrammerr.time.ruler.database.QueryTemplates;
 import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
 import com.iprogrammerr.time.ruler.matcher.ThrowsMatcher;
+import com.iprogrammerr.time.ruler.mock.RandomActivities;
 import com.iprogrammerr.time.ruler.mock.RandomUsers;
+import com.iprogrammerr.time.ruler.model.activity.Activity;
+import com.iprogrammerr.time.ruler.model.activity.DatabaseActivities;
 import com.iprogrammerr.time.ruler.model.day.DatabaseDays;
 import com.iprogrammerr.time.ruler.model.day.Day;
 import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
@@ -25,12 +28,14 @@ public class DatabaseDaysTest {
     private final TestDatabaseSetup setup = new TestDatabaseSetup();
     private DatabaseUsers users;
     private DatabaseDays days;
+    private DatabaseActivities activities;
 
     @Before
     public void setup() {
         DatabaseSession session = new SqlDatabaseSession(setup.database(), new QueryTemplates());
         users = new DatabaseUsers(session);
         days = new DatabaseDays(session);
+        activities = new DatabaseActivities(session);
         setup.setup();
     }
 
@@ -141,5 +146,16 @@ public class DatabaseDaysTest {
         String message = String.format("There is no day associated with %d user and %d date", id, date);
         MatcherAssert.assertThat("Does not throw exception with proper message", () -> days.ofUser(id, date),
             new ThrowsMatcher(message));
+    }
+
+    @Test
+    public void returnsOfActivityId() {
+        User user = new RandomUsers().user();
+        Day day = new Day(users.create(user.name, user.email, user.password), Instant.now().getEpochSecond());
+        long dayId = days.createForUser(day.userId, day.date);
+        day = new Day(dayId, day.userId, day.date);
+        Activity activity = new RandomActivities().activity(dayId);
+        MatcherAssert.assertThat("Does not return day associated with activity", day,
+            Matchers.equalTo(days.ofActivity(activities.create(activity))));
     }
 }

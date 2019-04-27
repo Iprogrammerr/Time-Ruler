@@ -6,5 +6,7 @@ public interface Descriptions {
 
     long create(Description description);
 
+    void updateOrCreate(Description description);
+
     DescribedActivity describedActivity(long activityId);
 }

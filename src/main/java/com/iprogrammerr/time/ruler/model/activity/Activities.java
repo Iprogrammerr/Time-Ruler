@@ -12,6 +12,8 @@ public interface Activities {
 
     long create(Activity activity);
 
+    void update(Activity activity);
+
     Activity activity(long id);
 
     boolean exists(long id);

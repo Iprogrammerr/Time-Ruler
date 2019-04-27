@@ -1,7 +1,6 @@
 package com.iprogrammerr.time.ruler.respondent.authentication;
 
 import com.iprogrammerr.time.ruler.respondent.Respondent;
-import com.iprogrammerr.time.ruler.view.rendering.SigningInViews;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
@@ -11,10 +10,10 @@ import javax.servlet.http.HttpSession;
 public class SigningOutRespondent implements Respondent {
 
     private static final String SIGN_OUT = "sign-out";
-    private final SigningInViews signInView;
+    private final SigningInRespondent respondent;
 
-    public SigningOutRespondent(SigningInViews signInView) {
-        this.signInView = signInView;
+    public SigningOutRespondent(SigningInRespondent respondent) {
+        this.respondent = respondent;
     }
 
     @Override
@@ -22,7 +21,7 @@ public class SigningOutRespondent implements Respondent {
         app.get(SIGN_OUT, this::signOut);
     }
 
-    public void signOut(Context context) {
+    private void signOut(Context context) {
         HttpSession session = context.req.getSession(false);
         if (session != null) {
             session.invalidate();
@@ -34,6 +33,6 @@ public class SigningOutRespondent implements Respondent {
                 context.cookie(c);
             }
         }
-        context.html(signInView.withFarewell());
+        respondent.redirectWithFarewell(context);
     }
 }

@@ -2,6 +2,7 @@ package com.iprogrammerr.time.ruler.respondent.authentication;
 
 import com.iprogrammerr.time.ruler.model.Hashing;
 import com.iprogrammerr.time.ruler.model.Identity;
+import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.session.UtcOffsetAttribute;
 import com.iprogrammerr.time.ruler.model.user.User;
 import com.iprogrammerr.time.ruler.model.user.Users;
@@ -18,22 +19,23 @@ import java.util.List;
 
 public class SigningInRespondent implements Respondent {
 
+    private static final String FAREWELL_PARAM = "farewell";
     private static final String SIGN_IN = "sign-in";
     private static final String FORM_EMAIL_LOGIN = "emailLogin";
     private static final String FORM_PASSWORD = "password";
     private static final String FORM_UTC_OFFSET = "utcOffset";
     private static final String ACTIVATION = "activation";
     private final TodayRespondent respondent;
-    private final SigningInViews signInView;
+    private final SigningInViews views;
     private final Users users;
     private final Hashing hashing;
     private final Identity<Long> identity;
     private final UtcOffsetAttribute offsetAttribute;
 
-    public SigningInRespondent(TodayRespondent respondent, SigningInViews signInView, Users users, Hashing hashing,
+    public SigningInRespondent(TodayRespondent respondent, SigningInViews views, Users users, Hashing hashing,
         Identity<Long> identity, UtcOffsetAttribute offsetAttribute) {
         this.respondent = respondent;
-        this.signInView = signInView;
+        this.views = views;
         this.users = users;
         this.hashing = hashing;
         this.identity = identity;
@@ -50,7 +52,8 @@ public class SigningInRespondent implements Respondent {
         String activation = context.queryParam(ACTIVATION, "");
         if (activation.isEmpty()) {
             if (context.req.getSession(false) == null) {
-                context.html(signInView.valid());
+                boolean farewell = context.queryParam(FAREWELL_PARAM, Boolean.class, Boolean.toString(false)).get();
+                context.html(farewell ? views.withFarewell() : views.valid());
             } else {
                 respondent.redirect(context);
             }
@@ -67,7 +70,7 @@ public class SigningInRespondent implements Respondent {
         if ((email.isValid() || name.isValid()) && password.isValid()) {
             signInOrSetError(context, email.isValid() ? email.value() : name.value(), hashing.hash(password.value()));
         } else {
-            context.html(signInView.invalid(emailOrLogin, password.isValid()));
+            context.html(views.invalid(emailOrLogin, password.isValid()));
         }
     }
 
@@ -80,10 +83,10 @@ public class SigningInRespondent implements Respondent {
                 offsetAttribute.to(context.req.getSession(), utcOffset);
                 respondent.redirect(context);
             } else {
-                context.html(signInView.invalid(emailOrName, true));
+                context.html(views.invalid(emailOrName, true));
             }
         } else {
-            context.html(signInView.invalid(emailOrName, false));
+            context.html(views.invalid(emailOrName, false));
         }
     }
 
@@ -100,7 +103,7 @@ public class SigningInRespondent implements Respondent {
             }
         }
         if (activated) {
-            context.html(signInView.withActivationCongratulations());
+            context.html(views.withActivationCongratulations());
         } else {
             throw new RuntimeException("Given activation link is invalid");
         }
@@ -108,5 +111,9 @@ public class SigningInRespondent implements Respondent {
 
     private String userHash(String email, String name, long id) {
         return hashing.hash(email, name, String.valueOf(id));
+    }
+
+    public void redirectWithFarewell(Context context) {
+        context.redirect(new UrlQueryBuilder().put(FAREWELL_PARAM, true).build(SIGN_IN));
     }
 }

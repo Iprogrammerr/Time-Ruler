@@ -62,7 +62,17 @@ public class DatabaseDays implements Days {
                     return new Day(r);
                 }
                 throw new RuntimeException(String.format("There is no day associated with %d user and %d date", id, date));
-            }, "SELECT * from day WHERE user_id = ? AND date >= ? AND date <= ?",
-            id, smartDate.dayBeginning(), smartDate.dayEnd());
+            }, "SELECT * from day WHERE user_id = ? AND date >= ? AND date <= ?", id,
+            smartDate.dayBeginning(), smartDate.dayEnd());
+    }
+
+    @Override
+    public Day ofActivity(long id) {
+        return session.select(r -> {
+            if (r.next()) {
+                return new Day(r);
+            }
+            throw new RuntimeException(String.format("There is no day associated with %d activity", id));
+        }, "SELECT * from day d INNER JOIN activity a ON a.day_id = d.id WHERE a.id = ?", id);
     }
 }

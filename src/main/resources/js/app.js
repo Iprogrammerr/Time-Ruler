@@ -38,6 +38,10 @@ export const hiddenInputKeys = {
     utcOffset: "utcOffset"
 };
 
+export const hiddenDataKeys = {
+    id: "data-id"
+};
+
 export const router = new Router(host);
 export const tabsNavigation = new TabsNavigation(router);
 export const httpConnections = new HttpConnections();

@@ -5,6 +5,8 @@ import com.iprogrammerr.time.ruler.database.Record;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
 import com.iprogrammerr.time.ruler.model.activity.DescribedActivity;
 
+import java.sql.ResultSet;
+
 public class DatabaseDescriptions implements Descriptions {
 
     private final DatabaseSession session;
@@ -35,5 +37,20 @@ public class DatabaseDescriptions implements Descriptions {
             }
             throw new RuntimeException(String.format("There is no activity associated with %d id", activityId));
         }, query, activityId);
+    }
+
+    @Override
+    public void updateOrCreate(Description description) {
+        Record record = new Record(Description.TABLE).put(Description.ACTIVITY_ID, description.activityId)
+            .put(Description.CONTENT, description.content);
+        if (descriptionExists(description.activityId)) {
+            session.update(record, "activity_id = ?", description.activityId);
+        } else {
+            session.create(record);
+        }
+    }
+
+    private boolean descriptionExists(long activityId) {
+        return session.select(ResultSet::next, "SELECT id from description WHERE activity_id = ?", activityId);
     }
 }

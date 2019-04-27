@@ -21,6 +21,7 @@ public class DayPlanRespondent implements GroupedRespondent {
     private final Activities activities;
     private final LimitedDate limitedDate;
     private final DateParsing parsing;
+    private String redirect;
 
     public DayPlanRespondent(Identity<Long> identity, DayPlanViews views, Activities activities, LimitedDate limitedDate,
         DateParsing parsing) {
@@ -29,11 +30,14 @@ public class DayPlanRespondent implements GroupedRespondent {
         this.activities = activities;
         this.limitedDate = limitedDate;
         this.parsing = parsing;
+        this.redirect = "";
     }
 
     @Override
     public void init(String group, Javalin app) {
-        app.get(group + DAY_PLAN, this::showDayPlan);
+        String withGroup = group + DAY_PLAN;
+        app.get(withGroup, this::showDayPlan);
+        redirect = "/" + withGroup;
     }
 
     private void showDayPlan(Context context) {
@@ -43,6 +47,6 @@ public class DayPlanRespondent implements GroupedRespondent {
     }
 
     public void redirect(Context context, Instant date) {
-        context.redirect(new UrlQueryBuilder().put(DATE_PARAM, parsing.write(date)).build(DAY_PLAN));
+        context.redirect(new UrlQueryBuilder().put(DATE_PARAM, parsing.write(date)).build(redirect));
     }
 }

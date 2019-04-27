@@ -23,6 +23,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+//TODO better exception handling/mapping mechanism
 public class ActivityRespondent implements GroupedRespondent {
 
     private static final String DATE_PARAM = "date";
@@ -60,7 +61,7 @@ public class ActivityRespondent implements GroupedRespondent {
         app.get(group + ACTIVITY, this::showEmpty);
         app.get(group + ACTIVITY_WITH_ID, this::showActivity);
         app.post(group + ACTIVITY, this::createActivity);
-        app.post(group + ACTIVITY_WITH_ID, this::saveActivity);
+        app.post(group + ACTIVITY_WITH_ID, this::updateActivity);
     }
 
     private void showEmpty(Context context) {
@@ -82,8 +83,7 @@ public class ActivityRespondent implements GroupedRespondent {
         ValidateableName name = new ValidateableName(context.formParam(FORM_NAME, ""), true);
         ValidateableTime start = new ValidateableTime(context.formParam(FORM_START_TIME, ""));
         ValidateableTime end = new ValidateableTime(context.formParam(FORM_END_TIME, ""));
-        String description = context.queryParam(FORM_DESCRIPTION, "");
-        //TODO proper values
+        String description = context.formParam(FORM_DESCRIPTION, "");
         if (name.isValid() && start.isValid() && end.isValid()) {
             Instant startTime = start.value();
             Instant endTime = end.value();
@@ -91,7 +91,7 @@ public class ActivityRespondent implements GroupedRespondent {
                 throw new BadRequestResponse("Start time can not be greater than end time");
             }
             Day day = existingOrNew(context);
-            boolean done = context.queryParam(FORM_DONE, Boolean.class, "false").get();
+            boolean done = context.formParam(FORM_DONE, Boolean.class).get();
             Activity activity = new Activity(name.value(), day.id, (int) startTime.getEpochSecond(),
                 (int) endTime.getEpochSecond(), done);
             createActivity(activity, description, activities.ofUserDate(identity.value(context.req), day.date));
@@ -126,8 +126,43 @@ public class ActivityRespondent implements GroupedRespondent {
         }
     }
 
-    //TODO implementation - will we have id?
-    private void saveActivity(Context context) {
+    private void updateActivity(Context context) {
+        long id = context.pathParam(ID, Integer.class).get();
+        if (!activities.exists(id)) {
+            throw new BadRequestResponse(String.format("Activity with id = %d does not exist", id));
+        }
+        ValidateableName name = new ValidateableName(context.formParam(FORM_NAME, ""), true);
+        ValidateableTime start = new ValidateableTime(context.formParam(FORM_START_TIME, ""));
+        ValidateableTime end = new ValidateableTime(context.formParam(FORM_END_TIME, ""));
+        String description = context.formParam(FORM_DESCRIPTION, "");
+        if (name.isValid() && start.isValid() && end.isValid()) {
+            Instant startTime = start.value();
+            Instant endTime = end.value();
+            if (startTime.isAfter(endTime)) {
+                throw new BadRequestResponse("Start time can not be greater than end time");
+            }
+            boolean done = context.formParam(FORM_DONE, Boolean.class).get();
+            Day day = days.ofActivity(id);
+            Activity activity = new Activity(id, name.value(), day.id, (int) startTime.getEpochSecond(),
+                (int) endTime.getEpochSecond(), done);
+            updateActivity(activity, description, activities.ofUserDate(identity.value(context.req), day.date));
+            ZonedDateTime dayDate = ZonedDateTime.ofInstant(Instant.ofEpochSecond(day.date), ZoneOffset.UTC);
+            //TODO proper redirect dependent on date value
+            dayPlanRespondent.redirect(context, dayDate.toInstant());
+        } else {
+            context.html(views.withErrors(!name.isValid(), !start.isValid(), !end.isValid()));
+        }
+    }
 
+    private void updateActivity(Activity activity, String description, List<Activity> dayActivities) {
+        for (Activity da : dayActivities) {
+            if (activity.intersects(da)) {
+                throw new BadRequestResponse("Activity intersects with existing one");
+            }
+        }
+        activities.update(activity);
+        if (!description.isEmpty()) {
+            descriptions.updateOrCreate(new Description(activity.id, description));
+        }
     }
 }

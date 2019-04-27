@@ -86,4 +86,27 @@ public class DatabaseDescriptionsTest {
         MatcherAssert.assertThat("Does no throw exception with proper message",
             () -> descriptions.describedActivity(id), new ThrowsMatcher(message));
     }
+
+    @Test
+    public void updatesDescriptionIfExists() {
+        Activity activity = createActivity();
+        Random random = new Random();
+        RandomStrings strings = new RandomStrings(random);
+        Description description = new Description(activity.id, strings.alphabetic());
+        descriptions.create(description);
+        description = new Description(activity.id,
+            description.content.substring(0, 1 + random.nextInt(description.content.length())));
+        descriptions.updateOrCreate(description);
+        MatcherAssert.assertThat("Does not update description", description.content,
+            Matchers.equalTo(descriptions.describedActivity(activity.id).description));
+    }
+
+    @Test
+    public void createsDescriptionIfDoesNotExist() {
+        Activity activity = createActivity();
+        Description description = new Description(activity.id, new RandomStrings().alphabetic());
+        descriptions.updateOrCreate(description);
+        MatcherAssert.assertThat("Does not create description", description.content,
+            Matchers.equalTo(descriptions.describedActivity(activity.id).description));
+    }
 }

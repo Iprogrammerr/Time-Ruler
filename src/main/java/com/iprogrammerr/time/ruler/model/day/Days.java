@@ -13,4 +13,6 @@ public interface Days {
     long userFirstDate(long id);
 
     Day ofUser(long id, long date);
+
+    Day ofActivity(long id);
 }
