@@ -5,7 +5,7 @@ import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SigningInView {
+public class SigningInViews {
 
     private static final String EMAIL_LOGIN_TEMPLATE = "emailLogin";
     private static final String INVALID_EMAIL_LOGIN_TEMPLATE = "invalidEmailLogin";
@@ -15,12 +15,12 @@ public class SigningInView {
     private final ViewsTemplates templates;
     private final String name;
 
-    public SigningInView(ViewsTemplates templates, String name) {
+    public SigningInViews(ViewsTemplates templates, String name) {
         this.templates = templates;
         this.name = name;
     }
 
-    public SigningInView(ViewsTemplates templates) {
+    public SigningInViews(ViewsTemplates templates) {
         this(templates, "sign-in");
     }
 

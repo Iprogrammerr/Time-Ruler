@@ -1,6 +1,7 @@
 package com.iprogrammerr.time.ruler.validation;
 
 import com.iprogrammerr.time.ruler.matcher.ThrowsMatcher;
+import com.iprogrammerr.time.ruler.mock.RandomStrings;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -25,6 +26,14 @@ public class ValidateableNameTest {
     public void acceptsNonAscii() {
         ValidateableName name = new ValidateableName("Sźcą");
         MatcherAssert.assertThat("Should accept non ascii letters", name.isValid(), Matchers.equalTo(true));
+    }
+
+    @Test
+    public void acceptsSpaces() {
+        RandomStrings strings = new RandomStrings();
+        ValidateableName name = new ValidateableName(strings.alphabetic(3) + " " + strings.alphabetic(5),
+            true);
+        MatcherAssert.assertThat("Should accept spaces", name.isValid(), Matchers.equalTo(true));
     }
 
     @Test

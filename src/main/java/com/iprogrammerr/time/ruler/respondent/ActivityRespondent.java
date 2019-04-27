@@ -1,13 +1,9 @@
 package com.iprogrammerr.time.ruler.respondent;
 
-import com.iprogrammerr.time.ruler.model.date.DateTimeFormatting;
 import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
-import com.iprogrammerr.time.ruler.model.activity.DescribedActivity;
 import com.iprogrammerr.time.ruler.model.date.LimitedDate;
-import com.iprogrammerr.time.ruler.model.date.SmartDate;
-import com.iprogrammerr.time.ruler.model.date.YearMonthDay;
 import com.iprogrammerr.time.ruler.model.day.Day;
 import com.iprogrammerr.time.ruler.model.day.Days;
 import com.iprogrammerr.time.ruler.model.description.Description;
@@ -16,7 +12,7 @@ import com.iprogrammerr.time.ruler.model.session.UtcOffsetAttribute;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanRespondent;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateableTime;
-import com.iprogrammerr.time.ruler.view.rendering.ActivityView;
+import com.iprogrammerr.time.ruler.view.rendering.ActivityViews;
 import io.javalin.BadRequestResponse;
 import io.javalin.Context;
 import io.javalin.Javalin;
@@ -39,26 +35,23 @@ public class ActivityRespondent implements GroupedRespondent {
     private static final String ID = "id";
     private static final String ACTIVITY_WITH_ID = ACTIVITY + "/:" + ID;
     private final Identity<Long> identity;
-    private final ActivityView view;
+    private final ActivityViews views;
     private final DayPlanRespondent dayPlanRespondent;
     private final Days days;
     private final Activities activities;
     private final Descriptions descriptions;
     private final UtcOffsetAttribute offsetAttribute;
-    private final DateTimeFormatting formatting;
     private final LimitedDate limitedDate;
 
-    public ActivityRespondent(Identity<Long> identity, ActivityView view, DayPlanRespondent dayPlanRespondent,
-        Days days, Activities activities, Descriptions descriptions, UtcOffsetAttribute offsetAttribute,
-        DateTimeFormatting formatting, LimitedDate limitedDate) {
+    public ActivityRespondent(Identity<Long> identity, ActivityViews views, DayPlanRespondent dayPlanRespondent, Days days,
+        Activities activities, Descriptions descriptions, UtcOffsetAttribute offsetAttribute, LimitedDate limitedDate) {
         this.identity = identity;
-        this.view = view;
+        this.views = views;
         this.dayPlanRespondent = dayPlanRespondent;
         this.days = days;
         this.activities = activities;
         this.descriptions = descriptions;
         this.offsetAttribute = offsetAttribute;
-        this.formatting = formatting;
         this.limitedDate = limitedDate;
     }
 
@@ -73,25 +66,20 @@ public class ActivityRespondent implements GroupedRespondent {
     private void showEmpty(Context context) {
         int utcOffset = offsetAttribute.from(context.req.getSession());
         ZonedDateTime clientDate = ZonedDateTime.now(Clock.systemUTC()).plusSeconds(utcOffset);
-        context.html(view.empty(clientDate.getHour(), clientDate.getMinute()));
+        context.html(views.empty(clientDate.getHour(), clientDate.getMinute()));
     }
 
-    //TODO render with proper params
     private void showActivity(Context context) {
         int id = context.pathParam(ID, Integer.class).get();
         if (activities.exists(id)) {
-            DescribedActivity activity = descriptions.describedActivity(id);
-            String startTime = formatting.timeFromSeconds(activity.activity.startTime);
-            String endTime = formatting.timeFromSeconds(activity.activity.endTime);
-            context.html(view.filled(activity.activity.name, startTime,
-                endTime, activity.description));
+            context.html(views.filled(descriptions.describedActivity(id)));
         } else {
             showEmpty(context);
         }
     }
 
     private void createActivity(Context context) {
-        ValidateableName name = new ValidateableName(context.formParam(FORM_NAME, ""));
+        ValidateableName name = new ValidateableName(context.formParam(FORM_NAME, ""), true);
         ValidateableTime start = new ValidateableTime(context.formParam(FORM_START_TIME, ""));
         ValidateableTime end = new ValidateableTime(context.formParam(FORM_END_TIME, ""));
         String description = context.queryParam(FORM_DESCRIPTION, "");
@@ -108,10 +96,9 @@ public class ActivityRespondent implements GroupedRespondent {
                 (int) endTime.getEpochSecond(), done);
             createActivity(activity, description, activities.ofUserDate(identity.value(context.req), day.date));
             ZonedDateTime dayDate = ZonedDateTime.ofInstant(Instant.ofEpochSecond(day.date), ZoneOffset.UTC);
-            //TODO redirect properly
-            dayPlanRespondent.redirect(context, "");
+            dayPlanRespondent.redirect(context, dayDate.toInstant());
         } else {
-            context.html(view.withErrors(!name.isValid(), !start.isValid(), !end.isValid()));
+            context.html(views.withErrors(!name.isValid(), !start.isValid(), !end.isValid()));
         }
     }
 

@@ -1,7 +1,7 @@
 package com.iprogrammerr.time.ruler.respondent.authentication;
 
 import com.iprogrammerr.time.ruler.respondent.Respondent;
-import com.iprogrammerr.time.ruler.view.rendering.SigningInView;
+import com.iprogrammerr.time.ruler.view.rendering.SigningInViews;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
@@ -11,9 +11,9 @@ import javax.servlet.http.HttpSession;
 public class SigningOutRespondent implements Respondent {
 
     private static final String SIGN_OUT = "sign-out";
-    private final SigningInView signInView;
+    private final SigningInViews signInView;
 
-    public SigningOutRespondent(SigningInView signInView) {
+    public SigningOutRespondent(SigningInViews signInView) {
         this.signInView = signInView;
     }
 

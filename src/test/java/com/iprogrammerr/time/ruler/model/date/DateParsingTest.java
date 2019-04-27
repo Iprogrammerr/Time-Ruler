@@ -9,18 +9,19 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class DateParsingTest {
 
     @Test
     public void parsesDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
         DateParsing dateParsing = new DateParsing(formatter);
         LocalDate now = LocalDate.now(Clock.systemUTC());
         String date = now.format(formatter);
         MatcherAssert.assertThat("Does not return the same date", now.atStartOfDay().toInstant(ZoneOffset.UTC),
-            Matchers.equalTo(dateParsing.readOrDefault(date, Instant.now())));
+            Matchers.equalTo(dateParsing.read(date, Instant.now())));
 
     }
 
@@ -30,6 +31,16 @@ public class DateParsingTest {
         String date = new RandomStrings().alphabetic();
         Instant defaultDate = Instant.now();
         MatcherAssert.assertThat("Does not return the same date", defaultDate,
-            Matchers.equalTo(dateParsing.readOrDefault(date, defaultDate)));
+            Matchers.equalTo(dateParsing.read(date, defaultDate)));
+    }
+
+    @Test
+    public void writesDate() {
+        ZonedDateTime date = ZonedDateTime.now(ZoneOffset.UTC);
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
+        DateParsing dateParsing = new DateParsing(formatter);
+        String expected = formatter.format(date);
+        MatcherAssert.assertThat("Writes incorrect date", expected,
+            Matchers.equalTo(dateParsing.write(date.toInstant())));
     }
 }

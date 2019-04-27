@@ -38,11 +38,11 @@ import com.iprogrammerr.time.ruler.view.HtmlViews;
 import com.iprogrammerr.time.ruler.view.HtmlViewsTemplates;
 import com.iprogrammerr.time.ruler.view.Views;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
-import com.iprogrammerr.time.ruler.view.rendering.ActivityView;
-import com.iprogrammerr.time.ruler.view.rendering.CalendarView;
-import com.iprogrammerr.time.ruler.view.rendering.DayPlanExecutionView;
-import com.iprogrammerr.time.ruler.view.rendering.DayPlanView;
-import com.iprogrammerr.time.ruler.view.rendering.SigningInView;
+import com.iprogrammerr.time.ruler.view.rendering.ActivityViews;
+import com.iprogrammerr.time.ruler.view.rendering.CalendarViews;
+import com.iprogrammerr.time.ruler.view.rendering.DayPlanExecutionViews;
+import com.iprogrammerr.time.ruler.view.rendering.DayPlanViews;
+import com.iprogrammerr.time.ruler.view.rendering.SigningInViews;
 import io.javalin.BadRequestResponse;
 import io.javalin.ForbiddenResponse;
 import io.javalin.Javalin;
@@ -65,6 +65,13 @@ public class App {
             .enableStaticFiles(root.getPath() + File.separator + "css", Location.EXTERNAL)
             .enableStaticFiles(root.getPath() + File.separator + "js", Location.EXTERNAL);
 
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DateTimeFormatting formatting = new DateTimeFormatting(dateFormat, new SimpleDateFormat("HH:mm"));
+        DateParsing dateParsing = new DateParsing();
+        LimitedDate limitedDate = new LimitedDate(dateParsing);
+        UtcOffsetAttribute offsetAttribute = new UtcOffsetAttribute();
+
         TemplateEngine engine = new TemplateEngine();
         FileTemplateResolver resolver = new FileTemplateResolver();
         resolver.setCacheable(false);
@@ -75,11 +82,11 @@ public class App {
         Views views = new HtmlViews(new File(root, "html"));
         ViewsTemplates viewsTemplates = new HtmlViewsTemplates(new File(root, "template"), engine);
 
-        SigningInView signingInView = new SigningInView(viewsTemplates);
-        CalendarView calendarView = new CalendarView(viewsTemplates);
-        DayPlanExecutionView dayPlanExecutionView = new DayPlanExecutionView(viewsTemplates);
-        DayPlanView dayPlanView = new DayPlanView(viewsTemplates);
-        ActivityView activityView = new ActivityView(viewsTemplates);
+        SigningInViews signingInView = new SigningInViews(viewsTemplates);
+        CalendarViews calendarView = new CalendarViews(viewsTemplates);
+        DayPlanExecutionViews dayPlanExecutionView = new DayPlanExecutionViews(viewsTemplates, formatting);
+        DayPlanViews dayPlanView = new DayPlanViews(viewsTemplates, formatting);
+        ActivityViews activityView = new ActivityViews(viewsTemplates, formatting);
 
         Database database = new SqlDatabase(configuration.databaseUser(), configuration.databasePassword(),
             configuration.jdbcUrl());
@@ -100,13 +107,6 @@ public class App {
         Hashing hashing = new Hashing();
         Identity<Long> identity = new SessionIdentity();
 
-        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        DateTimeFormatting formatting = new DateTimeFormatting(dateFormat, new SimpleDateFormat("HH:mm"));
-        DateParsing dateParsing = new DateParsing();
-        LimitedDate limitedDate = new LimitedDate(dateParsing);
-        UtcOffsetAttribute offsetAttribute = new UtcOffsetAttribute();
-
         WelcomeRespondent welcomeRespondent = new WelcomeRespondent(views);
         TodayRespondent todayRespondent = new TodayRespondent(identity, viewsTemplates);
         SigningInRespondent signingInRespondent = new SigningInRespondent(todayRespondent, signingInView, users,
@@ -116,11 +116,11 @@ public class App {
         CalendarRespondent calendarRespondent = new CalendarRespondent(identity, calendarView, days);
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, viewsTemplates);
         DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, dayPlanView, activities,
-            limitedDate, formatting);
+            limitedDate, dateParsing);
         ActivityRespondent activityRespondent = new ActivityRespondent(identity, activityView, dayPlanRespondent,
-            days, activities, descriptions, offsetAttribute, formatting, limitedDate);
+            days, activities, descriptions, offsetAttribute, limitedDate);
         DayPlanExecutionRespondent dayPlanExecutionRespondent = new DayPlanExecutionRespondent(identity,
-            dayPlanExecutionView, activities, limitedDate, formatting);
+            dayPlanExecutionView, activities, limitedDate, dateParsing);
 
         String userGroup = "user/";
 

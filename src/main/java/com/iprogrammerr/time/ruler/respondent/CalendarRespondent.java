@@ -7,7 +7,7 @@ import com.iprogrammerr.time.ruler.model.day.Day;
 import com.iprogrammerr.time.ruler.model.day.Days;
 import com.iprogrammerr.time.ruler.model.rendering.CalendarDay;
 import com.iprogrammerr.time.ruler.model.rendering.DayState;
-import com.iprogrammerr.time.ruler.view.rendering.CalendarView;
+import com.iprogrammerr.time.ruler.view.rendering.CalendarViews;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
@@ -27,12 +27,12 @@ public class CalendarRespondent implements GroupedRespondent {
     private static final String PLAN = "plan";
     private static final String HISTORY = "history";
     private final Identity<Long> identity;
-    private final CalendarView calendarView;
+    private final CalendarViews views;
     private final Days days;
 
-    public CalendarRespondent(Identity<Long> identity, CalendarView calendarView, Days days) {
+    public CalendarRespondent(Identity<Long> identity, CalendarViews views, Days days) {
         this.identity = identity;
-        this.calendarView = calendarView;
+        this.views = views;
         this.days = days;
     }
 
@@ -62,7 +62,7 @@ public class CalendarRespondent implements GroupedRespondent {
         }
         ZonedDateTime withOffset = new SmartDate(currentDate)
             .ofYearMonth(requestedYear, yearMonth.month(currentDate.getMonthValue()));
-        context.html(calendarView.rendered(true, withOffset.isAfter(currentDate), currentYear < yearMonth.maxYear,
+        context.html(views.view(true, withOffset.isAfter(currentDate), currentYear < yearMonth.maxYear,
             withOffset.getMonth().getDisplayName(TextStyle.FULL, Locale.US),
             withOffset.getYear(), calendarDays(context, withOffset, false))
         );
@@ -112,16 +112,14 @@ public class CalendarRespondent implements GroupedRespondent {
     private DayState dayStateForFuture(long dayStart, long dayEnd, long plannedDay) {
         DayState state;
         long currentDay = Instant.now().getEpochSecond();
-        if (currentDay > dayEnd) {
+        if (isBetween(dayStart, dayEnd, plannedDay)) {
+            state = DayState.PLANNED;
+        } else if (currentDay > dayEnd) {
             state = DayState.NOT_AVAILABLE;
         } else if (isBetween(dayStart, dayEnd, currentDay)) {
             state = DayState.CURRENT;
         } else {
-            if (isBetween(dayStart, dayEnd, plannedDay)) {
-                state = DayState.PLANNED;
-            } else {
-                state = DayState.AVAILABLE;
-            }
+            state = DayState.AVAILABLE;
         }
         return state;
     }
@@ -161,7 +159,7 @@ public class CalendarRespondent implements GroupedRespondent {
             requestedMonth = firstDate.getMonthValue();
             requestedDate = requestedDate.withMonth(requestedMonth);
         }
-        context.html(calendarView.rendered(false,
+        context.html(views.view(false,
             requestedDate.isAfter(firstDate) && firstDate.getMonthValue() < requestedDate.getMonthValue(),
             requestedDate.isBefore(currentDate), requestedDate.getMonth().getDisplayName(TextStyle.FULL, Locale.US),
             requestedDate.getYear(), calendarDays(context, requestedDate, true)));

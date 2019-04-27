@@ -10,7 +10,7 @@ import com.iprogrammerr.time.ruler.respondent.TodayRespondent;
 import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateablePassword;
-import com.iprogrammerr.time.ruler.view.rendering.SigningInView;
+import com.iprogrammerr.time.ruler.view.rendering.SigningInViews;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
@@ -24,13 +24,13 @@ public class SigningInRespondent implements Respondent {
     private static final String FORM_UTC_OFFSET = "utcOffset";
     private static final String ACTIVATION = "activation";
     private final TodayRespondent respondent;
-    private final SigningInView signInView;
+    private final SigningInViews signInView;
     private final Users users;
     private final Hashing hashing;
     private final Identity<Long> identity;
     private final UtcOffsetAttribute offsetAttribute;
 
-    public SigningInRespondent(TodayRespondent respondent, SigningInView signInView, Users users, Hashing hashing,
+    public SigningInRespondent(TodayRespondent respondent, SigningInViews signInView, Users users, Hashing hashing,
         Identity<Long> identity, UtcOffsetAttribute offsetAttribute) {
         this.respondent = respondent;
         this.signInView = signInView;

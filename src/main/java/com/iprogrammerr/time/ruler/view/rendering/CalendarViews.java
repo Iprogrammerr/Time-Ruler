@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CalendarView {
+public class CalendarViews {
 
     private static final String PLAN_TEMPLATE = "plan";
     private static final String PREV_TEMPLATE = "prev";
@@ -18,16 +18,16 @@ public class CalendarView {
     private final ViewsTemplates templates;
     private final String name;
 
-    public CalendarView(ViewsTemplates templates, String name) {
+    public CalendarViews(ViewsTemplates templates, String name) {
         this.templates = templates;
         this.name = name;
     }
 
-    public CalendarView(ViewsTemplates templates) {
+    public CalendarViews(ViewsTemplates templates) {
         this(templates, "calendar");
     }
 
-    public String rendered(boolean plan, boolean hasPrevious, boolean hasNext, String month, int year, List<CalendarDay> days) {
+    public String view(boolean plan, boolean hasPrevious, boolean hasNext, String month, int year, List<CalendarDay> days) {
         Map<String, Object> params = new HashMap<>();
         params.put(PLAN_TEMPLATE, plan);
         params.put(PREV_TEMPLATE, hasPrevious);

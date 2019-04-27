@@ -41,7 +41,7 @@ public class SigningUpRespondent implements Respondent {
         app.post(SIGN_UP, this::signUp);
     }
 
-    //TODO style sign-up-success/failure views
+    //TODO style sign-up-success/failure view
     public void signUp(Context context) {
         ValidateableEmail email = new ValidateableEmail(context.formParam(FORM_EMAIL, ""));
         ValidateableName name = new ValidateableName(context.formParam(FORM_LOGIN, ""));

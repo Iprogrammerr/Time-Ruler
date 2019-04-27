@@ -1,7 +1,5 @@
 package com.iprogrammerr.time.ruler.model.date;
 
-import io.javalin.Context;
-
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -21,11 +19,10 @@ public class LimitedDate {
     }
 
     public Instant fromString(String date, Instant defaultDate) {
-        Instant read = dateParsing.readOrDefault(date, defaultDate);
+        Instant read = dateParsing.read(date, defaultDate);
         if (read.isAfter(LocalDateTime.now().plusYears(maxYearsOffset).toInstant(ZoneOffset.UTC))) {
             read = defaultDate;
         }
-        System.out.println("Returning date = " + read.toString());
         return read;
     }
 

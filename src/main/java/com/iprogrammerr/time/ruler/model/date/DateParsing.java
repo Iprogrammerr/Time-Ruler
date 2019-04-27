@@ -3,6 +3,7 @@ package com.iprogrammerr.time.ruler.model.date;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class DateParsing {
@@ -23,7 +24,7 @@ public class DateParsing {
         this(DateTimeFormatter.ISO_LOCAL_DATE);
     }
 
-    public Instant readOrDefault(String date, Instant defaultDate) {
+    public Instant read(String date, Instant defaultDate) {
         Instant read;
         try {
             read = LocalDate.parse(date, formatter).atStartOfDay().toInstant(zoneOffset);
@@ -31,5 +32,9 @@ public class DateParsing {
             read = defaultDate;
         }
         return read;
+    }
+
+    public String write(Instant date) {
+        return formatter.format(ZonedDateTime.ofInstant(date, zoneOffset));
     }
 }
