@@ -45,6 +45,16 @@ export function DateTimeParams(urlParams, paramsKeys) {
         return params;
     };
 
-    this.yearMonthDayAsParams = (year, month, day) => 
-        params([_paramsKeys.year, _paramsKeys.month, _paramsKeys.day], [year, month, day]);
+    this.yearMonthDayAsDateParam = (year, month, day) =>
+        params([_paramsKeys.date], [new SmartDate().asIsoDateString(year, month, day)]);
+
+    this.dateFromUrl = () => {
+        let defaultDate = new SmartDate().asYearMonthDay();
+        return _urlParams.getOrDefault(_paramsKeys.date, this.yearMonthDayAsDateParam(defaultDate.year,
+            defaultDate.month, defaultDate.day));
+    };
+    
+    this.dateFromUrlAsParam = () => params([_paramsKeys.date], [this.dateFromUrl()]);
+
+    this.dateAsParam = (date) => params([_paramsKeys.date], [date]);
 }

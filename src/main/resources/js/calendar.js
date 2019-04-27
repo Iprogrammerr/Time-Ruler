@@ -63,8 +63,8 @@ function setupDaysNavigation() {
     for (let i = 0; i < days.length; i++) {
         let className = days[i].children[0].className;
         if (className !== notAvailableClass) {
-            let params = dateTimeParams.yearMonthDayAsParams(yearMonth.year, yearMonth.month, i + 1);
-            days[i].onclick = () => router.forwardWithParams(state.detailRoute, params);
+            let param = dateTimeParams.yearMonthDayAsDateParam(yearMonth.year, yearMonth.month, i + 1);
+            days[i].onclick = () => router.forwardWithParams(state.detailRoute, param);
         }
     }
 }

@@ -1,10 +1,11 @@
 package com.iprogrammerr.time.ruler.respondent;
 
-import com.iprogrammerr.time.ruler.model.Formatting;
+import com.iprogrammerr.time.ruler.model.date.DateTimeFormatting;
 import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
 import com.iprogrammerr.time.ruler.model.activity.DescribedActivity;
+import com.iprogrammerr.time.ruler.model.date.LimitedDate;
 import com.iprogrammerr.time.ruler.model.date.SmartDate;
 import com.iprogrammerr.time.ruler.model.date.YearMonthDay;
 import com.iprogrammerr.time.ruler.model.day.Day;
@@ -28,7 +29,7 @@ import java.util.List;
 
 public class ActivityRespondent implements GroupedRespondent {
 
-    private static final int MAX_YEAR_OFFSET_VALUE = 100;
+    private static final String DATE_PARAM = "date";
     private static final String FORM_NAME = "name";
     private static final String FORM_START_TIME = "start";
     private static final String FORM_END_TIME = "end";
@@ -44,11 +45,12 @@ public class ActivityRespondent implements GroupedRespondent {
     private final Activities activities;
     private final Descriptions descriptions;
     private final UtcOffsetAttribute offsetAttribute;
-    private final Formatting formatting;
+    private final DateTimeFormatting formatting;
+    private final LimitedDate limitedDate;
 
     public ActivityRespondent(Identity<Long> identity, ActivityView view, DayPlanRespondent dayPlanRespondent,
         Days days, Activities activities, Descriptions descriptions, UtcOffsetAttribute offsetAttribute,
-        Formatting formatting) {
+        DateTimeFormatting formatting, LimitedDate limitedDate) {
         this.identity = identity;
         this.view = view;
         this.dayPlanRespondent = dayPlanRespondent;
@@ -57,6 +59,7 @@ public class ActivityRespondent implements GroupedRespondent {
         this.descriptions = descriptions;
         this.offsetAttribute = offsetAttribute;
         this.formatting = formatting;
+        this.limitedDate = limitedDate;
     }
 
     @Override
@@ -105,21 +108,16 @@ public class ActivityRespondent implements GroupedRespondent {
                 (int) endTime.getEpochSecond(), done);
             createActivity(activity, description, activities.ofUserDate(identity.value(context.req), day.date));
             ZonedDateTime dayDate = ZonedDateTime.ofInstant(Instant.ofEpochSecond(day.date), ZoneOffset.UTC);
-            dayPlanRespondent.redirect(context, dayDate.getYear(), dayDate.getMonthValue(),
-                dayDate.getDayOfMonth());
+            //TODO redirect properly
+            dayPlanRespondent.redirect(context, "");
         } else {
             context.html(view.withErrors(!name.isValid(), !start.isValid(), !end.isValid()));
         }
     }
 
     private Day existingOrNew(Context context) {
-        ZonedDateTime now = ZonedDateTime.now(Clock.systemUTC());
-        YearMonthDay yearMonthDay = new YearMonthDay(context.queryParamMap(), now.getYear() + MAX_YEAR_OFFSET_VALUE);
         long userId = identity.value(context.req);
-        long date = new SmartDate(now)
-            .ofYearMonthDay(yearMonthDay.year(now.getYear()), yearMonthDay.month(now.getMonthValue()),
-                yearMonthDay.day(now.getDayOfMonth()))
-            .toEpochSecond();
+        long date = limitedDate.fromString(context.queryParam(DATE_PARAM, "")).getEpochSecond();
         Day day;
         if (days.ofUserExists(userId, date)) {
             day = days.ofUser(userId, date);

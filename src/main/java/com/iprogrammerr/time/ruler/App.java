@@ -8,12 +8,14 @@ import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
 import com.iprogrammerr.time.ruler.email.ConfigurableEmailServer;
 import com.iprogrammerr.time.ruler.email.EmailServer;
 import com.iprogrammerr.time.ruler.email.Emails;
-import com.iprogrammerr.time.ruler.model.Formatting;
 import com.iprogrammerr.time.ruler.model.Hashing;
 import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.Messages;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.DatabaseActivities;
+import com.iprogrammerr.time.ruler.model.date.DateParsing;
+import com.iprogrammerr.time.ruler.model.date.DateTimeFormatting;
+import com.iprogrammerr.time.ruler.model.date.LimitedDate;
 import com.iprogrammerr.time.ruler.model.day.DatabaseDays;
 import com.iprogrammerr.time.ruler.model.day.Days;
 import com.iprogrammerr.time.ruler.model.description.DatabaseDescriptions;
@@ -100,7 +102,9 @@ public class App {
 
         DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        Formatting formatting = new Formatting(new SimpleDateFormat("HH:mm"));
+        DateTimeFormatting formatting = new DateTimeFormatting(dateFormat, new SimpleDateFormat("HH:mm"));
+        DateParsing dateParsing = new DateParsing();
+        LimitedDate limitedDate = new LimitedDate(dateParsing);
         UtcOffsetAttribute offsetAttribute = new UtcOffsetAttribute();
 
         WelcomeRespondent welcomeRespondent = new WelcomeRespondent(views);
@@ -111,11 +115,12 @@ public class App {
         SigningOutRespondent signingOutRespondent = new SigningOutRespondent(signingInView);
         CalendarRespondent calendarRespondent = new CalendarRespondent(identity, calendarView, days);
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, viewsTemplates);
-        DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, dayPlanView, activities, dateFormat);
+        DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, dayPlanView, activities,
+            limitedDate, formatting);
         ActivityRespondent activityRespondent = new ActivityRespondent(identity, activityView, dayPlanRespondent,
-            days, activities, descriptions, offsetAttribute, formatting);
+            days, activities, descriptions, offsetAttribute, formatting, limitedDate);
         DayPlanExecutionRespondent dayPlanExecutionRespondent = new DayPlanExecutionRespondent(identity,
-            dayPlanExecutionView, activities, dateFormat);
+            dayPlanExecutionView, activities, limitedDate, formatting);
 
         String userGroup = "user/";
 

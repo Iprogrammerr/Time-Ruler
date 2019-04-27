@@ -30,7 +30,7 @@ export const endpoints = {
 export const paramsKeys = {
     year: "year",
     month: "month",
-    day: "day"
+    date: "date",
 };
 
 export const hiddenInputKeys = {
@@ -46,6 +46,6 @@ export const dateTimeParams = new DateTimeParams(urlParams, paramsKeys);
 export const validations = new Validations();
 
 export const parametrizedRoutes = {
-    createActivity: (year, month, day) => router.routeWithParams(routes.activity, dateTimeParams.yearMonthDayAsParams(year, month, day)),
+    createActivity: (date) => router.routeWithParams(routes.activity, dateTimeParams.dateAsParam(date)),
     updateActivity: (id) => router.fullRoute(routes.activity) + `/${id}`
 };

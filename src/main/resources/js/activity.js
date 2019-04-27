@@ -6,7 +6,7 @@ import { FormAction } from "./http/form-action.js";
 
 tabsNavigation.setup(document.querySelector("div"));
 const activityId = activityIdFromPath();
-const yearMonthDay = activityId > 0 ? {} : dateTimeParams.currentYearMonthDayFromUrl();
+const date = activityId > 0 ? {} : dateTimeParams.dateFromUrl();
 const form = document.querySelector("form");
 addEventListener("submit", e => e.preventDefault());
 document.getElementById("recent").onclick = () => console.log("Show recent...");
@@ -16,8 +16,9 @@ saveActivity.onclick = () => {
         let endpoint;
         if (activityId > 0) {
             endpoint = parametrizedRoutes.updateActivity(activityId);
-        } else {
-            endpoint = parametrizedRoutes.createActivity(yearMonthDay.year, yearMonthDay.month, yearMonthDay.day);
+        }
+         else {
+            endpoint = parametrizedRoutes.createActivity(date);
         }
         new FormAction(form).submit(endpoint, { key: hiddenInputKeys.done, value: false });
         saveActivity.disabled = true;

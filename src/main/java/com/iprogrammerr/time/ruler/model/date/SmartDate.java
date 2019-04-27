@@ -1,5 +1,6 @@
 package com.iprogrammerr.time.ruler.model.date;
 
+import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -14,6 +15,10 @@ public class SmartDate {
 
     public SmartDate(long date) {
         this(ZonedDateTime.ofInstant(Instant.ofEpochSecond(date), ZoneOffset.UTC));
+    }
+
+    public SmartDate() {
+        this(ZonedDateTime.now(Clock.systemUTC()));
     }
 
     public long ofYearMonthSeconds(int year, int month) {

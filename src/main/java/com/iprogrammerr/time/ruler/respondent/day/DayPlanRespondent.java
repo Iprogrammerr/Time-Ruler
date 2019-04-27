@@ -3,38 +3,35 @@ package com.iprogrammerr.time.ruler.respondent.day;
 import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
-import com.iprogrammerr.time.ruler.model.date.SmartDate;
-import com.iprogrammerr.time.ruler.model.date.YearMonthDay;
+import com.iprogrammerr.time.ruler.model.date.DateTimeFormatting;
+import com.iprogrammerr.time.ruler.model.date.LimitedDate;
 import com.iprogrammerr.time.ruler.model.rendering.ForViewActivity;
 import com.iprogrammerr.time.ruler.respondent.GroupedRespondent;
 import com.iprogrammerr.time.ruler.view.rendering.DayPlanView;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.Clock;
 import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO remove reading year/month/day code duplication
 public class DayPlanRespondent implements GroupedRespondent {
 
-    private static final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
-    private static final int MAX_YEAR_OFFSET_VALUE = 100;
+    private static final String DATE_PARAM = "date";
     private static final String DAY_PLAN = "plan/day";
     private final Identity<Long> identity;
     private final DayPlanView view;
     private final Activities activities;
-    private final DateFormat dateFormat;
+    private final LimitedDate limitedDate;
+    private final DateTimeFormatting formatting;
 
-    public DayPlanRespondent(Identity<Long> identity, DayPlanView view, Activities activities, DateFormat dateFormat) {
+    public DayPlanRespondent(Identity<Long> identity, DayPlanView view, Activities activities, LimitedDate limitedDate,
+        DateTimeFormatting formatting) {
         this.identity = identity;
         this.view = view;
         this.activities = activities;
-        this.dateFormat = dateFormat;
+        this.limitedDate = limitedDate;
+        this.formatting = formatting;
     }
 
     @Override
@@ -43,21 +40,8 @@ public class DayPlanRespondent implements GroupedRespondent {
     }
 
     private void showDayPlan(Context context) {
-        ZonedDateTime now = ZonedDateTime.now(Clock.systemUTC());
-        YearMonthDay yearMonthDay = new YearMonthDay(context.queryParamMap(), now.getYear() + MAX_YEAR_OFFSET_VALUE);
-        int year = yearMonthDay.year(now.getYear());
-        if (year < now.getYear()) {
-            year = now.getYear();
-        }
-        int month = yearMonthDay.month(now.getMonthValue());
-        ZonedDateTime requestedDate = new SmartDate(now).ofYearMonth(year, month);
-        int day = yearMonthDay.day(now.getDayOfMonth());
-        int maxDay = requestedDate.toLocalDate().lengthOfMonth();
-        if (day > maxDay) {
-            day = maxDay;
-        }
-        Instant date = Instant.ofEpochSecond(requestedDate.withDayOfMonth(day).toEpochSecond());
-        context.html(view.rendered(dateFormat.format(date.toEpochMilli()),
+        Instant date = limitedDate.fromString(context.queryParam(DATE_PARAM, ""));
+        context.html(view.rendered(formatting.dateFromSeconds(date.getEpochSecond()),
             plannedActivities(identity.value(context.req), date.getEpochSecond())));
     }
 
@@ -65,13 +49,14 @@ public class DayPlanRespondent implements GroupedRespondent {
         List<Activity> dayActivities = activities.ofUserDatePlanned(id, date);
         List<ForViewActivity> viewActivities = new ArrayList<>(dayActivities.size());
         for (Activity a : dayActivities) {
-            viewActivities.add(new ForViewActivity(a, TIME_FORMAT));
+            viewActivities.add(new ForViewActivity(a.name, formatting.timeFromSeconds(a.startTime),
+                formatting.timeFromSeconds(a.endTime)));
         }
         return viewActivities;
     }
 
-    public void redirect(Context context, int year, int month, int day) {
-        //TODO date?
-        context.redirect(DAY_PLAN);
+    public void redirect(Context context, String date) {
+        context.redirect(new StringBuilder(DAY_PLAN).append("?").append(DATE_PARAM)
+            .append("=").append(date).toString());
     }
 }
