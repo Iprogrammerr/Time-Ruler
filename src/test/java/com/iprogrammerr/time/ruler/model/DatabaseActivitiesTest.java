@@ -9,7 +9,6 @@ import com.iprogrammerr.time.ruler.mock.RandomActivities;
 import com.iprogrammerr.time.ruler.mock.RandomUsers;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
 import com.iprogrammerr.time.ruler.model.activity.DatabaseActivities;
-import com.iprogrammerr.time.ruler.model.day.DatabaseDays;
 import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.user.User;
 import org.hamcrest.MatcherAssert;
@@ -26,14 +25,12 @@ public class DatabaseActivitiesTest {
 
     private final TestDatabaseSetup setup = new TestDatabaseSetup();
     private DatabaseUsers users;
-    private DatabaseDays days;
     private DatabaseActivities activities;
 
     @Before
     public void setup() {
         DatabaseSession session = new SqlDatabaseSession(setup.database(), new QueryTemplates());
         users = new DatabaseUsers(session);
-        days = new DatabaseDays(session);
         activities = new DatabaseActivities(session);
         setup.setup();
     }
@@ -95,11 +92,10 @@ public class DatabaseActivitiesTest {
         User user = randomUsers.user();
         long userId = users.create(user.name, user.email, user.password);
         long date = Instant.now().getEpochSecond();
-        long dayId = days.createForUser(userId, date);
         insertUserWithActivity(randomUsers, randomActivities, date);
 
-        Activity first = randomActivities.activity(dayId);
-        Activity second = randomActivities.activity(dayId);
+        Activity first = randomActivities.activity(userId, date);
+        Activity second = randomActivities.activity(userId, date + 1);
         first = first.withId(activities.create(first));
         second = second.withId(activities.create(second));
 
@@ -112,10 +108,10 @@ public class DatabaseActivitiesTest {
     private long insertUserWithActivity(RandomUsers randomUsers, RandomActivities randomActivities, long date) {
         User user = randomUsers.user();
         long id = users.create(user.name, user.email, user.password);
-        return activities.create(randomActivities.activity(days.createForUser(id, date)));
+        return activities.create(randomActivities.activity(id, date));
     }
 
-    private long insertUserWithActity() {
+    private long insertUserWithActivity() {
         return insertUserWithActivity(new RandomUsers(), new RandomActivities(), Instant.now().getEpochSecond());
     }
 
@@ -130,12 +126,11 @@ public class DatabaseActivitiesTest {
         User user = randomUsers.user();
         long userId = users.create(user.name, user.email, user.password);
         long date = Instant.now().getEpochSecond();
-        long dayId = days.createForUser(userId, date);
         insertUserWithActivity(randomUsers, randomActivities, date);
 
-        Activity first = randomActivities.activity(dayId, !planned);
+        Activity first = randomActivities.activity(userId, date, !planned);
         first = first.withId(activities.create(first));
-        activities.create(randomActivities.activity(dayId, planned));
+        activities.create(randomActivities.activity(userId, date, planned));
 
         String message;
         List<Activity> userActivities;
@@ -146,6 +141,8 @@ public class DatabaseActivitiesTest {
             message = "Does not return done activities";
             userActivities = activities.ofUserDateDone(userId, date);
         }
+        System.out.println("User activities = " + userActivities);
+        System.out.println("First = " + first);
         MatcherAssert.assertThat(message, userActivities, Matchers.contains(first));
     }
 
@@ -159,8 +156,7 @@ public class DatabaseActivitiesTest {
         Random random = new Random();
         User user = new RandomUsers(random).user();
         long userId = users.create(user.name, user.email, user.password);
-        Activity activity = new RandomActivities(random).activity(days.createForUser(userId,
-            Instant.now().getEpochSecond()));
+        Activity activity = new RandomActivities(random).activity(userId, Instant.now().getEpochSecond());
         long activityId = activities.create(activity);
         MatcherAssert.assertThat("Should return newly created activity", activity.withId(activityId),
             Matchers.equalTo(activities.activity(activityId)));
@@ -176,7 +172,7 @@ public class DatabaseActivitiesTest {
 
     @Test
     public void deletesActivity() {
-        long id = insertUserWithActity();
+        long id = insertUserWithActivity();
         activities.delete(id);
         MatcherAssert.assertThat("Should delete activity", activities.exists(id), Matchers.equalTo(false));
     }

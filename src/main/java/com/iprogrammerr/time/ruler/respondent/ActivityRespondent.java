@@ -4,8 +4,6 @@ import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
 import com.iprogrammerr.time.ruler.model.date.LimitedDate;
-import com.iprogrammerr.time.ruler.model.day.Day;
-import com.iprogrammerr.time.ruler.model.day.Days;
 import com.iprogrammerr.time.ruler.model.description.Description;
 import com.iprogrammerr.time.ruler.model.description.Descriptions;
 import com.iprogrammerr.time.ruler.model.session.UtcOffsetAttribute;
@@ -38,18 +36,16 @@ public class ActivityRespondent implements GroupedRespondent {
     private final Identity<Long> identity;
     private final ActivityViews views;
     private final DayPlanRespondent dayPlanRespondent;
-    private final Days days;
     private final Activities activities;
     private final Descriptions descriptions;
     private final UtcOffsetAttribute offsetAttribute;
     private final LimitedDate limitedDate;
 
-    public ActivityRespondent(Identity<Long> identity, ActivityViews views, DayPlanRespondent dayPlanRespondent, Days days,
-        Activities activities, Descriptions descriptions, UtcOffsetAttribute offsetAttribute, LimitedDate limitedDate) {
+    public ActivityRespondent(Identity<Long> identity, ActivityViews views, DayPlanRespondent dayPlanRespondent, Activities activities,
+        Descriptions descriptions, UtcOffsetAttribute offsetAttribute, LimitedDate limitedDate) {
         this.identity = identity;
         this.views = views;
         this.dayPlanRespondent = dayPlanRespondent;
-        this.days = days;
         this.activities = activities;
         this.descriptions = descriptions;
         this.offsetAttribute = offsetAttribute;
@@ -74,7 +70,8 @@ public class ActivityRespondent implements GroupedRespondent {
     private void showActivity(Context context) {
         int id = context.pathParam(ID, Integer.class).get();
         if (activities.exists(id)) {
-            context.html(views.filled(descriptions.describedActivity(id)));
+            context.html(views.filled(descriptions.describedActivity(id),
+                offsetAttribute.from(context.req.getSession())));
         } else {
             showEmpty(context);
         }
@@ -91,28 +88,20 @@ public class ActivityRespondent implements GroupedRespondent {
             if (startTime.isAfter(endTime)) {
                 throw new BadRequestResponse("Start time can not be greater than end time");
             }
-            Day day = existingOrNew(context);
+            long userId = identity.value(context.req);
+            //TODO zone offset
+            Instant date = limitedDate.fromString(context.queryParam(DATE_PARAM, ""));
             boolean done = context.formParam(FORM_DONE, Boolean.class).get();
-            Activity activity = new Activity(name.value(), day.id, (int) startTime.getEpochSecond(),
-                (int) endTime.getEpochSecond(), done);
-            createActivity(activity, description, activities.ofUserDate(identity.value(context.req), day.date));
-            ZonedDateTime dayDate = ZonedDateTime.ofInstant(Instant.ofEpochSecond(day.date), ZoneOffset.UTC);
+            Activity activity = new Activity(userId, name.value(),
+                date.plusSeconds(startTime.getEpochSecond()).getEpochSecond(),
+                date.plusSeconds(endTime.getEpochSecond()).getEpochSecond(), done);
+            createActivity(activity, description,
+                activities.ofUserDate(identity.value(context.req), date.getEpochSecond()));
+            ZonedDateTime dayDate = ZonedDateTime.ofInstant(date, ZoneOffset.UTC);
             dayPlanRespondent.redirect(context, dayDate.toInstant());
         } else {
             context.html(views.withErrors(!name.isValid(), !start.isValid(), !end.isValid()));
         }
-    }
-
-    private Day existingOrNew(Context context) {
-        long userId = identity.value(context.req);
-        long date = limitedDate.fromString(context.queryParam(DATE_PARAM, "")).getEpochSecond();
-        Day day;
-        if (days.ofUserExists(userId, date)) {
-            day = days.ofUser(userId, date);
-        } else {
-            day = new Day(days.createForUser(userId, date), userId, date);
-        }
-        return day;
     }
 
     private void createActivity(Activity activity, String description, List<Activity> dayActivities) {
@@ -142,12 +131,16 @@ public class ActivityRespondent implements GroupedRespondent {
             if (startTime.isAfter(endTime)) {
                 throw new BadRequestResponse("Start time can not be greater than end time");
             }
+            long userId = identity.value(context.req);
+            //TODO zone offset
+            Instant date = limitedDate.fromString(context.queryParam(DATE_PARAM, ""));
             boolean done = context.formParam(FORM_DONE, Boolean.class).get();
-            Day day = days.ofActivity(id);
-            Activity activity = new Activity(id, name.value(), day.id, (int) startTime.getEpochSecond(),
-                (int) endTime.getEpochSecond(), done);
-            updateActivity(activity, description, activities.ofUserDate(identity.value(context.req), day.date));
-            ZonedDateTime dayDate = ZonedDateTime.ofInstant(Instant.ofEpochSecond(day.date), ZoneOffset.UTC);
+            Activity activity = new Activity(userId, name.value(),
+                date.plusSeconds(startTime.getEpochSecond()).getEpochSecond(),
+                date.plusSeconds(endTime.getEpochSecond()).getEpochSecond(), done);
+            updateActivity(activity, description,
+                activities.ofUserDate(identity.value(context.req), date.getEpochSecond()));
+            ZonedDateTime dayDate = ZonedDateTime.ofInstant(date, ZoneOffset.UTC);
             //TODO proper redirect dependent on date value
             dayPlanRespondent.redirect(context, dayDate.toInstant());
         } else {

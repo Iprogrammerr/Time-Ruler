@@ -23,13 +23,12 @@ public class DatabaseActivities implements Activities {
 
     private List<Activity> ofUserDate(long id, long date, ActivitiesFilter filter) {
         SmartDate smartDate = new SmartDate(date);
-        StringBuilder queryBuilder = new StringBuilder("SELECT * FROM activity a INNER JOIN day d ON ")
-            .append("d.user_id = ? AND d.date >= ? AND d.date <= ? ")
-            .append("WHERE a.day_id = d.id");
+        StringBuilder queryBuilder = new StringBuilder("SELECT * FROM activity WHERE ")
+            .append("user_id = ? AND start_date >= ? AND start_date <= ? ");
         if (filter != ActivitiesFilter.ALL) {
             queryBuilder.append(" AND done = ").append(filter == ActivitiesFilter.DONE ? "1" : "0");
         }
-        queryBuilder.append(" ORDER BY d.date ASC");
+        queryBuilder.append(" ORDER BY start_date ASC");
         return session.select(r -> {
             List<Activity> activities = new ArrayList<>();
             while (r.next()) {
@@ -54,9 +53,9 @@ public class DatabaseActivities implements Activities {
         return session.create(
             new Record(Activity.TABLE)
                 .put(Activity.NAME, activity.name)
-                .put(Activity.DAY_ID, activity.dayId)
-                .put(Activity.START_TIME, activity.startTime)
-                .put(Activity.END_TIME, activity.endTime)
+                .put(Activity.USER_ID, activity.userId)
+                .put(Activity.START_DATE, activity.startDate)
+                .put(Activity.END_DATE, activity.endDate)
                 .put(Activity.DONE, activity.done)
         );
     }
@@ -66,9 +65,9 @@ public class DatabaseActivities implements Activities {
         session.update(
             new Record(Activity.TABLE)
                 .put(Activity.NAME, activity.name)
-                .put(Activity.DAY_ID, activity.dayId)
-                .put(Activity.START_TIME, activity.startTime)
-                .put(Activity.END_TIME, activity.endTime)
+                .put(Activity.USER_ID, activity.userId)
+                .put(Activity.START_DATE, activity.startDate)
+                .put(Activity.END_DATE, activity.endDate)
                 .put(Activity.DONE, activity.done)
             ,
             "id = ?", activity.id

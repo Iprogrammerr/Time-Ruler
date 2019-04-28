@@ -1,6 +1,5 @@
 package com.iprogrammerr.time.ruler.view.rendering;
 
-import com.iprogrammerr.time.ruler.model.day.Day;
 import com.iprogrammerr.time.ruler.model.rendering.CalendarDay;
 import com.iprogrammerr.time.ruler.model.rendering.DayState;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
@@ -36,7 +35,7 @@ public class CalendarViews {
         this(templates, "calendar");
     }
 
-    public String view(boolean plan, boolean hasPrevious, boolean hasNext, ZonedDateTime date, List<Day> days,
+    public String view(boolean plan, boolean hasPrevious, boolean hasNext, ZonedDateTime date, List<Long> days,
         boolean fromPast) {
         Map<String, Object> params = new HashMap<>();
         params.put(PLAN_TEMPLATE, plan);
@@ -49,7 +48,7 @@ public class CalendarViews {
         return templates.rendered(name, params);
     }
 
-    private List<CalendarDay> calendarDays(List<Day> days, ZonedDateTime date, boolean fromPast) {
+    private List<CalendarDay> calendarDays(List<Long> days, ZonedDateTime date, boolean fromPast) {
         int daysNumber = date.toLocalDate().lengthOfMonth();
         List<CalendarDay> calendarDays = new ArrayList<>(daysNumber);
         int plannedDayIdx = 0;
@@ -57,7 +56,7 @@ public class CalendarViews {
         for (int i = 0; i < daysNumber; i++) {
             long dayStart = monthStart + (DAY_SECONDS * i);
             long dayEnd = dayStart + (DAY_SECONDS - 1);
-            long plannedDay = plannedDayIdx < days.size() ? days.get(plannedDayIdx).date : -1;
+            long plannedDay = plannedDayIdx < days.size() ? days.get(plannedDayIdx) : -1;
             DayState state = fromPast ?
                 dayStateForPast(dayStart, dayEnd, plannedDay) :
                 dayStateForFuture(dayStart, dayEnd, plannedDay);

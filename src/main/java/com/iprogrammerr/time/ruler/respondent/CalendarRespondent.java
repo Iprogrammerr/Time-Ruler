@@ -1,10 +1,9 @@
 package com.iprogrammerr.time.ruler.respondent;
 
 import com.iprogrammerr.time.ruler.model.Identity;
+import com.iprogrammerr.time.ruler.model.activity.Dates;
 import com.iprogrammerr.time.ruler.model.date.SmartDate;
 import com.iprogrammerr.time.ruler.model.date.YearMonth;
-import com.iprogrammerr.time.ruler.model.day.Day;
-import com.iprogrammerr.time.ruler.model.day.Days;
 import com.iprogrammerr.time.ruler.view.rendering.CalendarViews;
 import io.javalin.Context;
 import io.javalin.Javalin;
@@ -21,12 +20,12 @@ public class CalendarRespondent implements GroupedRespondent {
     private static final String HISTORY = "history";
     private final Identity<Long> identity;
     private final CalendarViews views;
-    private final Days days;
+    private final Dates dates;
 
-    public CalendarRespondent(Identity<Long> identity, CalendarViews views, Days days) {
+    public CalendarRespondent(Identity<Long> identity, CalendarViews views, Dates dates) {
         this.identity = identity;
         this.views = views;
-        this.days = days;
+        this.dates = dates;
     }
 
     @Override
@@ -39,8 +38,9 @@ public class CalendarRespondent implements GroupedRespondent {
         renderToFutureCalendar(context);
     }
 
+    //TODO date offset
     private void showHistory(Context context) {
-        long firstDate = days.userFirstDate(identity.value(context.req));
+        long firstDate = dates.userFirstActivity(identity.value(context.req));
         Instant dateInstant = firstDate == 0 ? Instant.now() : Instant.ofEpochSecond(firstDate);
         renderToPastCalendar(context, ZonedDateTime.ofInstant(dateInstant, ZoneOffset.UTC));
     }
@@ -55,19 +55,19 @@ public class CalendarRespondent implements GroupedRespondent {
         }
         ZonedDateTime requestedDate = currentDate.withYear(requestedYear)
             .withMonth(yearMonth.month(currentDate.getMonthValue()));
-        List<Day> days = daysForCalendar(identity.value(context.req), requestedDate, false);
+        List<Long> days = daysForCalendar(identity.value(context.req), requestedDate, false);
         String view = views.view(true, requestedDate.isAfter(currentDate), currentYear < yearMonth.maxYear,
             requestedDate, days, false);
         context.html(view);
     }
 
-    private List<Day> daysForCalendar(long userId, ZonedDateTime requestedDate, boolean fromPast) {
-        List<Day> daysForCalendar;
+    private List<Long> daysForCalendar(long userId, ZonedDateTime requestedDate, boolean fromPast) {
+        List<Long> daysForCalendar;
         if (fromPast) {
-            daysForCalendar = days.userRange(userId, requestedDate.withDayOfMonth(1).toEpochSecond(),
+            daysForCalendar = dates.userPlannedDays(userId, requestedDate.withDayOfMonth(1).toEpochSecond(),
                 requestedDate.toEpochSecond());
         } else {
-            daysForCalendar = days.userRange(userId, requestedDate.toEpochSecond(),
+            daysForCalendar = dates.userPlannedDays(userId, requestedDate.toEpochSecond(),
                 requestedDate.withDayOfMonth(requestedDate.toLocalDate().lengthOfMonth()).toEpochSecond());
         }
         return daysForCalendar;
@@ -89,7 +89,7 @@ public class CalendarRespondent implements GroupedRespondent {
             requestedMonth = firstDate.getMonthValue();
             requestedDate = requestedDate.withMonth(requestedMonth);
         }
-        List<Day> days = daysForCalendar(identity.value(context.req), requestedDate, true);
+        List<Long> days = daysForCalendar(identity.value(context.req), requestedDate, true);
         String view = views.view(
             false,
             requestedDate.isAfter(firstDate) && firstDate.getMonthValue() < requestedDate.getMonthValue(),

@@ -16,9 +16,9 @@ public class ActivityTest {
             Matchers.equalTo(true));
     }
 
-    private Activity withNewTimes(Activity activity, int startOffset, int endOffset) {
-        return new Activity(activity.name, activity.dayId, activity.startTime + startOffset,
-            activity.endTime + endOffset, activity.done);
+    private Activity withNewTimes(Activity activity, long startOffset, long endOffset) {
+        return new Activity(activity.userId, activity.name, activity.startDate + startOffset,
+            activity.endDate + endOffset, activity.done);
     }
 
     @Test
@@ -39,7 +39,7 @@ public class ActivityTest {
     @Test
     public void doesNotIntersectWithScheduledBefore() {
         Activity activity = new RandomActivities().activity();
-        Activity before = withNewTimes(activity, -activity.startTime, -activity.startTime);
+        Activity before = withNewTimes(activity, -activity.startDate, -activity.startDate);
         MatcherAssert.assertThat("Should not intersect with scheduled before", activity.intersects(before),
             Matchers.equalTo(false));
     }
@@ -47,7 +47,7 @@ public class ActivityTest {
     @Test
     public void doesNotIntersectWithScheduledAfter() {
         Activity activity = new RandomActivities().activity();
-        int offset = activity.endTime - activity.startTime;
+        long offset = activity.endDate - activity.startDate;
         Activity after = withNewTimes(activity, offset, offset);
         MatcherAssert.assertThat("Should not intersect with scheduled after", activity.intersects(after),
             Matchers.equalTo(false));

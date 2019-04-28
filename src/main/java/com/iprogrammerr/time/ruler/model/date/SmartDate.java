@@ -49,4 +49,8 @@ public class SmartDate {
     public long dayEnd() {
         return ofTime(23, 59, 59);
     }
+
+    public Instant withOffset(long seconds) {
+        return date.plusSeconds(seconds).toInstant();
+    }
 }

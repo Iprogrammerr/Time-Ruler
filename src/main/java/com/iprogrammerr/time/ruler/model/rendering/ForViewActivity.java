@@ -18,7 +18,7 @@ public class ForViewActivity {
     }
 
     public ForViewActivity(Activity activity, DateTimeFormatting formatting) {
-        this(activity.id, activity.name, formatting.timeFromSeconds(activity.startTime),
-            formatting.timeFromSeconds(activity.endTime));
+        this(activity.id, activity.name, formatting.timeFromSeconds(activity.startDate),
+            formatting.timeFromSeconds(activity.endDate));
     }
 }

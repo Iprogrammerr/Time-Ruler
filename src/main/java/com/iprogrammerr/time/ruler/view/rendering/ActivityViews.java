@@ -2,6 +2,7 @@ package com.iprogrammerr.time.ruler.view.rendering;
 
 import com.iprogrammerr.time.ruler.model.activity.DescribedActivity;
 import com.iprogrammerr.time.ruler.model.date.DateTimeFormatting;
+import com.iprogrammerr.time.ruler.model.date.SmartDate;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 
 import java.util.HashMap;
@@ -48,11 +49,15 @@ public class ActivityViews {
         return templates.rendered(name, params);
     }
 
-    public String filled(DescribedActivity activity) {
+    public String filled(DescribedActivity activity, int utcOffset) {
         Map<String, Object> params = new HashMap<>();
         params.put(NAME_TEMPLATE, activity.activity.name);
-        params.put(START_TIME_TEMPLATE, formatting.timeFromSeconds(activity.activity.startTime));
-        params.put(END_TIME_TEMPLATE, formatting.timeFromSeconds(activity.activity.endTime));
+        String startTime = formatting.timeFromSeconds(new SmartDate(activity.activity.startDate)
+            .withOffset(utcOffset).getEpochSecond());
+        params.put(START_TIME_TEMPLATE, startTime);
+        String endTime = formatting.timeFromSeconds(new SmartDate(activity.activity.endDate)
+            .withOffset(utcOffset).getEpochSecond());
+        params.put(END_TIME_TEMPLATE, endTime);
         params.put(DESCRIPTION_TEMPLATE, activity.description);
         return templates.rendered(name, params);
     }

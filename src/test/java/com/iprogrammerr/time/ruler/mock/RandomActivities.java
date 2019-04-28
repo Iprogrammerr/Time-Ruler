@@ -2,6 +2,7 @@ package com.iprogrammerr.time.ruler.mock;
 
 import com.iprogrammerr.time.ruler.model.activity.Activity;
 
+import java.time.Instant;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -25,23 +26,22 @@ public class RandomActivities {
         this(new Random());
     }
 
-    public Activity activity(long id, long dayId, boolean done) {
+    public Activity activity(long id, long userId, long startDate, boolean done) {
         String name = strings.alphabetic(1 + random.nextInt(MAX_NAME_LENGTH));
-        int end = 1 + random.nextInt(DAY_SECONDS);
-        int start = random.nextInt(end);
-        return new Activity(id, name, dayId, start, end, done);
+        long endDate = startDate + 1 + random.nextInt(DAY_SECONDS);
+        return new Activity(id, userId, name, startDate, endDate, done);
     }
 
-    public Activity activity(long dayId, boolean done) {
-        return activity(0, dayId, done);
+    public Activity activity(long userId, long startDate, boolean done) {
+        return activity(0, userId, startDate, done);
     }
 
-    public Activity activity(long dayId) {
-        return activity(dayId, random.nextBoolean());
+    public Activity activity(long userId, long startDate) {
+        return activity(userId, startDate, random.nextBoolean());
     }
 
     public Activity activity(boolean done) {
-        return activity(0, done);
+        return activity(0, Instant.now().getEpochSecond(), done);
     }
 
     public Activity activity() {

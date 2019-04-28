@@ -13,11 +13,11 @@ import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.Messages;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.DatabaseActivities;
+import com.iprogrammerr.time.ruler.model.activity.DatabaseDates;
+import com.iprogrammerr.time.ruler.model.activity.Dates;
 import com.iprogrammerr.time.ruler.model.date.DateParsing;
 import com.iprogrammerr.time.ruler.model.date.DateTimeFormatting;
 import com.iprogrammerr.time.ruler.model.date.LimitedDate;
-import com.iprogrammerr.time.ruler.model.day.DatabaseDays;
-import com.iprogrammerr.time.ruler.model.day.Days;
 import com.iprogrammerr.time.ruler.model.description.DatabaseDescriptions;
 import com.iprogrammerr.time.ruler.model.description.Descriptions;
 import com.iprogrammerr.time.ruler.model.session.SessionIdentity;
@@ -67,7 +67,9 @@ public class App {
 
         DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        DateTimeFormatting formatting = new DateTimeFormatting(dateFormat, new SimpleDateFormat("HH:mm"));
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        timeFormat.setTimeZone(dateFormat.getTimeZone());
+        DateTimeFormatting formatting = new DateTimeFormatting(dateFormat, timeFormat);
         DateParsing dateParsing = new DateParsing();
         LimitedDate limitedDate = new LimitedDate(dateParsing);
         UtcOffsetAttribute offsetAttribute = new UtcOffsetAttribute();
@@ -92,8 +94,8 @@ public class App {
             configuration.jdbcUrl());
         DatabaseSession session = new SqlDatabaseSession(database, new QueryTemplates());
         Users users = new DatabaseUsers(session);
-        Days days = new DatabaseDays(session);
         Activities activities = new DatabaseActivities(session);
+        Dates dates = new DatabaseDates(session);
         Descriptions descriptions = new DatabaseDescriptions(session);
 
         EmailServer emailServer = new ConfigurableEmailServer(
@@ -113,12 +115,12 @@ public class App {
             hashing, identity, offsetAttribute);
         SigningUpRespondent signingUpRespondent = new SigningUpRespondent(viewsTemplates, users, hashing, emails);
         SigningOutRespondent signingOutRespondent = new SigningOutRespondent(signingInRespondent);
-        CalendarRespondent calendarRespondent = new CalendarRespondent(identity, calendarView, days);
+        CalendarRespondent calendarRespondent = new CalendarRespondent(identity, calendarView, dates);
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, viewsTemplates);
         DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, dayPlanView, activities,
             limitedDate, dateParsing);
         ActivityRespondent activityRespondent = new ActivityRespondent(identity, activityView, dayPlanRespondent,
-            days, activities, descriptions, offsetAttribute, limitedDate);
+            activities, descriptions, offsetAttribute, limitedDate);
         DayPlanExecutionRespondent dayPlanExecutionRespondent = new DayPlanExecutionRespondent(identity,
             dayPlanExecutionView, activities, limitedDate, dateParsing);
 
