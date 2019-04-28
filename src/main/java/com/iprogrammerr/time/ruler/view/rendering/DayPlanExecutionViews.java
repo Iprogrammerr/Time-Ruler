@@ -5,10 +5,12 @@ import com.iprogrammerr.time.ruler.model.date.DateTimeFormatting;
 import com.iprogrammerr.time.ruler.model.rendering.ForViewActivity;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public class DayPlanExecutionViews {
 
@@ -29,16 +31,17 @@ public class DayPlanExecutionViews {
         this(templates, formatting, "day-plan-execution");
     }
 
-    public String view(boolean history, List<Activity> activities) {
+    public String view(boolean history, List<Activity> activities, Function<Long, Instant> timeTransformation) {
         Map<String, Object> params = new HashMap<>();
         params.put(HISTORY_TEMPLATE, history);
         List<ForViewActivity> plannedActivities = new ArrayList<>();
         List<ForViewActivity> executedActivities = new ArrayList<>();
         activities.forEach(a -> {
+            ForViewActivity activity = new ForViewActivity(a, formatting, timeTransformation);
             if (a.done) {
-                executedActivities.add(new ForViewActivity(a, formatting));
+                executedActivities.add(activity);
             } else {
-                plannedActivities.add(new ForViewActivity(a, formatting));
+                plannedActivities.add(activity);
             }
         });
         params.put(PLANNED_ACTIVITIES_TEMPLATE, plannedActivities);

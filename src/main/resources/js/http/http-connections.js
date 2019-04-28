@@ -9,7 +9,6 @@ export function HttpConnections() {
     const minOkStatus = 200;
     const maxOkStatus = 299;
 
-    //TODO session, cookies?
     function execute(url, method, data) {
         return new Promise((resolve, reject) => {
             let request = new XMLHttpRequest();

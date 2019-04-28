@@ -12,13 +12,9 @@ const signIn = document.getElementById("signIn");
 addEventListener("submit", e => e.preventDefault());
 signIn.onclick = () => {
     if (isFormValid()) {
-        new FormAction(form).submit(`${endpoints.signIn}`, {key: hiddenInputKeys.utcOffset, value: utcOffset()});
+        new FormAction(form).submit(endpoints.signIn);
         signIn.disabled = true;
     }
-};
-
-function utcOffset() {
-    return -(new Date().getTimezoneOffset() * 60);
 };
 
 function isFormValid() {

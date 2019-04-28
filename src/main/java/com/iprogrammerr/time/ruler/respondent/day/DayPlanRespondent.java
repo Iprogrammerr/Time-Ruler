@@ -5,6 +5,7 @@ import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.date.DateParsing;
 import com.iprogrammerr.time.ruler.model.date.LimitedDate;
+import com.iprogrammerr.time.ruler.model.date.ServerClientDates;
 import com.iprogrammerr.time.ruler.respondent.GroupedRespondent;
 import com.iprogrammerr.time.ruler.view.rendering.DayPlanViews;
 import io.javalin.Context;
@@ -21,15 +22,17 @@ public class DayPlanRespondent implements GroupedRespondent {
     private final Activities activities;
     private final LimitedDate limitedDate;
     private final DateParsing parsing;
+    private final ServerClientDates serverClientDates;
     private String redirect;
 
     public DayPlanRespondent(Identity<Long> identity, DayPlanViews views, Activities activities, LimitedDate limitedDate,
-        DateParsing parsing) {
+        DateParsing parsing, ServerClientDates serverClientDates) {
         this.identity = identity;
         this.views = views;
         this.activities = activities;
         this.limitedDate = limitedDate;
         this.parsing = parsing;
+        this.serverClientDates = serverClientDates;
         this.redirect = "";
     }
 
@@ -42,8 +45,8 @@ public class DayPlanRespondent implements GroupedRespondent {
 
     private void showDayPlan(Context context) {
         Instant date = limitedDate.fromString(context.queryParam(DATE_PARAM, ""));
-        context.html(views.view(date, activities.ofUserDatePlanned(identity.value(context.req),
-            date.getEpochSecond())));
+        context.html(views.view(date, d -> serverClientDates.clientDate(context.req, d),
+            activities.ofUserDatePlanned(identity.value(context.req), date.getEpochSecond())));
     }
 
     public void redirect(Context context, Instant date) {

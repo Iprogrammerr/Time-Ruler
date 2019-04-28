@@ -36,10 +36,14 @@ public class SmartDate {
     }
 
     public long ofTime(int hour, int minute, int second) {
+        return ofTimeDate(hour, minute, second).toEpochSecond();
+    }
+
+    private ZonedDateTime ofTimeDate(int hour, int minute, int second) {
         return ZonedDateTime.of(
             date.getYear(), date.getMonthValue(), date.getDayOfMonth(),
             hour, minute, second, 0, date.getZone()
-        ).toEpochSecond();
+        );
     }
 
     public long dayBeginning() {
@@ -50,7 +54,7 @@ public class SmartDate {
         return ofTime(23, 59, 59);
     }
 
-    public Instant withOffset(long seconds) {
-        return date.plusSeconds(seconds).toInstant();
+    public Instant withTime(Instant time) {
+        return ofTimeDate(0, 0, 0).plusSeconds(time.getEpochSecond()).toInstant();
     }
 }

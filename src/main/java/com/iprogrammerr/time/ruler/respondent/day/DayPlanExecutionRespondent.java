@@ -4,6 +4,7 @@ import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
+import com.iprogrammerr.time.ruler.model.date.ServerClientDates;
 import com.iprogrammerr.time.ruler.model.date.DateParsing;
 import com.iprogrammerr.time.ruler.model.date.LimitedDate;
 import com.iprogrammerr.time.ruler.model.date.SmartDate;
@@ -24,15 +25,17 @@ public class DayPlanExecutionRespondent implements GroupedRespondent {
     private final Activities activities;
     private final LimitedDate limitedDate;
     private final DateParsing parsing;
+    private final ServerClientDates serverClientDates;
     private String redirect;
 
     public DayPlanExecutionRespondent(Identity<Long> identity, DayPlanExecutionViews views, Activities activities,
-        LimitedDate limitedDate, DateParsing parsing) {
+        LimitedDate limitedDate, DateParsing parsing, ServerClientDates serverClientDates) {
         this.identity = identity;
         this.views = views;
         this.activities = activities;
         this.limitedDate = limitedDate;
         this.parsing = parsing;
+        this.serverClientDates = serverClientDates;
         this.redirect = "";
     }
 
@@ -48,7 +51,8 @@ public class DayPlanExecutionRespondent implements GroupedRespondent {
         List<Activity> dayActivities = activities.ofUserDate(identity.value(context.req),
             date.getEpochSecond());
         boolean history = new SmartDate().dayBeginning() > date.getEpochSecond();
-        context.html(views.view(history, dayActivities));
+        context.html(views.view(history, dayActivities,
+            d -> serverClientDates.clientDate(context.req, d)));
     }
 
     public void redirect(Context context, Instant date) {

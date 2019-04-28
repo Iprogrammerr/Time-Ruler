@@ -18,10 +18,10 @@ import com.iprogrammerr.time.ruler.model.activity.Dates;
 import com.iprogrammerr.time.ruler.model.date.DateParsing;
 import com.iprogrammerr.time.ruler.model.date.DateTimeFormatting;
 import com.iprogrammerr.time.ruler.model.date.LimitedDate;
+import com.iprogrammerr.time.ruler.model.date.ServerClientDates;
 import com.iprogrammerr.time.ruler.model.description.DatabaseDescriptions;
 import com.iprogrammerr.time.ruler.model.description.Descriptions;
 import com.iprogrammerr.time.ruler.model.session.SessionIdentity;
-import com.iprogrammerr.time.ruler.model.session.UtcOffsetAttribute;
 import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.user.Users;
 import com.iprogrammerr.time.ruler.respondent.ActivityRespondent;
@@ -72,7 +72,7 @@ public class App {
         DateTimeFormatting formatting = new DateTimeFormatting(dateFormat, timeFormat);
         DateParsing dateParsing = new DateParsing();
         LimitedDate limitedDate = new LimitedDate(dateParsing);
-        UtcOffsetAttribute offsetAttribute = new UtcOffsetAttribute();
+        ServerClientDates serverClientDates = new ServerClientDates();
 
         TemplateEngine engine = new TemplateEngine();
         FileTemplateResolver resolver = new FileTemplateResolver();
@@ -112,17 +112,18 @@ public class App {
         WelcomeRespondent welcomeRespondent = new WelcomeRespondent(views);
         TodayRespondent todayRespondent = new TodayRespondent(identity, viewsTemplates);
         SigningInRespondent signingInRespondent = new SigningInRespondent(todayRespondent, signingInView, users,
-            hashing, identity, offsetAttribute);
+            hashing, identity);
         SigningUpRespondent signingUpRespondent = new SigningUpRespondent(viewsTemplates, users, hashing, emails);
         SigningOutRespondent signingOutRespondent = new SigningOutRespondent(signingInRespondent);
-        CalendarRespondent calendarRespondent = new CalendarRespondent(identity, calendarView, dates);
+        CalendarRespondent calendarRespondent = new CalendarRespondent(identity, calendarView, dates,
+            serverClientDates);
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, viewsTemplates);
         DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, dayPlanView, activities,
-            limitedDate, dateParsing);
+            limitedDate, dateParsing, serverClientDates);
         ActivityRespondent activityRespondent = new ActivityRespondent(identity, activityView, dayPlanRespondent,
-            activities, descriptions, offsetAttribute, limitedDate);
+            activities, descriptions, limitedDate, serverClientDates);
         DayPlanExecutionRespondent dayPlanExecutionRespondent = new DayPlanExecutionRespondent(identity,
-            dayPlanExecutionView, activities, limitedDate, dateParsing);
+            dayPlanExecutionView, activities, limitedDate, dateParsing, serverClientDates);
 
         String userGroup = "user/";
 

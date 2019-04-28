@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public class DayPlanViews {
 
@@ -29,11 +30,11 @@ public class DayPlanViews {
         this(templates, formatting, "day-plan");
     }
 
-    public String view(Instant date, List<Activity> activities) {
+    public String view(Instant date, Function<Long, Instant> timeTransformation, List<Activity> activities) {
         Map<String, Object> params = new HashMap<>();
-        params.put(DATE_TEMPLATE, formatting.dateFromSeconds(date.getEpochSecond()));
+        params.put(DATE_TEMPLATE, formatting.date(date));
         List<ForViewActivity> viewActivities = new ArrayList<>(activities.size());
-        activities.forEach(a -> viewActivities.add(new ForViewActivity(a, formatting)));
+        activities.forEach(a -> viewActivities.add(new ForViewActivity(a, formatting, timeTransformation)));
         params.put(ACTIVITIES_TEMPLATE, viewActivities);
         return templates.rendered(name, params);
     }

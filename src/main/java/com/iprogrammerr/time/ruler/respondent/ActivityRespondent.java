@@ -4,9 +4,10 @@ import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
 import com.iprogrammerr.time.ruler.model.date.LimitedDate;
+import com.iprogrammerr.time.ruler.model.date.ServerClientDates;
+import com.iprogrammerr.time.ruler.model.date.SmartDate;
 import com.iprogrammerr.time.ruler.model.description.Description;
 import com.iprogrammerr.time.ruler.model.description.Descriptions;
-import com.iprogrammerr.time.ruler.model.session.UtcOffsetAttribute;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanRespondent;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateableTime;
@@ -15,11 +16,10 @@ import io.javalin.BadRequestResponse;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
-import java.time.Clock;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.TimeZone;
 
 //TODO better exception handling/mapping mechanism
 public class ActivityRespondent implements GroupedRespondent {
@@ -33,23 +33,29 @@ public class ActivityRespondent implements GroupedRespondent {
     private static final String ACTIVITY = "activity";
     private static final String ID = "id";
     private static final String ACTIVITY_WITH_ID = ACTIVITY + "/:" + ID;
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy, HH:mm");
+
+    static {
+        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
+
     private final Identity<Long> identity;
     private final ActivityViews views;
     private final DayPlanRespondent dayPlanRespondent;
     private final Activities activities;
     private final Descriptions descriptions;
-    private final UtcOffsetAttribute offsetAttribute;
     private final LimitedDate limitedDate;
+    private final ServerClientDates serverClientDates;
 
     public ActivityRespondent(Identity<Long> identity, ActivityViews views, DayPlanRespondent dayPlanRespondent, Activities activities,
-        Descriptions descriptions, UtcOffsetAttribute offsetAttribute, LimitedDate limitedDate) {
+        Descriptions descriptions, LimitedDate limitedDate, ServerClientDates serverClientDates) {
         this.identity = identity;
         this.views = views;
         this.dayPlanRespondent = dayPlanRespondent;
         this.activities = activities;
         this.descriptions = descriptions;
-        this.offsetAttribute = offsetAttribute;
         this.limitedDate = limitedDate;
+        this.serverClientDates = serverClientDates;
     }
 
     @Override
@@ -62,46 +68,49 @@ public class ActivityRespondent implements GroupedRespondent {
     }
 
     private void showEmpty(Context context) {
-        int utcOffset = offsetAttribute.from(context.req.getSession());
-        ZonedDateTime clientDate = ZonedDateTime.now(Clock.systemUTC()).plusSeconds(utcOffset);
-        context.html(views.empty(clientDate.getHour(), clientDate.getMinute()));
+        context.html(views.empty(serverClientDates.clientDate(context.req)));
     }
 
     private void showActivity(Context context) {
         int id = context.pathParam(ID, Integer.class).get();
         if (activities.exists(id)) {
             context.html(views.filled(descriptions.describedActivity(id),
-                offsetAttribute.from(context.req.getSession())));
+                date -> serverClientDates.clientDate(context.req, date)));
         } else {
             showEmpty(context);
         }
     }
 
+    //TODO this ought to be simpler
     private void createActivity(Context context) {
         ValidateableName name = new ValidateableName(context.formParam(FORM_NAME, ""), true);
         ValidateableTime start = new ValidateableTime(context.formParam(FORM_START_TIME, ""));
         ValidateableTime end = new ValidateableTime(context.formParam(FORM_END_TIME, ""));
         String description = context.formParam(FORM_DESCRIPTION, "");
         if (name.isValid() && start.isValid() && end.isValid()) {
-            Instant startTime = start.value();
-            Instant endTime = end.value();
-            if (startTime.isAfter(endTime)) {
-                throw new BadRequestResponse("Start time can not be greater than end time");
-            }
-            long userId = identity.value(context.req);
-            //TODO zone offset
             Instant date = limitedDate.fromString(context.queryParam(DATE_PARAM, ""));
-            boolean done = context.formParam(FORM_DONE, Boolean.class).get();
-            Activity activity = new Activity(userId, name.value(),
-                date.plusSeconds(startTime.getEpochSecond()).getEpochSecond(),
-                date.plusSeconds(endTime.getEpochSecond()).getEpochSecond(), done);
+            Activity activity = activity(context, date, name, start, end);
             createActivity(activity, description,
                 activities.ofUserDate(identity.value(context.req), date.getEpochSecond()));
-            ZonedDateTime dayDate = ZonedDateTime.ofInstant(date, ZoneOffset.UTC);
-            dayPlanRespondent.redirect(context, dayDate.toInstant());
+            dayPlanRespondent.redirect(context, date);
         } else {
             context.html(views.withErrors(!name.isValid(), !start.isValid(), !end.isValid()));
         }
+    }
+
+    private Activity activity(Context context, Instant date, ValidateableName name,
+        ValidateableTime start, ValidateableTime end) {
+        Instant startTime = start.value();
+        Instant endTime = end.value();
+        if (startTime.isAfter(endTime)) {
+            throw new BadRequestResponse("Start time can not be greater than end time");
+        }
+        long userId = identity.value(context.req);
+        boolean done = context.formParam(FORM_DONE, Boolean.class).get();
+        SmartDate smartDate = new SmartDate(date.getEpochSecond());
+        long startDate = serverClientDates.serverDate(context.req, smartDate.withTime(startTime)).getEpochSecond();
+        long endDate = serverClientDates.serverDate(context.req, smartDate.withTime(endTime)).getEpochSecond();
+        return new Activity(userId, name.value(), startDate, endDate, done);
     }
 
     private void createActivity(Activity activity, String description, List<Activity> dayActivities) {
@@ -126,23 +135,12 @@ public class ActivityRespondent implements GroupedRespondent {
         ValidateableTime end = new ValidateableTime(context.formParam(FORM_END_TIME, ""));
         String description = context.formParam(FORM_DESCRIPTION, "");
         if (name.isValid() && start.isValid() && end.isValid()) {
-            Instant startTime = start.value();
-            Instant endTime = end.value();
-            if (startTime.isAfter(endTime)) {
-                throw new BadRequestResponse("Start time can not be greater than end time");
-            }
-            long userId = identity.value(context.req);
-            //TODO zone offset
             Instant date = limitedDate.fromString(context.queryParam(DATE_PARAM, ""));
-            boolean done = context.formParam(FORM_DONE, Boolean.class).get();
-            Activity activity = new Activity(userId, name.value(),
-                date.plusSeconds(startTime.getEpochSecond()).getEpochSecond(),
-                date.plusSeconds(endTime.getEpochSecond()).getEpochSecond(), done);
+            Activity activity = activity(context, date, name, start, end);
             updateActivity(activity, description,
                 activities.ofUserDate(identity.value(context.req), date.getEpochSecond()));
-            ZonedDateTime dayDate = ZonedDateTime.ofInstant(date, ZoneOffset.UTC);
             //TODO proper redirect dependent on date value
-            dayPlanRespondent.redirect(context, dayDate.toInstant());
+            dayPlanRespondent.redirect(context, date);
         } else {
             context.html(views.withErrors(!name.isValid(), !start.isValid(), !end.isValid()));
         }

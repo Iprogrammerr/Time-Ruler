@@ -18,16 +18,16 @@ export function TabsNavigation(router, activeClassName = "active") {
             }
         }
         if (_activeIndex != 0 || allActive) {
-            tabs[0].onclick = () => router.forward(routes.today);
+            tabs[0].onclick = () => _router.forward(routes.today);
         }
         if (_activeIndex != 1 || allActive) {
-            tabs[1].onclick = () => router.forwardWithParams(routes.plan, dateTimeParams.yearMonthAsParams(_yearMonth.year, _yearMonth.month));
+            tabs[1].onclick = () => _router.forwardWithParams(routes.plan, dateTimeParams.yearMonthAsParams(_yearMonth.year, _yearMonth.month));
         }
         if (_activeIndex != 2 || allActive) {
-            tabs[2].onclick = () => router.forwardWithParams(routes.history, dateTimeParams.yearMonthAsParams(_yearMonth.year, _yearMonth.month));
+            tabs[2].onclick = () => _router.forwardWithParams(routes.history, dateTimeParams.yearMonthAsParams(_yearMonth.year, _yearMonth.month));
         }
         if (_activeIndex != 3 || allActive) {
-            tabs[3].onclick = () => router.forward(routes.profile);
+            tabs[3].onclick = () => _router.forward(routes.profile);
         }
     };
 

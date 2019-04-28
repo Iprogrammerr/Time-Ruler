@@ -2,12 +2,14 @@ package com.iprogrammerr.time.ruler.respondent;
 
 import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.activity.Dates;
+import com.iprogrammerr.time.ruler.model.date.ServerClientDates;
 import com.iprogrammerr.time.ruler.model.date.SmartDate;
 import com.iprogrammerr.time.ruler.model.date.YearMonth;
 import com.iprogrammerr.time.ruler.view.rendering.CalendarViews;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
+import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -21,11 +23,13 @@ public class CalendarRespondent implements GroupedRespondent {
     private final Identity<Long> identity;
     private final CalendarViews views;
     private final Dates dates;
+    private final ServerClientDates serverClientDates;
 
-    public CalendarRespondent(Identity<Long> identity, CalendarViews views, Dates dates) {
+    public CalendarRespondent(Identity<Long> identity, CalendarViews views, Dates dates, ServerClientDates serverClientDates) {
         this.identity = identity;
         this.views = views;
         this.dates = dates;
+        this.serverClientDates = serverClientDates;
     }
 
     @Override
@@ -41,12 +45,12 @@ public class CalendarRespondent implements GroupedRespondent {
     //TODO date offset
     private void showHistory(Context context) {
         long firstDate = dates.userFirstActivity(identity.value(context.req));
-        Instant dateInstant = firstDate == 0 ? Instant.now() : Instant.ofEpochSecond(firstDate);
-        renderToPastCalendar(context, ZonedDateTime.ofInstant(dateInstant, ZoneOffset.UTC));
+        Instant date = firstDate == 0 ? Instant.now(Clock.systemUTC()) : Instant.ofEpochSecond(firstDate);
+        renderToPastCalendar(context, ZonedDateTime.ofInstant(date, ZoneOffset.UTC));
     }
 
     private void renderToFutureCalendar(Context context) {
-        ZonedDateTime currentDate = ZonedDateTime.now(ZoneOffset.UTC);
+        ZonedDateTime currentDate = ZonedDateTime.now(Clock.systemUTC());
         int currentYear = currentDate.getYear();
         YearMonth yearMonth = new YearMonth(context.queryParamMap(), currentYear + MAX_YEAR_OFFSET_VALUE);
         int requestedYear = yearMonth.year(currentYear);
@@ -61,6 +65,7 @@ public class CalendarRespondent implements GroupedRespondent {
         context.html(view);
     }
 
+    //TODO offset
     private List<Long> daysForCalendar(long userId, ZonedDateTime requestedDate, boolean fromPast) {
         List<Long> daysForCalendar;
         if (fromPast) {
@@ -74,7 +79,7 @@ public class CalendarRespondent implements GroupedRespondent {
     }
 
     private void renderToPastCalendar(Context context, ZonedDateTime firstDate) {
-        ZonedDateTime currentDate = ZonedDateTime.now(ZoneOffset.UTC);
+        ZonedDateTime currentDate = ZonedDateTime.now(Clock.systemUTC());
         int currentYear = currentDate.getYear();
         int currentMonth = currentDate.getMonthValue();
         YearMonth yearMonth = new YearMonth(context.queryParamMap(), currentYear);

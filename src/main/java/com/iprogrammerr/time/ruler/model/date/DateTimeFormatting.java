@@ -1,6 +1,7 @@
 package com.iprogrammerr.time.ruler.model.date;
 
 import java.text.DateFormat;
+import java.time.Instant;
 
 public class DateTimeFormatting {
 
@@ -12,11 +13,11 @@ public class DateTimeFormatting {
         this.timeFormat = timeFormat;
     }
 
-    public String timeFromSeconds(long time) {
-        return timeFormat.format(time * 1000);
+    public String time(Instant time) {
+        return timeFormat.format(time.toEpochMilli());
     }
 
-    public String dateFromSeconds(long date) {
-        return dateFormat.format(date * 1000);
+    public String date(Instant date) {
+        return dateFormat.format(date.toEpochMilli());
     }
 }

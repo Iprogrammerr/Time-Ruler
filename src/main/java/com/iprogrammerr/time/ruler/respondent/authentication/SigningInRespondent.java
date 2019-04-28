@@ -3,7 +3,6 @@ package com.iprogrammerr.time.ruler.respondent.authentication;
 import com.iprogrammerr.time.ruler.model.Hashing;
 import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
-import com.iprogrammerr.time.ruler.model.session.UtcOffsetAttribute;
 import com.iprogrammerr.time.ruler.model.user.User;
 import com.iprogrammerr.time.ruler.model.user.Users;
 import com.iprogrammerr.time.ruler.respondent.Respondent;
@@ -23,23 +22,20 @@ public class SigningInRespondent implements Respondent {
     private static final String SIGN_IN = "sign-in";
     private static final String FORM_EMAIL_LOGIN = "emailLogin";
     private static final String FORM_PASSWORD = "password";
-    private static final String FORM_UTC_OFFSET = "utcOffset";
     private static final String ACTIVATION = "activation";
     private final TodayRespondent respondent;
     private final SigningInViews views;
     private final Users users;
     private final Hashing hashing;
     private final Identity<Long> identity;
-    private final UtcOffsetAttribute offsetAttribute;
 
     public SigningInRespondent(TodayRespondent respondent, SigningInViews views, Users users, Hashing hashing,
-        Identity<Long> identity, UtcOffsetAttribute offsetAttribute) {
+        Identity<Long> identity) {
         this.respondent = respondent;
         this.views = views;
         this.users = users;
         this.hashing = hashing;
         this.identity = identity;
-        this.offsetAttribute = offsetAttribute;
     }
 
     @Override
@@ -79,8 +75,6 @@ public class SigningInRespondent implements Respondent {
             User user = users.byEmailOrName(emailOrName);
             if (passwordHash.equals(user.password)) {
                 identity.create(user.id, context.req);
-                int utcOffset = context.formParam(FORM_UTC_OFFSET, Integer.class).get();
-                offsetAttribute.to(context.req.getSession(), utcOffset);
                 respondent.redirect(context);
             } else {
                 context.html(views.invalid(emailOrName, true));

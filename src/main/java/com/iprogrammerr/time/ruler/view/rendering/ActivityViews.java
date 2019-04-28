@@ -2,11 +2,12 @@ package com.iprogrammerr.time.ruler.view.rendering;
 
 import com.iprogrammerr.time.ruler.model.activity.DescribedActivity;
 import com.iprogrammerr.time.ruler.model.date.DateTimeFormatting;
-import com.iprogrammerr.time.ruler.model.date.SmartDate;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 //TODO client time offset
 public class ActivityViews {
@@ -18,7 +19,6 @@ public class ActivityViews {
     private static final String START_TIME_TEMPLATE = "start";
     private static final String END_TIME_TEMPLATE = "end";
     private static final String DESCRIPTION_TEMPLATE = "description";
-    private static final String TIME_FORMAT = "%02d:%02d";
     private final ViewsTemplates templates;
     private final DateTimeFormatting formatting;
     private final String name;
@@ -33,11 +33,11 @@ public class ActivityViews {
         this(templates, formatting, "activity");
     }
 
-    public String empty(int hour, int minute) {
+    public String empty(Instant time) {
         Map<String, Object> params = new HashMap<>();
-        String time = String.format(TIME_FORMAT, hour, minute);
-        params.put(START_TIME_TEMPLATE, time);
-        params.put(END_TIME_TEMPLATE, time);
+        String timeString = formatting.time(time);
+        params.put(START_TIME_TEMPLATE, timeString);
+        params.put(END_TIME_TEMPLATE, timeString);
         return templates.rendered(name, params);
     }
 
@@ -49,14 +49,12 @@ public class ActivityViews {
         return templates.rendered(name, params);
     }
 
-    public String filled(DescribedActivity activity, int utcOffset) {
+    public String filled(DescribedActivity activity, Function<Long, Instant> timeTransformation) {
         Map<String, Object> params = new HashMap<>();
         params.put(NAME_TEMPLATE, activity.activity.name);
-        String startTime = formatting.timeFromSeconds(new SmartDate(activity.activity.startDate)
-            .withOffset(utcOffset).getEpochSecond());
+        String startTime = formatting.time(timeTransformation.apply(activity.activity.startDate));
         params.put(START_TIME_TEMPLATE, startTime);
-        String endTime = formatting.timeFromSeconds(new SmartDate(activity.activity.endDate)
-            .withOffset(utcOffset).getEpochSecond());
+        String endTime = formatting.time(timeTransformation.apply(activity.activity.endDate));
         params.put(END_TIME_TEMPLATE, endTime);
         params.put(DESCRIPTION_TEMPLATE, activity.description);
         return templates.rendered(name, params);

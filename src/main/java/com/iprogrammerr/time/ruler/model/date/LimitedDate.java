@@ -1,5 +1,6 @@
 package com.iprogrammerr.time.ruler.model.date;
 
+import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -27,6 +28,6 @@ public class LimitedDate {
     }
 
     public Instant fromString(String date) {
-        return fromString(date, Instant.now());
+        return fromString(date, Instant.now(Clock.systemUTC()));
     }
 }

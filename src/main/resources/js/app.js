@@ -4,6 +4,7 @@ import { UrlParams } from "./http/url-params.js";
 import { DateTimeParams } from "./date/date-time-params.js";
 import { Validations } from "./validation/validations.js";
 import { TabsNavigation } from "./navigation/tabs-navigation.js";
+import { Cookies} from "./http/cookies.js";
 
 const host = "http://127.0.0.1:8080/";
 const userRoutePrefix = "user/";
@@ -42,6 +43,10 @@ export const hiddenDataKeys = {
     id: "data-id"
 };
 
+const cookiesKeys = {
+    utcOffset: "utcOffset"
+};
+
 export const router = new Router(host);
 export const tabsNavigation = new TabsNavigation(router);
 export const httpConnections = new HttpConnections();
@@ -53,4 +58,25 @@ export const parametrizedRoutes = {
     createActivity: (date) => router.routeWithParams(routes.activity, dateTimeParams.dateAsParam(date)),
     updateActivity: (id) => router.fullRoute(routes.activity) + `/${id}`,
     deleteActivity: (id) => router.fullRoute(routes.activity) + `/${id}`
+};
+
+attachUtcOffset();
+
+function attachUtcOffset() {
+    let cookies = new Cookies();
+    let oldOffset = 0;
+    if (cookies.has(cookiesKeys.utcOffset)) {
+        oldOffset = cookies.get(cookiesKeys.utcOffset);
+        if (isNaN(oldOffset)) {
+            oldOffset = 0;
+        } else {
+            oldOffset = parseInt(oldOffset);
+        }
+    }
+    let offset = new Date().getTimezoneOffset() * 60;
+    console.log(`Old offset = ${oldOffset}, newOffset = ${offset}`);
+    if (oldOffset !== offset) {
+       cookies.put(cookiesKeys.utcOffset, offset);
+    }
+    console.log("All cokies = " + document.cookie);
 };
