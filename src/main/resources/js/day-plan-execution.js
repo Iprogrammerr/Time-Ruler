@@ -24,7 +24,22 @@ function setupListNavigation() {
                 removeActivity(activities, a);
             }).catch(e => alert(e));
         };
-    }
+        let spans = a.querySelectorAll("span");
+        setupDoneNotDone(spans[0], spans[1]);
+     }
+};
+
+function setupDoneNotDone(done, notDone) {
+    done.onclick = (e) => {
+        e.stopPropagation();
+        notDone.className = "visible";
+        done.className = "hidden";
+    };
+    notDone.onclick = (e) => {
+        e.stopPropagation();
+        done.className = "visible";
+        notDone.className = "hidden";
+    };
 };
 
 function removeActivity(activities, activity) {

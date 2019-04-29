@@ -20,8 +20,8 @@
             <li th:each="a : ${activities}" th:data-id="${a.id}">
                 <div th:utext="|${a.start} - ${a.end}|"></div>
                 <div th:text="${a.name}"></div>
-                <span th:if="${a.done}" th:utext="|#{done} #{checkedIcon}"></span>
-                <span th:if="!${a.done}" th:utext="|#{done} #{uncheckedIcon}"></span>
+                <span th:class="${a.done}? visible : hidden" th:utext="|#{done} #{checkedIcon}"></span>
+                <span th:class="${a.done}? hidden : visible" th:utext="|#{done} #{uncheckedIcon}"></span>
                 <span class="close">&times;</span>
             </li>
         </ul>
