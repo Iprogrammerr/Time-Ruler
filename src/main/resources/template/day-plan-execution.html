@@ -13,29 +13,19 @@
         <button th:class="${history}? active">History</button>
         <button>Profile</button>
     </div>
-    <div class="two-columns-grid">
-        <div class="centered-h">
-            <p th:if="${plannedActivities.size()} == 0" th:text="#{emptyPlanMessage}"></p>
-            <ul class="activities">
-                <li th:each="pa : ${plannedActivities}">
-                    <div th:utext="|${pa.start} - ${pa.end}|"></div>
-                    <div th:text="${pa.name}"></div>
-                    <span class="close">&times;</span>
-                </li>
-            </ul>
-            <button id="addPlan" th:text="#{addMessage}"></button>
-        </div>
-        <div class="centered-h">
-            <p th:if="${executedActivities.size()} == 0" th:text="#{emptyExecutionMessage}"></p>
-            <ul class="activities">
-                <li th:each="ea : ${executedActivities}">
-                    <div th:utext="|${ea.start} - ${ea.end}|"></div>
-                    <div th:text="${ea.name}"></div>
-                    <span class="close">&times;</span>
-                </li>
-            </ul>
-            <button id="addExecution" th:text="#{addMessage}"></button>
-        </div>
+    <div class="centered-h" style="padding: 8px 16px">
+        <h1 th:text=${date}></h1>
+        <p th:class="!${activities.isEmpty()} ? hidden" th:text="#{emptyPlanMessage}"></p>
+        <ul class="activities">
+            <li th:each="a : ${activities}" th:data-id="${a.id}">
+                <div th:utext="|${a.start} - ${a.end}|"></div>
+                <div th:text="${a.name}"></div>
+                <span th:if="${a.done}" th:utext="|#{done} #{checkedIcon}"></span>
+                <span th:if="!${a.done}" th:utext="|#{done} #{uncheckedIcon}"></span>
+                <span class="close">&times;</span>
+            </li>
+        </ul>
+        <button id="add" th:text="#{addActivity}"></button>
     </div>
 </body>
 <script src="/day-plan-execution.js" type="module"></script>

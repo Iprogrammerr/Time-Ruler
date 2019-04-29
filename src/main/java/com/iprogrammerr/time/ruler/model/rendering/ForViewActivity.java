@@ -12,16 +12,18 @@ public class ForViewActivity {
     public final String name;
     public final String start;
     public final String end;
+    public final boolean done;
 
-    public ForViewActivity(long id, String name, String start, String end) {
+    public ForViewActivity(long id, String name, String start, String end, boolean done) {
         this.id = id;
         this.name = name;
         this.start = start;
         this.end = end;
+        this.done = done;
     }
 
     public ForViewActivity(Activity activity, DateTimeFormatting formatting, Function<Long, Instant> timeTransformation) {
         this(activity.id, activity.name, formatting.time(timeTransformation.apply(activity.startDate)),
-            formatting.time(timeTransformation.apply(activity.endDate)));
+            formatting.time(timeTransformation.apply(activity.endDate)), activity.done);
     }
 }

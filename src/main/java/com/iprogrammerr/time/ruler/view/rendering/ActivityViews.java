@@ -36,8 +36,10 @@ public class ActivityViews {
     public String empty(Instant time) {
         Map<String, Object> params = new HashMap<>();
         String timeString = formatting.time(time);
+        params.put(NAME_TEMPLATE, "");
         params.put(START_TIME_TEMPLATE, timeString);
         params.put(END_TIME_TEMPLATE, timeString);
+        params.put(DESCRIPTION_TEMPLATE, "");
         return templates.rendered(name, params);
     }
 

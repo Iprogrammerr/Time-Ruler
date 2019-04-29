@@ -51,7 +51,7 @@ public class DayPlanExecutionRespondent implements GroupedRespondent {
         List<Activity> dayActivities = activities.ofUserDate(identity.value(context.req),
             date.getEpochSecond());
         boolean history = new SmartDate().dayBeginning() > date.getEpochSecond();
-        context.html(views.view(history, dayActivities,
+        context.html(views.view(date, history, dayActivities,
             d -> serverClientDates.clientDate(context.req, d)));
     }
 

@@ -14,9 +14,9 @@ import java.util.function.Function;
 
 public class DayPlanExecutionViews {
 
+    private static final String DATE_TEMPLATE = "date";
     private static final String HISTORY_TEMPLATE = "history";
-    private static final String PLANNED_ACTIVITIES_TEMPLATE = "plannedActivities";
-    private static final String EXECUTED_ACTIVITIES_TEMPLATE = "executedActivities";
+    private static final String ACTIVITIES_TEMPLATE = "activities";
     private final ViewsTemplates templates;
     private final DateTimeFormatting formatting;
     private final String name;
@@ -31,21 +31,13 @@ public class DayPlanExecutionViews {
         this(templates, formatting, "day-plan-execution");
     }
 
-    public String view(boolean history, List<Activity> activities, Function<Long, Instant> timeTransformation) {
+    public String view(Instant date, boolean history, List<Activity> activities, Function<Long, Instant> timeTransformation) {
         Map<String, Object> params = new HashMap<>();
+        params.put(DATE_TEMPLATE, formatting.date(date));
         params.put(HISTORY_TEMPLATE, history);
-        List<ForViewActivity> plannedActivities = new ArrayList<>();
-        List<ForViewActivity> executedActivities = new ArrayList<>();
-        activities.forEach(a -> {
-            ForViewActivity activity = new ForViewActivity(a, formatting, timeTransformation);
-            if (a.done) {
-                executedActivities.add(activity);
-            } else {
-                plannedActivities.add(activity);
-            }
-        });
-        params.put(PLANNED_ACTIVITIES_TEMPLATE, plannedActivities);
-        params.put(EXECUTED_ACTIVITIES_TEMPLATE, executedActivities);
+        List<ForViewActivity> viewActivities = new ArrayList<>();
+        activities.forEach(a -> viewActivities.add(new ForViewActivity(a, formatting, timeTransformation)));
+        params.put(ACTIVITIES_TEMPLATE, viewActivities);
         return templates.rendered(name, params);
     }
 }

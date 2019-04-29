@@ -222,3 +222,8 @@ ul.activities li:hover {
     padding: 12px;
     grid-gap: 8px;
 }
+
+div.two-columns-grid .spanned {
+    text-align: center;
+    grid-column: 1 / span 2;
+}

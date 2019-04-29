@@ -9,10 +9,7 @@ import { HttpConnections } from "./http/http-connections.js";
 const yearMonthDay = dateTimeParams.currentYearMonthDayFromUrl();
 tabsNavigation.setYearMonth(yearMonthDay.year, yearMonthDay.month);
 tabsNavigation.setup(document.querySelector("div"), true);
-document.getElementById("add").onclick = () => {
-    location.reload();
-    router.forwardWithParams(routes.activity, dateTimeParams.dateFromUrlAsParam());
-}
+document.getElementById("add").onclick = () => router.forwardWithParams(routes.activity, dateTimeParams.dateFromUrlAsParam());
 setupListNavigation();
 
 //TODO error handling mechanism

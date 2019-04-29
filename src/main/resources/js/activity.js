@@ -20,7 +20,7 @@ saveActivity.onclick = () => {
          else {
             endpoint = parametrizedRoutes.createActivity(date);
         }
-        new FormAction(form).submit(endpoint, { key: hiddenInputKeys.done, value: false});
+        new FormAction(form).submit(endpoint);
         saveActivity.disabled = true;
     }
 };
