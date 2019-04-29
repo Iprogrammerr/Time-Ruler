@@ -10,11 +10,13 @@ import com.iprogrammerr.time.ruler.respondent.GroupedRespondent;
 import com.iprogrammerr.time.ruler.view.rendering.DayPlanViews;
 import io.javalin.Context;
 import io.javalin.Javalin;
+import io.javalin.core.util.Header;
 
 import java.time.Instant;
 
 public class DayPlanRespondent implements GroupedRespondent {
 
+    private static final String CACHE_VALUE = "no-store";
     private static final String DATE_PARAM = "date";
     private static final String DAY_PLAN = "plan/day";
     private final Identity<Long> identity;
@@ -45,6 +47,7 @@ public class DayPlanRespondent implements GroupedRespondent {
 
     private void showDayPlan(Context context) {
         Instant date = limitedDate.fromString(context.queryParam(DATE_PARAM, ""));
+        context.header(Header.CACHE_CONTROL, CACHE_VALUE);
         context.html(views.view(date, d -> serverClientDates.clientDate(context.req, d),
             activities.ofUserDatePlanned(identity.value(context.req), date.getEpochSecond())));
     }

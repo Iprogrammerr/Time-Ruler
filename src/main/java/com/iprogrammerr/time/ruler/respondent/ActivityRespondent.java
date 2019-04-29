@@ -16,10 +16,8 @@ import io.javalin.BadRequestResponse;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.List;
-import java.util.TimeZone;
 
 //TODO better exception handling/mapping mechanism
 public class ActivityRespondent implements GroupedRespondent {
@@ -33,12 +31,6 @@ public class ActivityRespondent implements GroupedRespondent {
     private static final String ACTIVITY = "activity";
     private static final String ID = "id";
     private static final String ACTIVITY_WITH_ID = ACTIVITY + "/:" + ID;
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy, HH:mm");
-
-    static {
-        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
-    }
-
     private final Identity<Long> identity;
     private final ActivityViews views;
     private final DayPlanRespondent dayPlanRespondent;
@@ -136,7 +128,7 @@ public class ActivityRespondent implements GroupedRespondent {
         String description = context.formParam(FORM_DESCRIPTION, "");
         if (name.isValid() && start.isValid() && end.isValid()) {
             Instant date = limitedDate.fromString(context.queryParam(DATE_PARAM, ""));
-            Activity activity = activity(context, date, name, start, end);
+            Activity activity = activity(context, date, name, start, end).withId(id);
             updateActivity(activity, description,
                 activities.ofUserDate(identity.value(context.req), date.getEpochSecond()));
             //TODO proper redirect dependent on date value
@@ -148,7 +140,7 @@ public class ActivityRespondent implements GroupedRespondent {
 
     private void updateActivity(Activity activity, String description, List<Activity> dayActivities) {
         for (Activity da : dayActivities) {
-            if (activity.intersects(da)) {
+            if (activity.id != da.id && activity.intersects(da)) {
                 throw new BadRequestResponse("Activity intersects with existing one");
             }
         }

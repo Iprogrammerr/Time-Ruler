@@ -61,6 +61,10 @@ p.error-visible {
     width: 25%;
 }
 
+.hidden {
+    display: none;
+}
+
 input {
     padding: 8px;
     outline: none;

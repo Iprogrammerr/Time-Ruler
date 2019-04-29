@@ -73,10 +73,9 @@ function attachUtcOffset() {
             oldOffset = parseInt(oldOffset);
         }
     }
-    let offset = new Date().getTimezoneOffset() * 60;
-    console.log(`Old offset = ${oldOffset}, newOffset = ${offset}`);
+    let date = new Date();
+    let offset = ((date.getUTCHours() - date.getHours()) * 60 + date.getUTCMinutes() - date.getMinutes()) * 60; 
     if (oldOffset !== offset) {
        cookies.put(cookiesKeys.utcOffset, offset);
     }
-    console.log("All cokies = " + document.cookie);
 };

@@ -15,7 +15,7 @@
     </div>
     <div class="centered-h" style="padding: 8px 16px">
         <h1 th:text=${date}></h1>
-        <p th:if="${activities.isEmpty()}" th:text="#{emptyPlanMessage}"></p>
+        <p th:class="!${activities.isEmpty()} ? hidden" th:text="#{emptyPlanMessage}"></p>
         <ul class="activities">
             <li th:each="a : ${activities}" th:data-id="${a.id}">
                 <div th:utext="|${a.start} - ${a.end}|"></div>
