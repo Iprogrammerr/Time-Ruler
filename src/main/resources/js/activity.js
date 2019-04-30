@@ -1,7 +1,6 @@
 import { tabsNavigation } from "./app.js";
-import { hiddenInputKeys } from "./app.js";
 import { dateTimeParams } from "./app.js";
-import { parametrizedRoutes } from "./app.js";
+import { parametrizedEndpoints } from "./app.js";
 import { FormAction } from "./http/form-action.js";
 
 tabsNavigation.setup(document.querySelector("div"));
@@ -15,10 +14,10 @@ saveActivity.onclick = () => {
     if (isFormValid()) {
         let endpoint;
         if (activityId > 0) {
-            endpoint = parametrizedRoutes.updateActivity(activityId);
+            endpoint = parametrizedEndpoints.updateActivity(activityId);
         }
          else {
-            endpoint = parametrizedRoutes.createActivity(date);
+            endpoint = parametrizedEndpoints.createActivity(date);
         }
         new FormAction(form).submit(endpoint);
         saveActivity.disabled = true;

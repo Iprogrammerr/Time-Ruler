@@ -19,4 +19,8 @@ public interface Activities {
     Activity activity(long id);
 
     boolean exists(long id);
+
+    boolean belongsToUser(long userId, long activityId);
+
+    void setDone(long id, boolean done);
 }

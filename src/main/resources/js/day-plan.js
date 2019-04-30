@@ -3,7 +3,7 @@ import { routes } from "./app.js";
 import { tabsNavigation } from "./app.js";
 import { dateTimeParams } from "./app.js";
 import { hiddenDataKeys } from "./app.js";
-import { parametrizedRoutes } from "./app.js";
+import { parametrizedEndpoints} from "./app.js";
 import { HttpConnections } from "./http/http-connections.js";
 
 const yearMonthDay = dateTimeParams.currentYearMonthDayFromUrl();
@@ -20,7 +20,7 @@ function setupListNavigation() {
         a.onclick = () => router.forwardWithVariable(routes.activity, id);
         a.getElementsByClassName("close")[0].onclick = (e) => {
             e.stopPropagation();
-            new HttpConnections().delete(parametrizedRoutes.deleteActivity(id)).then(r => {
+            new HttpConnections().delete(parametrizedEndpoints.deleteActivity(id)).then(r => {
                 removeActivity(activities, a);
             }).catch(e => alert(e));
         };

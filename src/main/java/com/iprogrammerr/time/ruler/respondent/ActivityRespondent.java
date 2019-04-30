@@ -31,6 +31,8 @@ public class ActivityRespondent implements GroupedRespondent {
     private static final String ACTIVITY = "activity";
     private static final String ID = "id";
     private static final String ACTIVITY_WITH_ID = ACTIVITY + "/:" + ID;
+    private static final String ACTIVITY_DONE = ACTIVITY + "/done/:" + ID;
+    private static final String ACTIVITY_NOT_DONE = ACTIVITY + "/not-done/:" + ID;
     private final Identity<Long> identity;
     private final ActivityViews views;
     private final DayPlanRespondent dayPlanRespondent;
@@ -52,11 +54,15 @@ public class ActivityRespondent implements GroupedRespondent {
 
     @Override
     public void init(String group, Javalin app) {
-        app.get(group + ACTIVITY, this::showEmpty);
-        app.get(group + ACTIVITY_WITH_ID, this::showActivity);
-        app.post(group + ACTIVITY, this::createActivity);
-        app.post(group + ACTIVITY_WITH_ID, this::updateActivity);
-        app.delete(group + ACTIVITY_WITH_ID, this::deleteActivity);
+        String withGroupActivity = group + ACTIVITY;
+        String withGroupActivityId = group + ACTIVITY_WITH_ID;
+        app.get(withGroupActivity, this::showEmpty);
+        app.get(withGroupActivityId, this::showActivity);
+        app.post(withGroupActivity, this::createActivity);
+        app.post(withGroupActivityId, this::updateActivity);
+        app.put(group + ACTIVITY_DONE, ctx -> setActivityDone(ctx, true));
+        app.put(group + ACTIVITY_NOT_DONE, ctx -> setActivityDone(ctx, false));
+        app.delete(withGroupActivityId, this::deleteActivity);
     }
 
     private void showEmpty(Context context) {
@@ -152,5 +158,15 @@ public class ActivityRespondent implements GroupedRespondent {
 
     private void deleteActivity(Context context) {
         activities.delete(context.pathParam(ID, Integer.class).get());
+    }
+
+    private void setActivityDone(Context context, boolean done) {
+        long activityId = context.pathParam(ID, Long.class).get();
+        if (activities.belongsToUser(identity.value(context.req), activityId)) {
+            activities.setDone(activityId, done);
+        } else {
+            throw new BadRequestResponse("Given activity does not belong to user");
+        }
+
     }
 }

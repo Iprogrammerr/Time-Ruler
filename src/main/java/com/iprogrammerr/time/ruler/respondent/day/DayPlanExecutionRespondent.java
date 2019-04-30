@@ -4,20 +4,22 @@ import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
-import com.iprogrammerr.time.ruler.model.date.ServerClientDates;
 import com.iprogrammerr.time.ruler.model.date.DateParsing;
 import com.iprogrammerr.time.ruler.model.date.LimitedDate;
+import com.iprogrammerr.time.ruler.model.date.ServerClientDates;
 import com.iprogrammerr.time.ruler.model.date.SmartDate;
 import com.iprogrammerr.time.ruler.respondent.GroupedRespondent;
 import com.iprogrammerr.time.ruler.view.rendering.DayPlanExecutionViews;
 import io.javalin.Context;
 import io.javalin.Javalin;
+import io.javalin.core.util.Header;
 
 import java.time.Instant;
 import java.util.List;
 
 public class DayPlanExecutionRespondent implements GroupedRespondent {
 
+    private static final String CACHE_VALUE = "no-store";
     private static final String DATE_PARAM = "date";
     private static final String DAY_PLAN_EXECUTION = "day-plan-execution";
     private final Identity<Long> identity;
@@ -53,6 +55,7 @@ public class DayPlanExecutionRespondent implements GroupedRespondent {
         boolean history = new SmartDate().dayBeginning() > date.getEpochSecond();
         context.html(views.view(date, history, dayActivities,
             d -> serverClientDates.clientDate(context.req, d)));
+        context.header(Header.CACHE_CONTROL, CACHE_VALUE);
     }
 
     public void redirect(Context context, Instant date) {

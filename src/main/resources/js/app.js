@@ -54,10 +54,12 @@ export const urlParams = new UrlParams();
 export const dateTimeParams = new DateTimeParams(urlParams, paramsKeys);
 export const validations = new Validations();
 
-export const parametrizedRoutes = {
+export const parametrizedEndpoints = {
     createActivity: (date) => router.routeWithParams(routes.activity, dateTimeParams.dateAsParam(date)),
-    updateActivity: (id) => router.fullRoute(routes.activity) + `/${id}`,
-    deleteActivity: (id) => router.fullRoute(routes.activity) + `/${id}`
+    updateActivity: (id) => `${router.fullRoute(routes.activity)}/${id}`,
+    deleteActivity: (id) => `${router.fullRoute(routes.activity)}/${id}`,
+    setActivityDone: (id) => `${router.fullRoute(routes.activity)}/done/${id}`,
+    setActivityNotDone: (id) => `${router.fullRoute(routes.activity)}/not-done/${id}`
 };
 
 attachUtcOffset();

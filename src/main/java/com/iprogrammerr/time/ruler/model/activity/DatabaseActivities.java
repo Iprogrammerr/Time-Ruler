@@ -24,7 +24,7 @@ public class DatabaseActivities implements Activities {
     private List<Activity> ofUserDate(long id, long date, ActivitiesFilter filter) {
         SmartDate smartDate = new SmartDate(date);
         StringBuilder queryBuilder = new StringBuilder("SELECT * FROM activity WHERE ")
-            .append("user_id = ? AND start_date >= ? AND start_date <= ? ");
+            .append("user_id = ? AND start_date >= ? AND start_date <= ?");
         if (filter != ActivitiesFilter.ALL) {
             queryBuilder.append(" AND done = ").append(filter == ActivitiesFilter.DONE ? "1" : "0");
         }
@@ -92,6 +92,17 @@ public class DatabaseActivities implements Activities {
     @Override
     public boolean exists(long id) {
         return session.select(ResultSet::next, "SELECT id from activity WHERE id = ?", id);
+    }
+
+    @Override
+    public boolean belongsToUser(long userId, long activityId) {
+        return session.select(ResultSet::next, "SELECT id from activity WHERE user_id = ? AND id = ?",
+            userId, activityId);
+    }
+
+    @Override
+    public void setDone(long id, boolean done) {
+        session.update(new Record(Activity.TABLE).put(Activity.DONE, done), "id = ?", id);
     }
 
     private enum ActivitiesFilter {

@@ -42,7 +42,7 @@ public class QueryTemplates {
 
     public String insert(Record record) {
         StringBuilder builder = new StringBuilder();
-        builder.append("insert into ").append(record.table()).append(" (");
+        builder.append("INSERT INTO ").append(record.table()).append(" (");
         StringBuilder keysBuilder = new StringBuilder();
         StringBuilder valuesBuilder = new StringBuilder();
         keysBuilder.append(record.keys().get(0));
@@ -53,22 +53,22 @@ public class QueryTemplates {
         }
         keysBuilder.append(")");
         valuesBuilder.append(")");
-        return builder.append(keysBuilder).append(" values (").append(valuesBuilder).toString();
+        return builder.append(keysBuilder).append(" VALUES (").append(valuesBuilder).toString();
     }
 
     public String update(Record record, String whereTemplate, Object... values) {
         StringBuilder builder = new StringBuilder();
-        builder.append("update ").append(record.table()).append(" set ");
+        builder.append("UPDATE ").append(record.table()).append(" SET ");
         builder.append(record.keys().get(0)).append("=").append(toStringValue(record.values().get(0)));
         for (int i = 1; i < record.keys().size(); i++) {
             builder.append(", ").append(record.keys().get(i)).append("=").append(toStringValue(record.values().get(i)));
         }
-        return builder.append(" where ").append(query(whereTemplate, values)).toString();
+        return builder.append(" WHERE ").append(query(whereTemplate, values)).toString();
     }
 
     public String delete(String table, String whereTemplate, Object... values) {
-        return new StringBuilder("delete from ").append(table)
-            .append(" where ").append(query(whereTemplate, values))
+        return new StringBuilder("DELETE FROM ").append(table)
+            .append(" WHERE ").append(query(whereTemplate, values))
             .toString();
     }
 }

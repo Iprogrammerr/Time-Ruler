@@ -92,7 +92,7 @@ public class DatabaseActivitiesTest {
         User user = randomUsers.user();
         long userId = users.create(user.name, user.email, user.password);
         long date = Instant.now().getEpochSecond();
-        insertUserWithActivity(randomUsers, randomActivities, date);
+        insertActivityWithUser(randomUsers, randomActivities, date);
 
         Activity first = randomActivities.activity(userId, date);
         Activity second = randomActivities.activity(userId, date + 1);
@@ -105,14 +105,14 @@ public class DatabaseActivitiesTest {
         );
     }
 
-    private long insertUserWithActivity(RandomUsers randomUsers, RandomActivities randomActivities, long date) {
+    private long insertActivityWithUser(RandomUsers randomUsers, RandomActivities randomActivities, long date) {
         User user = randomUsers.user();
         long id = users.create(user.name, user.email, user.password);
         return activities.create(randomActivities.activity(id, date));
     }
 
-    private long insertUserWithActivity() {
-        return insertUserWithActivity(new RandomUsers(), new RandomActivities(), Instant.now().getEpochSecond());
+    private long insertActivityWithUser() {
+        return insertActivityWithUser(new RandomUsers(), new RandomActivities(), Instant.now().getEpochSecond());
     }
 
     @Test
@@ -126,7 +126,7 @@ public class DatabaseActivitiesTest {
         User user = randomUsers.user();
         long userId = users.create(user.name, user.email, user.password);
         long date = Instant.now().getEpochSecond();
-        insertUserWithActivity(randomUsers, randomActivities, date);
+        insertActivityWithUser(randomUsers, randomActivities, date);
 
         Activity first = randomActivities.activity(userId, date, !planned);
         first = first.withId(activities.create(first));
@@ -141,8 +141,6 @@ public class DatabaseActivitiesTest {
             message = "Does not return done activities";
             userActivities = activities.ofUserDateDone(userId, date);
         }
-        System.out.println("User activities = " + userActivities);
-        System.out.println("First = " + first);
         MatcherAssert.assertThat(message, userActivities, Matchers.contains(first));
     }
 
@@ -172,8 +170,36 @@ public class DatabaseActivitiesTest {
 
     @Test
     public void deletesActivity() {
-        long id = insertUserWithActivity();
+        long id = insertActivityWithUser();
         activities.delete(id);
         MatcherAssert.assertThat("Should delete activity", activities.exists(id), Matchers.equalTo(false));
+    }
+
+    @Test
+    public void returnsTrueIfBelongsToUser() {
+        belongsToUser(true);
+    }
+
+    private void belongsToUser(boolean belongs) {
+        User user = new RandomUsers().user();
+        long userId = users.create(user.name, user.email, user.password);
+        long activityId = activities.create(new RandomActivities().activity(userId, Instant.now().getEpochSecond()));
+        long toTestId = belongs ? userId : userId + 1;
+        MatcherAssert.assertThat(String.format("Should return %b", belongs),
+            activities.belongsToUser(toTestId, activityId), Matchers.equalTo(belongs));
+    }
+
+    @Test
+    public void returnsFalseIfDoesNotBelongsToUser() {
+        belongsToUser(false);
+    }
+
+    @Test
+    public void setsActivityDone() {
+        long id = insertActivityWithUser();
+        boolean done = !activities.activity(id).done;
+        activities.setDone(id, done);
+        MatcherAssert.assertThat("Does not update done status", activities.activity(id).done,
+            Matchers.equalTo(done));
     }
 }

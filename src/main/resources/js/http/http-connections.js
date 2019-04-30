@@ -29,7 +29,7 @@ export function HttpConnections() {
                 request.send();
             }
         });
-    }
+    };
 
     this.get = (url) => execute(url, methods.get);
     this.post = (url, data) => execute(url, methods.post, data);
