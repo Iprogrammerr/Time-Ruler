@@ -32,6 +32,7 @@ export const paramsKeys = {
     year: "year",
     month: "month",
     date: "date",
+    plan: "plan"
 };
 
 export const hiddenInputKeys = {

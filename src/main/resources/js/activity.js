@@ -3,7 +3,7 @@ import { dateTimeParams } from "./app.js";
 import { parametrizedEndpoints } from "./app.js";
 import { FormAction } from "./http/form-action.js";
 
-tabsNavigation.setup(document.querySelector("div"));
+tabsNavigation.setup(document.querySelector("div"), true);
 const activityId = activityIdFromPath();
 const date = activityId > 0 ? {} : dateTimeParams.dateFromUrl();
 const form = document.querySelector("form");

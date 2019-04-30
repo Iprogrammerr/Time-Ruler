@@ -59,6 +59,9 @@ public class CalendarRespondent implements GroupedRespondent {
         }
         ZonedDateTime requestedDate = currentDate.withYear(requestedYear)
             .withMonth(yearMonth.month(currentDate.getMonthValue()));
+        if (requestedDate.isAfter(currentDate)) {
+            requestedDate = requestedDate.withDayOfMonth(1);
+        }
         List<Long> days = daysForCalendar(identity.value(context.req), requestedDate, false);
         String view = views.view(true, requestedDate.isAfter(currentDate), currentYear < yearMonth.maxYear,
             requestedDate, days, false);

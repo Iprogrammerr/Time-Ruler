@@ -118,12 +118,12 @@ public class App {
         CalendarRespondent calendarRespondent = new CalendarRespondent(identity, calendarView, dates,
             serverClientDates);
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, viewsTemplates);
-        DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, dayPlanView, activities,
-            limitedDate, dateParsing, serverClientDates);
-        ActivityRespondent activityRespondent = new ActivityRespondent(identity, activityView, dayPlanRespondent,
-            activities, descriptions, limitedDate, serverClientDates);
         DayPlanExecutionRespondent dayPlanExecutionRespondent = new DayPlanExecutionRespondent(identity,
             dayPlanExecutionView, activities, limitedDate, dateParsing, serverClientDates);
+        DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, dayPlanView, activities,
+            limitedDate, dateParsing, serverClientDates);
+        ActivityRespondent activityRespondent = new ActivityRespondent(identity, activityView,
+            dayPlanExecutionRespondent, dayPlanRespondent, activities, descriptions, limitedDate, serverClientDates);
 
         String userGroup = "user/";
 
@@ -138,9 +138,10 @@ public class App {
         activityRespondent.init(userGroup, app);
         dayPlanExecutionRespondent.init(userGroup, app);
 
+        //TODO is it a good idea?
         app.before(userGroup + "*", ctx -> {
             if (!identity.isValid(ctx.req)) {
-                throw new ForbiddenResponse();
+                ctx.redirect("/");
             }
         });
         //TODO handle exceptions
@@ -151,9 +152,6 @@ public class App {
             ctx.html(message);
         });
         //TODO proper pages per http code
-        app.exception(ForbiddenResponse.class, (e, ctx) -> {
-            ctx.html("You are not allowed to see this page");
-        });
         app.exception(BadRequestResponse.class, (e, ctx) -> {
             ctx.html(String.format("Bad request: %s", e.getMessage()));
         });

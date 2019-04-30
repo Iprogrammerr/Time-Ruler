@@ -8,6 +8,7 @@ import com.iprogrammerr.time.ruler.model.date.ServerClientDates;
 import com.iprogrammerr.time.ruler.model.date.SmartDate;
 import com.iprogrammerr.time.ruler.model.description.Description;
 import com.iprogrammerr.time.ruler.model.description.Descriptions;
+import com.iprogrammerr.time.ruler.respondent.day.DayPlanExecutionRespondent;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanRespondent;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateableTime;
@@ -23,6 +24,7 @@ import java.util.List;
 public class ActivityRespondent implements GroupedRespondent {
 
     private static final String DATE_PARAM = "date";
+    private static final String PLAN_PARAM = "plan";
     private static final String FORM_NAME = "name";
     private static final String FORM_START_TIME = "start";
     private static final String FORM_END_TIME = "end";
@@ -35,16 +37,19 @@ public class ActivityRespondent implements GroupedRespondent {
     private static final String ACTIVITY_NOT_DONE = ACTIVITY + "/not-done/:" + ID;
     private final Identity<Long> identity;
     private final ActivityViews views;
+    private final DayPlanExecutionRespondent dayPlanExecutionRespondent;
     private final DayPlanRespondent dayPlanRespondent;
     private final Activities activities;
     private final Descriptions descriptions;
     private final LimitedDate limitedDate;
     private final ServerClientDates serverClientDates;
 
-    public ActivityRespondent(Identity<Long> identity, ActivityViews views, DayPlanRespondent dayPlanRespondent, Activities activities,
-        Descriptions descriptions, LimitedDate limitedDate, ServerClientDates serverClientDates) {
+    public ActivityRespondent(Identity<Long> identity, ActivityViews views, DayPlanExecutionRespondent dayPlanExecutionRespondent,
+        DayPlanRespondent dayPlanRespondent, Activities activities, Descriptions descriptions, LimitedDate limitedDate,
+        ServerClientDates serverClientDates) {
         this.identity = identity;
         this.views = views;
+        this.dayPlanExecutionRespondent = dayPlanExecutionRespondent;
         this.dayPlanRespondent = dayPlanRespondent;
         this.activities = activities;
         this.descriptions = descriptions;
@@ -66,7 +71,11 @@ public class ActivityRespondent implements GroupedRespondent {
     }
 
     private void showEmpty(Context context) {
-        context.html(views.empty(serverClientDates.clientDate(context.req)));
+        context.html(views.empty(serverClientDates.clientDate(context.req), isActivityPlanned(context)));
+    }
+
+    private boolean isActivityPlanned(Context context) {
+        return context.queryParam(PLAN_PARAM, Boolean.class, Boolean.toString(true)).get();
     }
 
     private void showActivity(Context context) {
@@ -90,10 +99,22 @@ public class ActivityRespondent implements GroupedRespondent {
             Activity activity = activity(context, date, name, start, end);
             createActivity(activity, description,
                 activities.ofUserDate(identity.value(context.req), date.getEpochSecond()));
-            dayPlanRespondent.redirect(context, date);
+            redirectToDay(context, date, activity.done);
         } else {
-            context.html(views.withErrors(!name.isValid(), !start.isValid(), !end.isValid()));
+            context.html(views.withErrors(isActivityDone(context), name, start, end));
         }
+    }
+
+    private void redirectToDay(Context context, Instant date, boolean done) {
+        if (done) {
+            dayPlanExecutionRespondent.redirect(context, date);
+        } else {
+            dayPlanRespondent.redirect(context, date);
+        }
+    }
+
+    private boolean isActivityDone(Context context) {
+        return context.formParam(FORM_DONE, Boolean.class).get();
     }
 
     private Activity activity(Context context, Instant date, ValidateableName name,
@@ -104,7 +125,7 @@ public class ActivityRespondent implements GroupedRespondent {
             throw new BadRequestResponse("Start time can not be greater than end time");
         }
         long userId = identity.value(context.req);
-        boolean done = context.formParam(FORM_DONE, Boolean.class).get();
+        boolean done = isActivityDone(context);
         SmartDate smartDate = new SmartDate(date.getEpochSecond());
         long startDate = serverClientDates.serverDate(context.req, smartDate.withTime(startTime)).getEpochSecond();
         long endDate = serverClientDates.serverDate(context.req, smartDate.withTime(endTime)).getEpochSecond();
@@ -137,10 +158,9 @@ public class ActivityRespondent implements GroupedRespondent {
             Activity activity = activity(context, date, name, start, end).withId(id);
             updateActivity(activity, description,
                 activities.ofUserDate(identity.value(context.req), date.getEpochSecond()));
-            //TODO proper redirect dependent on date value
-            dayPlanRespondent.redirect(context, date);
+            redirectToDay(context, date, activity.done);
         } else {
-            context.html(views.withErrors(!name.isValid(), !start.isValid(), !end.isValid()));
+            context.html(views.withErrors(isActivityDone(context), name, start, end));
         }
     }
 
@@ -167,6 +187,5 @@ public class ActivityRespondent implements GroupedRespondent {
         } else {
             throw new BadRequestResponse("Given activity does not belong to user");
         }
-
     }
 }
