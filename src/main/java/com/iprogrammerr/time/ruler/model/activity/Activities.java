@@ -2,6 +2,7 @@ package com.iprogrammerr.time.ruler.model.activity;
 
 import java.util.List;
 
+//TODO move part of functionality to ActivitiesSearch
 public interface Activities {
 
     List<Activity> ofUserDate(long id, long date);
