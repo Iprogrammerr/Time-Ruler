@@ -47,6 +47,92 @@ public class DatabaseActivitiesSearchTest {
     }
 
     @Test
+    public void returnsEmptyListOfUserDate() {
+        MatcherAssert.assertThat("Is not empty", activitiesSearch.ofUserDate(fakeOrRealUserId(), 1), Matchers.empty());
+    }
+
+    private long fakeOrRealUserId() {
+        Random random = new Random();
+        long id = 1;
+        if (random.nextBoolean()) {
+            User user = new RandomUsers().user();
+            id = users.create(user.name, user.email, user.password);
+        }
+        return id;
+    }
+
+    @Test
+    public void returnsEmptyListOfUserDatePlanned() {
+        MatcherAssert.assertThat("Is not empty", activitiesSearch.ofUserDatePlanned(fakeOrRealUserId(), 1),
+            Matchers.empty());
+    }
+
+    @Test
+    public void returnsEmptyListOfUserDateDone() {
+        MatcherAssert.assertThat("Is not empty", activitiesSearch.ofUserDateDone(fakeOrRealUserId(), 1),
+            Matchers.empty());
+    }
+
+    @Test
+    public void returnsListOfUserDate() {
+        RandomUsers randomUsers = new RandomUsers();
+        RandomActivities randomActivities = new RandomActivities();
+        User user = randomUsers.user();
+        long userId = users.create(user.name, user.email, user.password);
+        long date = Instant.now().getEpochSecond();
+        insertActivityWithUser(randomUsers, randomActivities, date);
+
+        Activity first = randomActivities.activity(userId, date);
+        Activity second = randomActivities.activity(userId, date + 1);
+        first = first.withId(activities.create(first));
+        second = second.withId(activities.create(second));
+
+        MatcherAssert.assertThat("Does not return proper activities", activitiesSearch.ofUserDate(userId, date),
+            Matchers.contains(first, second)
+        );
+    }
+
+    private long insertActivityWithUser(RandomUsers randomUsers, RandomActivities randomActivities, long date) {
+        User user = randomUsers.user();
+        long id = users.create(user.name, user.email, user.password);
+        return activities.create(randomActivities.activity(id, date));
+    }
+
+    @Test
+    public void returnsListOfUserDatePlanned() {
+        returnsListOfUserDate(true);
+    }
+
+    private void returnsListOfUserDate(boolean planned) {
+        RandomUsers randomUsers = new RandomUsers();
+        RandomActivities randomActivities = new RandomActivities();
+        User user = randomUsers.user();
+        long userId = users.create(user.name, user.email, user.password);
+        long date = Instant.now().getEpochSecond();
+        insertActivityWithUser(randomUsers, randomActivities, date);
+
+        Activity first = randomActivities.activity(userId, date, !planned);
+        first = first.withId(activities.create(first));
+        activities.create(randomActivities.activity(userId, date, planned));
+
+        String message;
+        List<Activity> userActivities;
+        if (planned) {
+            message = "Does not return planned activities";
+            userActivities = activitiesSearch.ofUserDatePlanned(userId, date);
+        } else {
+            message = "Does not return done activities";
+            userActivities = activitiesSearch.ofUserDateDone(userId, date);
+        }
+        MatcherAssert.assertThat(message, userActivities, Matchers.contains(first));
+    }
+
+    @Test
+    public void returnsListOfUserDateDone() {
+        returnsListOfUserDate(false);
+    }
+
+    @Test
     public void returnsLimitedWithOffset() {
         Random random = new Random();
         User user = new RandomUsers(random).user();

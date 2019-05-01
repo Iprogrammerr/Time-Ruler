@@ -2,6 +2,7 @@ package com.iprogrammerr.time.ruler.respondent.activity;
 
 import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
+import com.iprogrammerr.time.ruler.model.activity.ActivitiesSearch;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
 import com.iprogrammerr.time.ruler.model.date.LimitedDate;
 import com.iprogrammerr.time.ruler.model.date.ServerClientDates;
@@ -41,18 +42,20 @@ public class ActivityRespondent implements GroupedRespondent {
     private final DayPlanExecutionRespondent dayPlanExecutionRespondent;
     private final DayPlanRespondent dayPlanRespondent;
     private final Activities activities;
+    private final ActivitiesSearch activitiesSearch;
     private final Descriptions descriptions;
     private final LimitedDate limitedDate;
     private final ServerClientDates serverClientDates;
 
     public ActivityRespondent(Identity<Long> identity, ActivityViews views, DayPlanExecutionRespondent dayPlanExecutionRespondent,
-        DayPlanRespondent dayPlanRespondent, Activities activities, Descriptions descriptions, LimitedDate limitedDate,
-        ServerClientDates serverClientDates) {
+        DayPlanRespondent dayPlanRespondent, Activities activities, ActivitiesSearch activitiesSearch, Descriptions descriptions,
+        LimitedDate limitedDate, ServerClientDates serverClientDates) {
         this.identity = identity;
         this.views = views;
         this.dayPlanExecutionRespondent = dayPlanExecutionRespondent;
         this.dayPlanRespondent = dayPlanRespondent;
         this.activities = activities;
+        this.activitiesSearch = activitiesSearch;
         this.descriptions = descriptions;
         this.limitedDate = limitedDate;
         this.serverClientDates = serverClientDates;
@@ -99,7 +102,7 @@ public class ActivityRespondent implements GroupedRespondent {
             Instant date = limitedDate.fromString(context.queryParam(DATE_PARAM, ""));
             Activity activity = activity(context, date, name, start, end);
             createActivity(activity, description,
-                activities.ofUserDate(identity.value(context.req), date.getEpochSecond()));
+                activitiesSearch.ofUserDate(identity.value(context.req), date.getEpochSecond()));
             redirectToDay(context, date, activity.done);
         } else {
             context.html(views.withErrors(isActivityDone(context), name, start, end));
@@ -158,7 +161,7 @@ public class ActivityRespondent implements GroupedRespondent {
             Instant date = limitedDate.fromString(context.queryParam(DATE_PARAM, ""));
             Activity activity = activity(context, date, name, start, end).withId(id);
             updateActivity(activity, description,
-                activities.ofUserDate(identity.value(context.req), date.getEpochSecond()));
+                activitiesSearch.ofUserDate(identity.value(context.req), date.getEpochSecond()));
             redirectToDay(context, date, activity.done);
         } else {
             context.html(views.withErrors(isActivityDone(context), name, start, end));

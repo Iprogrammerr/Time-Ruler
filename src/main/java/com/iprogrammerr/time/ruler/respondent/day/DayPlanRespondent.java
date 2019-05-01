@@ -2,7 +2,7 @@ package com.iprogrammerr.time.ruler.respondent.day;
 
 import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
-import com.iprogrammerr.time.ruler.model.activity.Activities;
+import com.iprogrammerr.time.ruler.model.activity.ActivitiesSearch;
 import com.iprogrammerr.time.ruler.model.date.DateParsing;
 import com.iprogrammerr.time.ruler.model.date.LimitedDate;
 import com.iprogrammerr.time.ruler.model.date.ServerClientDates;
@@ -21,13 +21,13 @@ public class DayPlanRespondent implements GroupedRespondent {
     private static final String DAY_PLAN = "plan/day";
     private final Identity<Long> identity;
     private final DayPlanViews views;
-    private final Activities activities;
+    private final ActivitiesSearch activities;
     private final LimitedDate limitedDate;
     private final DateParsing parsing;
     private final ServerClientDates serverClientDates;
     private String redirect;
 
-    public DayPlanRespondent(Identity<Long> identity, DayPlanViews views, Activities activities, LimitedDate limitedDate,
+    public DayPlanRespondent(Identity<Long> identity, DayPlanViews views, ActivitiesSearch activities, LimitedDate limitedDate,
         DateParsing parsing, ServerClientDates serverClientDates) {
         this.identity = identity;
         this.views = views;

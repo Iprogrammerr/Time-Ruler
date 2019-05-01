@@ -4,6 +4,12 @@ import java.util.List;
 
 public interface ActivitiesSearch {
 
+    List<Activity> ofUserDate(long id, long date);
+
+    List<Activity> ofUserDatePlanned(long id, long date);
+
+    List<Activity> ofUserDateDone(long id, long date);
+
     List<Activity> userActivities(long id, int offset, int limit, boolean ascending);
 
     int matches(long userId, String pattern);

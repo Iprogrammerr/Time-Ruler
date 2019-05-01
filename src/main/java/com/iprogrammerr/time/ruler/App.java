@@ -12,7 +12,9 @@ import com.iprogrammerr.time.ruler.model.Hashing;
 import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.Messages;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
+import com.iprogrammerr.time.ruler.model.activity.ActivitiesSearch;
 import com.iprogrammerr.time.ruler.model.activity.DatabaseActivities;
+import com.iprogrammerr.time.ruler.model.activity.DatabaseActivitiesSearch;
 import com.iprogrammerr.time.ruler.model.activity.DatabaseDates;
 import com.iprogrammerr.time.ruler.model.activity.Dates;
 import com.iprogrammerr.time.ruler.model.date.DateParsing;
@@ -24,12 +26,12 @@ import com.iprogrammerr.time.ruler.model.description.Descriptions;
 import com.iprogrammerr.time.ruler.model.session.SessionIdentity;
 import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.user.Users;
-import com.iprogrammerr.time.ruler.respondent.activity.ActivitiesRespondent;
-import com.iprogrammerr.time.ruler.respondent.activity.ActivityRespondent;
 import com.iprogrammerr.time.ruler.respondent.CalendarRespondent;
 import com.iprogrammerr.time.ruler.respondent.ProfileRespondent;
 import com.iprogrammerr.time.ruler.respondent.TodayRespondent;
 import com.iprogrammerr.time.ruler.respondent.WelcomeRespondent;
+import com.iprogrammerr.time.ruler.respondent.activity.ActivitiesRespondent;
+import com.iprogrammerr.time.ruler.respondent.activity.ActivityRespondent;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningInRespondent;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningOutRespondent;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningUpRespondent;
@@ -97,6 +99,7 @@ public class App {
         DatabaseSession session = new SqlDatabaseSession(database, new QueryTemplates());
         Users users = new DatabaseUsers(session);
         Activities activities = new DatabaseActivities(session);
+        ActivitiesSearch activitiesSearch = new DatabaseActivitiesSearch(session);
         Dates dates = new DatabaseDates(session);
         Descriptions descriptions = new DatabaseDescriptions(session);
 
@@ -121,11 +124,12 @@ public class App {
             serverClientDates);
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, viewsTemplates);
         DayPlanExecutionRespondent dayPlanExecutionRespondent = new DayPlanExecutionRespondent(identity,
-            dayPlanExecutionView, activities, limitedDate, dateParsing, serverClientDates);
-        DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, dayPlanView, activities,
+            dayPlanExecutionView, activitiesSearch, limitedDate, dateParsing, serverClientDates);
+        DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, dayPlanView, activitiesSearch,
             limitedDate, dateParsing, serverClientDates);
         ActivityRespondent activityRespondent = new ActivityRespondent(identity, activityView,
-            dayPlanExecutionRespondent, dayPlanRespondent, activities, descriptions, limitedDate, serverClientDates);
+            dayPlanExecutionRespondent, dayPlanRespondent, activities, activitiesSearch, descriptions, limitedDate,
+            serverClientDates);
         ActivitiesRespondent activitiesRespondent = new ActivitiesRespondent(activitiesViews);
 
         String userGroup = "user/";

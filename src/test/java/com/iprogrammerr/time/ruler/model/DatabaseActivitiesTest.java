@@ -18,7 +18,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Random;
 
 public class DatabaseActivitiesTest {
@@ -40,114 +39,6 @@ public class DatabaseActivitiesTest {
         setup.database().close();
     }
 
-    @Test
-    public void returnsEmptyListOfNonExistentUserDate() {
-        MatcherAssert.assertThat("Is not empty", activities.ofUserDate(1, 1), Matchers.empty());
-    }
-
-    @Test
-    public void returnsEmptyListOfNonExistentUserDatePlanned() {
-        MatcherAssert.assertThat("Is not empty", activities.ofUserDatePlanned(1, 1), Matchers.empty());
-    }
-
-    @Test
-    public void returnsEmptyListOfNonExistentUserDateDone() {
-        MatcherAssert.assertThat("Is not empty", activities.ofUserDateDone(1, 1), Matchers.empty());
-    }
-
-    @Test
-    public void returnsEmptyListOfExistentUserEmptyDate() {
-        User user = new RandomUsers().user();
-        long id = users.create(user.name, user.email, user.password);
-        MatcherAssert.assertThat(
-            "Is not empty", activities.ofUserDate(id, Instant.now().getEpochSecond()), Matchers.empty()
-        );
-    }
-
-    @Test
-    public void returnsEmptyListOfExistentUserEmptyDatePlanned() {
-        returnsEmptyListOfExistentUserEmptyDate(true);
-    }
-
-    private void returnsEmptyListOfExistentUserEmptyDate(boolean planned) {
-        User user = new RandomUsers().user();
-        long id = users.create(user.name, user.email, user.password);
-        MatcherAssert.assertThat(
-            "Is not empty",
-            planned ? activities.ofUserDatePlanned(id, Instant.now().getEpochSecond()) :
-                activities.ofUserDateDone(id, Instant.now().getEpochSecond()),
-            Matchers.empty()
-        );
-    }
-
-    @Test
-    public void returnsEmptyListOfExistentUserEmptyDateDone() {
-        returnsEmptyListOfExistentUserEmptyDate(false);
-    }
-
-    @Test
-    public void returnsListOfUserDate() {
-        RandomUsers randomUsers = new RandomUsers();
-        RandomActivities randomActivities = new RandomActivities();
-        User user = randomUsers.user();
-        long userId = users.create(user.name, user.email, user.password);
-        long date = Instant.now().getEpochSecond();
-        insertActivityWithUser(randomUsers, randomActivities, date);
-
-        Activity first = randomActivities.activity(userId, date);
-        Activity second = randomActivities.activity(userId, date + 1);
-        first = first.withId(activities.create(first));
-        second = second.withId(activities.create(second));
-
-        MatcherAssert.assertThat(
-            "Does not return proper activities", activities.ofUserDate(userId, date),
-            Matchers.contains(first, second)
-        );
-    }
-
-    private long insertActivityWithUser(RandomUsers randomUsers, RandomActivities randomActivities, long date) {
-        User user = randomUsers.user();
-        long id = users.create(user.name, user.email, user.password);
-        return activities.create(randomActivities.activity(id, date));
-    }
-
-    private long insertActivityWithUser() {
-        return insertActivityWithUser(new RandomUsers(), new RandomActivities(), Instant.now().getEpochSecond());
-    }
-
-    @Test
-    public void returnsListOfUserDatePlanned() {
-        returnsListOfUserDate(true);
-    }
-
-    private void returnsListOfUserDate(boolean planned) {
-        RandomUsers randomUsers = new RandomUsers();
-        RandomActivities randomActivities = new RandomActivities();
-        User user = randomUsers.user();
-        long userId = users.create(user.name, user.email, user.password);
-        long date = Instant.now().getEpochSecond();
-        insertActivityWithUser(randomUsers, randomActivities, date);
-
-        Activity first = randomActivities.activity(userId, date, !planned);
-        first = first.withId(activities.create(first));
-        activities.create(randomActivities.activity(userId, date, planned));
-
-        String message;
-        List<Activity> userActivities;
-        if (planned) {
-            message = "Does not return planned activities";
-            userActivities = activities.ofUserDatePlanned(userId, date);
-        } else {
-            message = "Does not return done activities";
-            userActivities = activities.ofUserDateDone(userId, date);
-        }
-        MatcherAssert.assertThat(message, userActivities, Matchers.contains(first));
-    }
-
-    @Test
-    public void returnsListOfUserDateDone() {
-        returnsListOfUserDate(false);
-    }
 
     @Test
     public void returnsActivityFromId() {
@@ -173,6 +64,16 @@ public class DatabaseActivitiesTest {
         long id = insertActivityWithUser();
         activities.delete(id);
         MatcherAssert.assertThat("Should delete activity", activities.exists(id), Matchers.equalTo(false));
+    }
+
+    private long insertActivityWithUser(RandomUsers randomUsers, RandomActivities randomActivities, long date) {
+        User user = randomUsers.user();
+        long id = users.create(user.name, user.email, user.password);
+        return activities.create(randomActivities.activity(id, date));
+    }
+
+    private long insertActivityWithUser() {
+        return insertActivityWithUser(new RandomUsers(), new RandomActivities(), Instant.now().getEpochSecond());
     }
 
     @Test
