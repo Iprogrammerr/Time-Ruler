@@ -94,8 +94,9 @@ public class CalendarRespondent implements GroupedRespondent {
         int requestedMonth = yearMonth.month(currentMonth);
         ZonedDateTime requestedDate = new SmartDate(currentDate).ofYearMonth(requestedYear, requestedMonth);
         if (requestedDate.isBefore(firstDate)) {
-            requestedMonth = firstDate.getMonthValue();
-            requestedDate = requestedDate.withMonth(requestedMonth);
+            requestedDate = firstDate;
+        } else if (requestedDate.isBefore(currentDate)) {
+            requestedDate = requestedDate.withDayOfMonth(requestedDate.toLocalDate().lengthOfMonth());
         }
         List<Long> days = daysForCalendar(identity.value(context.req), requestedDate, true);
         String view = views.view(

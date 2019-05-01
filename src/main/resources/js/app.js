@@ -33,7 +33,9 @@ export const paramsKeys = {
     year: "year",
     month: "month",
     date: "date",
-    plan: "plan"
+    plan: "plan",
+    template: "template",
+    id: "id"
 };
 
 export const hiddenInputKeys = {
@@ -42,7 +44,9 @@ export const hiddenInputKeys = {
 };
 
 export const hiddenDataKeys = {
-    id: "data-id"
+    id: "data-id",
+    plan: "data-plan",
+    date: "data-date"
 };
 
 const cookiesKeys = {

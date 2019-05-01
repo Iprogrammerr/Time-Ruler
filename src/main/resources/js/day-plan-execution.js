@@ -17,7 +17,7 @@ function setupListNavigation() {
     let activities = document.getElementsByClassName("activities")[0];
     for (let a of activities.children) {
         let id = a.getAttribute(hiddenDataKeys.id);
-        a.onclick = () => router.forwardWithVariable(routes.activity, id);
+        a.onclick = () => router.forwardWithParam(routes.activity, paramsKeys.id, id);
         a.getElementsByClassName("close")[0].onclick = (e) => {
             e.stopPropagation();
             httpConnections.delete(parametrizedEndpoints.deleteActivity(id)).then(r => {

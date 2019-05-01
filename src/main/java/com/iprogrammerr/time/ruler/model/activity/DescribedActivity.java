@@ -12,6 +12,11 @@ public class DescribedActivity {
         this.description = description;
     }
 
+    public DescribedActivity withDone(boolean done) {
+        return new DescribedActivity(new Activity(activity.id, activity.userId, activity.name,
+            activity.startDate, activity.endDate, done), description);
+    }
+
     @Override
     public boolean equals(Object other) {
         boolean equal = false;

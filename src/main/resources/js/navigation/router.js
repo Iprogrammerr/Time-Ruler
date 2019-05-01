@@ -12,6 +12,8 @@ export function Router(root = "http://127.0.0.1:8080/") {
         location.href = `${this.fullRoute(route)}${paramsString(params)}`;
     };
 
+    this.forwardWithParam = (route, key, value) => this.forwardWithParams(route, new Map([[key, value]]));
+
     function paramsString(params) {
         let paramsString = params.size > 0 ? "?" : "";
         for (let [k, v] of params) {

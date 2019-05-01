@@ -4,6 +4,7 @@ import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.ActivitiesSearch;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
+import com.iprogrammerr.time.ruler.model.activity.DescribedActivity;
 import com.iprogrammerr.time.ruler.model.date.LimitedDate;
 import com.iprogrammerr.time.ruler.model.date.ServerClientDates;
 import com.iprogrammerr.time.ruler.model.date.SmartDate;
@@ -27,6 +28,7 @@ public class ActivityRespondent implements GroupedRespondent {
 
     private static final String DATE_PARAM = "date";
     private static final String PLAN_PARAM = "plan";
+    private static final String TEMPLATE_PARAM = "template";
     private static final String FORM_NAME = "name";
     private static final String FORM_START_TIME = "start";
     private static final String FORM_END_TIME = "end";
@@ -65,8 +67,7 @@ public class ActivityRespondent implements GroupedRespondent {
     public void init(String group, Javalin app) {
         String withGroupActivity = group + ACTIVITY;
         String withGroupActivityId = group + ACTIVITY_WITH_ID;
-        app.get(withGroupActivity, this::showEmpty);
-        app.get(withGroupActivityId, this::showActivity);
+        app.get(withGroupActivity, this::showActivity);
         app.post(withGroupActivity, this::createActivity);
         app.post(withGroupActivityId, this::updateActivity);
         app.put(group + ACTIVITY_DONE, ctx -> setActivityDone(ctx, true));
@@ -74,22 +75,25 @@ public class ActivityRespondent implements GroupedRespondent {
         app.delete(withGroupActivityId, this::deleteActivity);
     }
 
-    private void showEmpty(Context context) {
-        context.html(views.empty(serverClientDates.clientDate(context.req), isActivityPlanned(context)));
+    private void showActivity(Context context) {
+        long templateId = context.queryParam(TEMPLATE_PARAM, Long.class, Long.toString(0)).get();
+        long id = context.queryParam(ID, Long.class, Long.toString(0)).get();
+        boolean plan = context.queryParam(PLAN_PARAM, Boolean.class, Boolean.toString(true)).get();
+        String view;
+        if (templateId > 0 && activities.exists(templateId)) {
+            DescribedActivity activity = descriptions.describedActivity(templateId).withDone(!plan);
+            view = views.filled(activity, date -> serverClientDates.clientDate(context.req, date));
+        } else if (id > 0 && activities.exists(id)) {
+            view = views.filled(descriptions.describedActivity(id),
+                date -> serverClientDates.clientDate(context.req, date));
+        } else {
+            view = views.empty(serverClientDates.clientDate(context.req), isActivityPlanned(context));
+        }
+        context.html(view);
     }
 
     private boolean isActivityPlanned(Context context) {
         return context.queryParam(PLAN_PARAM, Boolean.class, Boolean.toString(true)).get();
-    }
-
-    private void showActivity(Context context) {
-        int id = context.pathParam(ID, Integer.class).get();
-        if (activities.exists(id)) {
-            context.html(views.filled(descriptions.describedActivity(id),
-                date -> serverClientDates.clientDate(context.req, date)));
-        } else {
-            showEmpty(context);
-        }
     }
 
     //TODO this ought to be simpler

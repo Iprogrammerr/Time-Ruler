@@ -13,6 +13,7 @@ import io.javalin.Javalin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ActivitiesRespondent implements GroupedRespondent {
 
@@ -64,7 +65,7 @@ public class ActivitiesRespondent implements GroupedRespondent {
             activities = search.userActivities(userId, pattern, (page - 1) * pageSize, pageSize, false);
             allPagesNumber = pagesNumber(search.matches(userId, pattern));
         }
-        context.html(views.view(plan, page, pages(allPagesNumber, plan, pattern), activities,
+        context.html(views.view(plan, page, pages(allPagesNumber, plan, pattern, context.queryParamMap()), activities,
             d -> dates.clientDate(context.req, d)));
     }
 
@@ -72,7 +73,7 @@ public class ActivitiesRespondent implements GroupedRespondent {
         return (int) Math.ceil(((double) records) / pageSize);
     }
 
-    private List<ForViewPage> pages(int size, boolean plan, String pattern) {
+    private List<ForViewPage> pages(int size, boolean plan, String pattern, Map<String, List<String>> currentParams) {
         List<ForViewPage> pages = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             int page = i + 1;
@@ -80,6 +81,7 @@ public class ActivitiesRespondent implements GroupedRespondent {
             if (pattern.length() > 0) {
                 queryBuilder.put(PATTERN_PARAM, pattern);
             }
+            currentParams.forEach((k, v) -> v.forEach(s -> queryBuilder.put(k, s)));
             pages.add(new ForViewPage(queryBuilder.build(ACTIVITIES), i + 1));
         }
         return pages;
