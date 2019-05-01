@@ -92,7 +92,7 @@ public class App {
         DayPlanExecutionViews dayPlanExecutionView = new DayPlanExecutionViews(viewsTemplates, formatting);
         DayPlanViews dayPlanView = new DayPlanViews(viewsTemplates, formatting);
         ActivityViews activityView = new ActivityViews(viewsTemplates, formatting);
-        ActivitiesViews activitiesViews = new ActivitiesViews(viewsTemplates);
+        ActivitiesViews activitiesViews = new ActivitiesViews(viewsTemplates, formatting);
 
         Database database = new SqlDatabase(configuration.databaseUser(), configuration.databasePassword(),
             configuration.jdbcUrl());
@@ -130,7 +130,8 @@ public class App {
         ActivityRespondent activityRespondent = new ActivityRespondent(identity, activityView,
             dayPlanExecutionRespondent, dayPlanRespondent, activities, activitiesSearch, descriptions, limitedDate,
             serverClientDates);
-        ActivitiesRespondent activitiesRespondent = new ActivitiesRespondent(activitiesViews);
+        ActivitiesRespondent activitiesRespondent = new ActivitiesRespondent(identity, activitiesViews,
+            activitiesSearch, serverClientDates);
 
         String userGroup = "user/";
 

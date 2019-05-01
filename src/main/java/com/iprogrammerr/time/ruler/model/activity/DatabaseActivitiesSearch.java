@@ -66,12 +66,20 @@ public class DatabaseActivitiesSearch implements ActivitiesSearch {
     }
 
     @Override
+    public int matches(long userId) {
+        return session.select(r -> {
+            r.next();
+            return r.getInt(1);
+        }, "SELECT COUNT(id) FROM activity WHERE user_id = ?", userId);
+    }
+
+    @Override
     public int matches(long userId, String pattern) {
         return session.select(r -> {
                 r.next();
                 return r.getInt(1);
-            }, "SELECT COUNT(id) FROM activity WHERE LOWER(name) LIKE LOWER(?)",
-            pattern + "%");
+            }, "SELECT COUNT(id) FROM activity WHERE user_id = ? AND LOWER(name) LIKE LOWER(?)",
+            userId, pattern + "%");
     }
 
     @Override

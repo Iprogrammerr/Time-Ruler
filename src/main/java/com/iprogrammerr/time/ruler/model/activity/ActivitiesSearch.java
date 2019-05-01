@@ -12,6 +12,8 @@ public interface ActivitiesSearch {
 
     List<Activity> userActivities(long id, int offset, int limit, boolean ascending);
 
+    int matches(long userId);
+
     int matches(long userId, String pattern);
 
     List<Activity> userActivities(long id, String pattern, int offset, int limit, boolean ascending);

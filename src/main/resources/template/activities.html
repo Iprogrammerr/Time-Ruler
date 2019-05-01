@@ -15,6 +15,30 @@
             transition: 1s;
             font-size: 3em;
         }
+
+        div.page {
+            text-align: center;
+            padding: 8px;
+        }
+
+        a {
+            color: black;
+            padding: 4px;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #74a2ed
+        }
+
+        a.active {
+            color: #666;
+            font-size: 1.25em;
+            text-decoration: underline;
+        }
+        #search {
+            margin-bottom: 16px;
+        }
     </style>
 </head>
 
@@ -30,9 +54,8 @@
         <h1 th:text=#{userActivities}></h1>
         <input id="search" type="text" /></input>
         <span class="search" th:utext="#{searchIcon}"></span>
-        <!--TODO render pages-->
-        <div>
-
+        <div th:if="${pages.size() > 1}" class="page">
+            <a th:each="p : ${pages}" th:href="${p.url}" th:text="${p.number}" th:class="${currentPage == p.number} ? active"></a>
         </div>
         <p th:class="!${activities.isEmpty()} ? hidden" th:text="#{emptyUserActivities}"></p>
         <ul class="activities">
