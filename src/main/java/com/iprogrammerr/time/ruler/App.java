@@ -72,7 +72,10 @@ public class App {
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         DateFormat timeFormat = new SimpleDateFormat("HH:mm");
         timeFormat.setTimeZone(dateFormat.getTimeZone());
-        DateTimeFormatting formatting = new DateTimeFormatting(dateFormat, timeFormat);
+        DateFormat dateTimeFormat = new SimpleDateFormat("dd.MM.yyyy, HH:mm");
+        dateTimeFormat.setTimeZone(dateFormat.getTimeZone());
+
+        DateTimeFormatting formatting = new DateTimeFormatting(dateFormat, timeFormat, dateTimeFormat);
         DateParsing dateParsing = new DateParsing();
         LimitedDate limitedDate = new LimitedDate(dateParsing);
         ServerClientDates serverClientDates = new ServerClientDates();

@@ -2,8 +2,8 @@ package com.iprogrammerr.time.ruler.view.rendering;
 
 import com.iprogrammerr.time.ruler.model.activity.Activity;
 import com.iprogrammerr.time.ruler.model.date.DateTimeFormatting;
-import com.iprogrammerr.time.ruler.model.rendering.ForViewActivity;
-import com.iprogrammerr.time.ruler.model.rendering.ForViewPage;
+import com.iprogrammerr.time.ruler.model.rendering.FoundActivity;
+import com.iprogrammerr.time.ruler.model.rendering.Page;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 
 import java.time.Instant;
@@ -34,15 +34,15 @@ public class ActivitiesViews {
         this(templates, formatting, "activities");
     }
 
-    public String view(boolean plan, String pattern, int currentPage, List<ForViewPage> pages, List<Activity> activities,
+    public String view(boolean plan, String pattern, int currentPage, List<Page> pages, List<Activity> activities,
         Function<Long, Instant> dateTransformation) {
         Map<String, Object> params = new HashMap<>();
         params.put(PLAN_TEMPLATE, plan);
         params.put(PATTERN_TEMPLATE, pattern);
         params.put(CURRENT_PAGE_TEMPLATE, currentPage);
         params.put(PAGES_TEMPLATE, pages);
-        List<ForViewActivity> viewActivities = new ArrayList<>(activities.size());
-        activities.forEach(a -> viewActivities.add(new ForViewActivity(a, formatting, dateTransformation)));
+        List<FoundActivity> viewActivities = new ArrayList<>(activities.size());
+        activities.forEach(a -> viewActivities.add(new FoundActivity(a, formatting, dateTransformation)));
         params.put(ACTIVITIES_TEMPLATE, viewActivities);
         return templates.rendered(name, params);
     }

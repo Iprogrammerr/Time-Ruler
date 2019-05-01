@@ -6,7 +6,7 @@ import com.iprogrammerr.time.ruler.model.date.DateTimeFormatting;
 import java.time.Instant;
 import java.util.function.Function;
 
-public class ForViewActivity {
+public class DayActivity {
 
     public final long id;
     public final String name;
@@ -14,7 +14,7 @@ public class ForViewActivity {
     public final String end;
     public final boolean done;
 
-    public ForViewActivity(long id, String name, String start, String end, boolean done) {
+    public DayActivity(long id, String name, String start, String end, boolean done) {
         this.id = id;
         this.name = name;
         this.start = start;
@@ -22,7 +22,7 @@ public class ForViewActivity {
         this.done = done;
     }
 
-    public ForViewActivity(Activity activity, DateTimeFormatting formatting, Function<Long, Instant> timeTransformation) {
+    public DayActivity(Activity activity, DateTimeFormatting formatting, Function<Long, Instant> timeTransformation) {
         this(activity.id, activity.name, formatting.time(timeTransformation.apply(activity.startDate)),
             formatting.time(timeTransformation.apply(activity.endDate)), activity.done);
     }

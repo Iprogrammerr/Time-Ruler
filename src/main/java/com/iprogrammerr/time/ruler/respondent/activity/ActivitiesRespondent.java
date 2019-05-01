@@ -5,7 +5,7 @@ import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.activity.ActivitiesSearch;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
 import com.iprogrammerr.time.ruler.model.date.ServerClientDates;
-import com.iprogrammerr.time.ruler.model.rendering.ForViewPage;
+import com.iprogrammerr.time.ruler.model.rendering.Page;
 import com.iprogrammerr.time.ruler.respondent.GroupedRespondent;
 import com.iprogrammerr.time.ruler.view.rendering.ActivitiesViews;
 import io.javalin.Context;
@@ -73,8 +73,8 @@ public class ActivitiesRespondent implements GroupedRespondent {
         return (int) Math.ceil(((double) records) / pageSize);
     }
 
-    private List<ForViewPage> pages(int size, boolean plan, String pattern, Map<String, List<String>> currentParams) {
-        List<ForViewPage> pages = new ArrayList<>(size);
+    private List<Page> pages(int size, boolean plan, String pattern, Map<String, List<String>> currentParams) {
+        List<Page> pages = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             int page = i + 1;
             UrlQueryBuilder queryBuilder = new UrlQueryBuilder().put(PLAN_PARAM, plan).put(PAGE_PARAM, page);
@@ -82,7 +82,7 @@ public class ActivitiesRespondent implements GroupedRespondent {
                 queryBuilder.put(PATTERN_PARAM, pattern);
             }
             currentParams.forEach((k, v) -> v.forEach(s -> queryBuilder.put(k, s)));
-            pages.add(new ForViewPage(queryBuilder.build(ACTIVITIES), i + 1));
+            pages.add(new Page(queryBuilder.build(ACTIVITIES), i + 1));
         }
         return pages;
     }

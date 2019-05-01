@@ -2,7 +2,7 @@ package com.iprogrammerr.time.ruler.view.rendering;
 
 import com.iprogrammerr.time.ruler.model.activity.Activity;
 import com.iprogrammerr.time.ruler.model.date.DateTimeFormatting;
-import com.iprogrammerr.time.ruler.model.rendering.ForViewActivity;
+import com.iprogrammerr.time.ruler.model.rendering.DayActivity;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 
 import java.time.Instant;
@@ -35,8 +35,8 @@ public class DayPlanExecutionViews {
         Map<String, Object> params = new HashMap<>();
         params.put(DATE_TEMPLATE, formatting.date(date));
         params.put(HISTORY_TEMPLATE, history);
-        List<ForViewActivity> viewActivities = new ArrayList<>();
-        activities.forEach(a -> viewActivities.add(new ForViewActivity(a, formatting, timeTransformation)));
+        List<DayActivity> viewActivities = new ArrayList<>();
+        activities.forEach(a -> viewActivities.add(new DayActivity(a, formatting, timeTransformation)));
         params.put(ACTIVITIES_TEMPLATE, viewActivities);
         return templates.rendered(name, params);
     }
