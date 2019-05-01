@@ -19,6 +19,7 @@ public class ActivitiesViews {
     private static final String CURRENT_PAGE_TEMPLATE = "currentPage";
     private static final String PAGES_TEMPLATE = "pages";
     private static final String ACTIVITIES_TEMPLATE = "activities";
+    private static final String PATTERN_TEMPLATE = "pattern";
     private final ViewsTemplates templates;
     private final DateTimeFormatting formatting;
     private final String name;
@@ -33,10 +34,11 @@ public class ActivitiesViews {
         this(templates, formatting, "activities");
     }
 
-    //TODO render with proper params
-    public String view(boolean plan, int currentPage, List<ForViewPage> pages, List<Activity> activities, Function<Long, Instant> dateTransformation) {
+    public String view(boolean plan, String pattern, int currentPage, List<ForViewPage> pages, List<Activity> activities,
+        Function<Long, Instant> dateTransformation) {
         Map<String, Object> params = new HashMap<>();
         params.put(PLAN_TEMPLATE, plan);
+        params.put(PATTERN_TEMPLATE, pattern);
         params.put(CURRENT_PAGE_TEMPLATE, currentPage);
         params.put(PAGES_TEMPLATE, pages);
         List<ForViewActivity> viewActivities = new ArrayList<>(activities.size());

@@ -1,9 +1,19 @@
 import { tabsNavigation, router, routes, paramsKeys, urlParams, hiddenDataKeys, dateTimeParams } from "./app.js";
 
+const template = urlParams.getOrDefault(paramsKeys.template, 0);
 const activityId = urlParams.getOrDefault(paramsKeys.id, 0);
 const date = dateTimeParams.dateFromUrl();
+const page = urlParams.getOrDefault(paramsKeys.page, 0);
+const enterKeyCode = 13;
+const searchInput = document.getElementById("search");
 
 tabsNavigation.setup(document.querySelector("div"), true);
+searchInput.onkeyup = (e) => {
+    if (e.keyCode == enterKeyCode) {
+        searchActivities();
+    }
+};
+document.getElementById("searchIcon").onclick = () => searchActivities();
 setupListNavigation();
 
 function setupListNavigation() {
@@ -20,5 +30,25 @@ function setupListNavigation() {
             }
             router.forwardWithParams(routes.activity, params);
         };
+    }
+};
+
+function searchActivities() {
+    let pattern = searchInput.value;
+    if (pattern.length > 0) {
+        let params = new Map();
+        if (page > 0) {
+            params.set(paramsKeys.page, page);
+        }
+        if (template > 0) {
+            params.set(paramsKeys.template, template);
+        }
+        if (activityId > 0) {
+            params.set(paramsKeys.id, activityId);
+        } else {
+            params.set(paramsKeys.date, date);
+        }
+        params.set(paramsKeys.pattern, pattern);
+        router.forwardWithParams(routes.activities, params);
     }
 };

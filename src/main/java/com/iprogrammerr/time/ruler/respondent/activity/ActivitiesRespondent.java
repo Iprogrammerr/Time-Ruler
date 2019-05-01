@@ -65,8 +65,8 @@ public class ActivitiesRespondent implements GroupedRespondent {
             activities = search.userActivities(userId, pattern, (page - 1) * pageSize, pageSize, false);
             allPagesNumber = pagesNumber(search.matches(userId, pattern));
         }
-        context.html(views.view(plan, page, pages(allPagesNumber, plan, pattern, context.queryParamMap()), activities,
-            d -> dates.clientDate(context.req, d)));
+        context.html(views.view(plan, pattern, page, pages(allPagesNumber, plan, pattern, context.queryParamMap()),
+            activities, d -> dates.clientDate(context.req, d)));
     }
 
     private int pagesNumber(int records) {

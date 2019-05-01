@@ -35,7 +35,9 @@ export const paramsKeys = {
     date: "date",
     plan: "plan",
     template: "template",
-    id: "id"
+    page: "page",
+    id: "id",
+    pattern: "pattern"
 };
 
 export const hiddenInputKeys = {
