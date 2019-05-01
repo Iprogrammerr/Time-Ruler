@@ -1,10 +1,4 @@
-import { router } from "./app.js";
-import { routes } from "./app.js";
-import { tabsNavigation } from "./app.js";
-import { dateTimeParams } from "./app.js";
-import { hiddenDataKeys } from "./app.js";
-import { paramsKeys } from "./app.js";
-import { parametrizedEndpoints} from "./app.js";
+import { router, routes, tabsNavigation, dateTimeParams, hiddenDataKeys, paramsKeys, parametrizedEndpoints } from "./app.js";
 import { HttpConnections } from "./http/http-connections.js";
 
 const yearMonthDay = dateTimeParams.currentYearMonthDayFromUrl();

@@ -1,15 +1,15 @@
-import { tabsNavigation } from "./app.js";
-import { dateTimeParams } from "./app.js";
-import { parametrizedEndpoints } from "./app.js";
+import { tabsNavigation, router, routes, dateTimeParams, parametrizedEndpoints, paramsKeys, urlParams } from "./app.js";
 import { FormAction } from "./http/form-action.js";
 
-tabsNavigation.setup(document.querySelector("div"), true);
 const activityId = activityIdFromPath();
 const date = activityId > 0 ? {} : dateTimeParams.dateFromUrl();
+const plan = urlParams.getOrDefault(paramsKeys.plan, "false");
 const form = document.querySelector("form");
-addEventListener("submit", e => e.preventDefault());
-document.getElementById("recent").onclick = () => console.log("Show recent...");
 const saveActivity = document.getElementById("save");
+
+tabsNavigation.setup(document.querySelector("div"), true);
+addEventListener("submit", e => e.preventDefault());
+document.getElementById("recent").onclick = () => router.forwardWithParams(routes.activities, new Map([[paramsKeys.plan, plan]]));
 saveActivity.onclick = () => {
     if (isFormValid()) {
         let endpoint;

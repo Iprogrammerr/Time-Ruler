@@ -4,7 +4,7 @@ import { UrlParams } from "./http/url-params.js";
 import { DateTimeParams } from "./date/date-time-params.js";
 import { Validations } from "./validation/validations.js";
 import { TabsNavigation } from "./navigation/tabs-navigation.js";
-import { Cookies} from "./http/cookies.js";
+import { Cookies } from "./http/cookies.js";
 
 const host = "http://127.0.0.1:8080/";
 const userRoutePrefix = "user/";
@@ -17,9 +17,10 @@ export const routes = {
     plan: `${userRoutePrefix}plan`,
     history: `${userRoutePrefix}history`,
     profile: `${userRoutePrefix}profile`,
-    dayPlan: `${userRoutePrefix}plan/day`,
     activity: `${userRoutePrefix}activity`,
-    dayPlanExecution: `${userRoutePrefix}day-plan-execution`
+    activities: `${userRoutePrefix}activities`,
+    dayPlanExecution: `${userRoutePrefix}day-plan-execution`,
+    dayPlan: `${userRoutePrefix}plan/day`
 };
 
 export const endpoints = {
@@ -77,8 +78,8 @@ function attachUtcOffset() {
         }
     }
     let date = new Date();
-    let offset = ((date.getUTCHours() - date.getHours()) * 60 + date.getUTCMinutes() - date.getMinutes()) * 60; 
+    let offset = ((date.getUTCHours() - date.getHours()) * 60 + date.getUTCMinutes() - date.getMinutes()) * 60;
     if (oldOffset !== offset) {
-       cookies.put(cookiesKeys.utcOffset, offset);
+        cookies.put(cookiesKeys.utcOffset, offset);
     }
 };

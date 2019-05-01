@@ -1,6 +1,4 @@
-import { endpoints } from "./app.js";
-import { validations } from "./app.js";
-import { hiddenInputKeys } from "./app.js";
+import { endpoints, validations } from "./app.js";
 import { FormAction } from "./http/form-action.js";
 
 const emailLoginError = document.getElementById("emailLoginError");

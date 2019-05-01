@@ -219,16 +219,3 @@ ul.activities li:hover {
 .close:hover {
     background: #bbb;
 }
-
-.two-columns-grid {
-    width: 100%;
-    display: grid;
-    grid-template-columns: auto auto;
-    padding: 12px;
-    grid-gap: 8px;
-}
-
-div.two-columns-grid .spanned {
-    text-align: center;
-    grid-column: 1 / span 2;
-}

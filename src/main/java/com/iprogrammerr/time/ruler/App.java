@@ -24,7 +24,8 @@ import com.iprogrammerr.time.ruler.model.description.Descriptions;
 import com.iprogrammerr.time.ruler.model.session.SessionIdentity;
 import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.user.Users;
-import com.iprogrammerr.time.ruler.respondent.ActivityRespondent;
+import com.iprogrammerr.time.ruler.respondent.activity.ActivitiesRespondent;
+import com.iprogrammerr.time.ruler.respondent.activity.ActivityRespondent;
 import com.iprogrammerr.time.ruler.respondent.CalendarRespondent;
 import com.iprogrammerr.time.ruler.respondent.ProfileRespondent;
 import com.iprogrammerr.time.ruler.respondent.TodayRespondent;
@@ -38,13 +39,13 @@ import com.iprogrammerr.time.ruler.view.HtmlViews;
 import com.iprogrammerr.time.ruler.view.HtmlViewsTemplates;
 import com.iprogrammerr.time.ruler.view.Views;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
+import com.iprogrammerr.time.ruler.view.rendering.ActivitiesViews;
 import com.iprogrammerr.time.ruler.view.rendering.ActivityViews;
 import com.iprogrammerr.time.ruler.view.rendering.CalendarViews;
 import com.iprogrammerr.time.ruler.view.rendering.DayPlanExecutionViews;
 import com.iprogrammerr.time.ruler.view.rendering.DayPlanViews;
 import com.iprogrammerr.time.ruler.view.rendering.SigningInViews;
 import io.javalin.BadRequestResponse;
-import io.javalin.ForbiddenResponse;
 import io.javalin.Javalin;
 import io.javalin.staticfiles.Location;
 import org.thymeleaf.TemplateEngine;
@@ -89,6 +90,7 @@ public class App {
         DayPlanExecutionViews dayPlanExecutionView = new DayPlanExecutionViews(viewsTemplates, formatting);
         DayPlanViews dayPlanView = new DayPlanViews(viewsTemplates, formatting);
         ActivityViews activityView = new ActivityViews(viewsTemplates, formatting);
+        ActivitiesViews activitiesViews = new ActivitiesViews(viewsTemplates);
 
         Database database = new SqlDatabase(configuration.databaseUser(), configuration.databasePassword(),
             configuration.jdbcUrl());
@@ -124,6 +126,7 @@ public class App {
             limitedDate, dateParsing, serverClientDates);
         ActivityRespondent activityRespondent = new ActivityRespondent(identity, activityView,
             dayPlanExecutionRespondent, dayPlanRespondent, activities, descriptions, limitedDate, serverClientDates);
+        ActivitiesRespondent activitiesRespondent = new ActivitiesRespondent(activitiesViews);
 
         String userGroup = "user/";
 
@@ -134,9 +137,10 @@ public class App {
         todayRespondent.init(userGroup, app);
         calendarRespondent.init(userGroup, app);
         profileRespondent.init(userGroup, app);
+        dayPlanExecutionRespondent.init(userGroup, app);
         dayPlanRespondent.init(userGroup, app);
         activityRespondent.init(userGroup, app);
-        dayPlanExecutionRespondent.init(userGroup, app);
+        activitiesRespondent.init(userGroup, app);
 
         //TODO is it a good idea?
         app.before(userGroup + "*", ctx -> {

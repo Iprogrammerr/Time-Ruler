@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title th:text="#{userActivities}"></title>
+    <link rel="stylesheet" type="text/css" href="/style.css" />
+    <style>
+        span.search {
+            font-size: 2em;
+            cursor: pointer;
+        }
+
+        span.search:hover {
+            color: #666;
+            transition: 1s;
+            font-size: 3em;
+        }
+    </style>
+</head>
+
+<body class="marginless">
+    <!--TODO which tab should be active?-->
+    <div class="tab">
+        <button>Today</button>
+        <button th:class="${plan}? active">Plan</button>
+        <button th:class="!${plan}? active">History</button>
+        <button>Profile</button>
+    </div>
+    <div class="centered-h" style="padding: 8px 16px">
+        <h1 th:text=#{userActivities}></h1>
+        <input id="search" type="text" /></input>
+        <span class="search" th:utext="#{searchIcon}"></span>
+        <!--TODO render pages-->
+        <div>
+
+        </div>
+        <p th:class="!${activities.isEmpty()} ? hidden" th:text="#{emptyUserActivities}"></p>
+        <ul class="activities">
+            <li th:each="a : ${activities}" th:data-id="${a.id}">
+                <div th:utext="|${a.start} - ${a.end}|"></div>
+                <div th:text="${a.name}"></div>
+            </li>
+        </ul>
+    </div>
+</body>
+<script src="/activities.js" type="module"></script>
+
+</html>

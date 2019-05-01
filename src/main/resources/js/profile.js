@@ -1,6 +1,4 @@
-import {tabsNavigation} from "./app.js";
-import {router} from "./app.js";
-import {routes} from "./app.js";
+import { router, routes, tabsNavigation } from "./app.js";
 
 tabsNavigation.setup(document.querySelector("div"));
 window.addEventListener("submit", e => e.preventDefault());

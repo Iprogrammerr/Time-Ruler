@@ -1,7 +1,4 @@
-import { tabsNavigation } from "./app.js";
-import { router } from "./app.js";
-import { routes } from "./app.js";
-import { dateTimeParams } from "./app.js";
+import { tabsNavigation, router, routes, dateTimeParams } from "./app.js";
 import { SmartDate } from "./date/smart-date.js";
 
 const STATE = {
@@ -36,17 +33,14 @@ function stateFromActive(activeIndex) {
 
 function setupMonthsNavigation() {
     let date = new SmartDate();
-    let currentYearMonth = date.asYearMonth();
     date.setYearMonth(yearMonth.year, yearMonth.month);
-    if (date.isAfter(currentYearMonth.year, currentYearMonth.month)) {
-        let prev = document.getElementsByClassName("prev");
-        if (prev.length > 0) {
-            date.subtractMonth(1);
-            let newYearMonth = date.asYearMonth();
-            date.addMonth(1);
-            prev[0].onclick = () => router.replaceWithParams(state.mainRoute,
-                dateTimeParams.yearMonthAsParams(newYearMonth.year, newYearMonth.month));
-        }
+    let prev = document.getElementsByClassName("prev");
+    if (prev.length > 0) {
+        date.subtractMonth(1);
+        let newYearMonth = date.asYearMonth();
+        date.addMonth(1);
+        prev[0].onclick = () => router.replaceWithParams(state.mainRoute,
+            dateTimeParams.yearMonthAsParams(newYearMonth.year, newYearMonth.month));
     }
     let next = document.getElementsByClassName("next");
     if (next.length > 0) {
