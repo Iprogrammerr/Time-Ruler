@@ -7,7 +7,6 @@
 </head>
 
 <body class="marginless">
-    <!--TODO which tab should be active?-->
     <div class="tab">
         <button>Today</button>
         <button th:class="${plan}? active">Plan</button>
@@ -28,11 +27,10 @@
             <p>Description</p>
             <textarea name="description" th:text="${description}"></textarea>
             </br>
-            <!--TODO is it needed-->
             <input type="hidden" name="done" th:value="!${plan}"></input>
             <input id="save" type="submit" value="Save"></input>
         </form>
-        <button id="recent">Recent</button>
+        <button id="recent" th:text="#{fromTemplate}"></button>
     </div>
 </body>
 <script src="/activity.js" type="module"></script>

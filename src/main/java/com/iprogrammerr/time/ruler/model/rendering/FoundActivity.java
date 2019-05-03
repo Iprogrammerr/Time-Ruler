@@ -19,6 +19,7 @@ public class FoundActivity {
     }
 
     public FoundActivity(Activity activity, DateTimeFormatting formatting, Function<Long, Instant> timeTransformation) {
-        this(activity.id, formatting.dateTime(timeTransformation.apply(activity.startDate)), activity.name);
+        this(activity.id, formatting.dateTimeRange(timeTransformation.apply(activity.startDate),
+            timeTransformation.apply(activity.endDate)), activity.name);
     }
 }

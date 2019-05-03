@@ -26,4 +26,8 @@ public class DateTimeFormatting {
     public String dateTime(Instant date) {
         return dateTimeFormat.format(date.toEpochMilli());
     }
+
+    public String dateTimeRange(Instant date, Instant endTime) {
+        return String.format("%s - %s", dateTime(date), time(endTime));
+    }
 }
