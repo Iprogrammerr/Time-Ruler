@@ -4,6 +4,7 @@ const template = urlParams.getOrDefault(paramsKeys.template, 0);
 const activityId = urlParams.getOrDefault(paramsKeys.id, 0);
 const date = dateTimeParams.dateFromUrl();
 const page = urlParams.getOrDefault(paramsKeys.page, 0);
+const pattern = urlParams.getOrDefault(paramsKeys.pattern, "");
 const enterKeyCode = 13;
 const searchInput = document.getElementById("search");
 
@@ -34,8 +35,8 @@ function setupListNavigation() {
 };
 
 function searchActivities() {
-    let pattern = searchInput.value;
-    if (pattern.length > 0) {
+    let currentPattern = searchInput.value;
+    if (currentPattern.length > 0 || currentPattern !== pattern) {
         let params = new Map();
         if (page > 0) {
             params.set(paramsKeys.page, page);
@@ -48,7 +49,9 @@ function searchActivities() {
         } else {
             params.set(paramsKeys.date, date);
         }
-        params.set(paramsKeys.pattern, pattern);
+        if (currentPattern.length > 0) {
+            params.set(paramsKeys.pattern, currentPattern);
+        }
         router.forwardWithParams(routes.activities, params);
     }
 };

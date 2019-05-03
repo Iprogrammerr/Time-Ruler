@@ -172,6 +172,7 @@ public class ActivityRespondent implements GroupedRespondent {
         }
     }
 
+    //TODO intersection check does not work properly
     private void updateActivity(Activity activity, String description, List<Activity> dayActivities) {
         for (Activity da : dayActivities) {
             if (activity.id != da.id && activity.intersects(da)) {

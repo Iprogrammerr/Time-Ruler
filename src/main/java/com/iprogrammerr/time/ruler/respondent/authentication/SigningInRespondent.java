@@ -6,7 +6,7 @@ import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.user.User;
 import com.iprogrammerr.time.ruler.model.user.Users;
 import com.iprogrammerr.time.ruler.respondent.Respondent;
-import com.iprogrammerr.time.ruler.respondent.TodayRespondent;
+import com.iprogrammerr.time.ruler.respondent.day.DayPlanExecutionRespondent;
 import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateablePassword;
@@ -23,13 +23,13 @@ public class SigningInRespondent implements Respondent {
     private static final String FORM_EMAIL_LOGIN = "emailLogin";
     private static final String FORM_PASSWORD = "password";
     private static final String ACTIVATION = "activation";
-    private final TodayRespondent respondent;
+    private final DayPlanExecutionRespondent respondent;
     private final SigningInViews views;
     private final Users users;
     private final Hashing hashing;
     private final Identity<Long> identity;
 
-    public SigningInRespondent(TodayRespondent respondent, SigningInViews views, Users users, Hashing hashing,
+    public SigningInRespondent(DayPlanExecutionRespondent respondent, SigningInViews views, Users users, Hashing hashing,
         Identity<Long> identity) {
         this.respondent = respondent;
         this.views = views;

@@ -49,6 +49,7 @@ p.error-visible {
     top: 0;
     background-color: #f1f1f1;
     position: sticky;
+    z-index: 1;
 }
 
 .tab button {

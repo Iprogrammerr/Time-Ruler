@@ -4,6 +4,13 @@
 <head>
     <title th:text="${history}? #{historyDayTitle} : #{todayTitle}"></title>
     <link rel="stylesheet" type="text/css" href="/style.css" />
+    <style>
+        .yesterday:hover {
+            font-size: 1.5em;
+            transition: 1s;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body class="marginless">
@@ -26,6 +33,7 @@
             </li>
         </ul>
         <button id="add" th:text="#{addActivity}"></button>
+        <p class="yesterday" th:if="!${history}" th:text="#{yesterdayQuestion}"></p>
     </div>
 </body>
 <script src="/day-plan-execution.js" type="module"></script>

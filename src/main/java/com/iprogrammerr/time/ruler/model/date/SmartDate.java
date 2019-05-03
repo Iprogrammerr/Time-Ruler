@@ -13,8 +13,12 @@ public class SmartDate {
         this.date = date;
     }
 
+    public SmartDate(Instant date) {
+        this(ZonedDateTime.ofInstant(date, ZoneOffset.UTC));
+    }
+
     public SmartDate(long date) {
-        this(ZonedDateTime.ofInstant(Instant.ofEpochSecond(date), ZoneOffset.UTC));
+        this(Instant.ofEpochSecond(date));
     }
 
     public SmartDate() {

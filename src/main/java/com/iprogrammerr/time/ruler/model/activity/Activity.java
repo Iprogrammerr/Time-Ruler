@@ -44,7 +44,9 @@ public class Activity {
 
     public boolean intersects(Activity other) {
         return (startDate <= other.startDate && endDate >= other.endDate) ||
-            (startDate > other.startDate && endDate < other.endDate);
+            (startDate > other.startDate && endDate < other.endDate) ||
+            (startDate >= other.startDate && startDate < other.endDate) ||
+            (endDate > other.startDate && endDate < other.endDate);
     }
 
     @Override

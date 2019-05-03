@@ -6,6 +6,8 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
+import java.util.Random;
+
 public class ActivityTest {
 
     @Test
@@ -27,6 +29,15 @@ public class ActivityTest {
         Activity longer = withNewTimes(shorter, -1, 1);
         MatcherAssert.assertThat("Shorter should intersect with longer", shorter.intersects(longer),
             Matchers.equalTo(true));
+    }
+
+    @Test
+    public void shiftedIntersectsWithOriginal() {
+        Random random = new Random();
+        Activity original = new RandomActivities(random).activity();
+        int shift = random.nextBoolean()? 1 : -1;
+        Activity shifted = withNewTimes(original, shift, shift);
+        MatcherAssert.assertThat("Original should intersect with shifted", original.intersects(shifted));
     }
 
     @Test

@@ -28,7 +28,6 @@ import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.user.Users;
 import com.iprogrammerr.time.ruler.respondent.CalendarRespondent;
 import com.iprogrammerr.time.ruler.respondent.ProfileRespondent;
-import com.iprogrammerr.time.ruler.respondent.TodayRespondent;
 import com.iprogrammerr.time.ruler.respondent.WelcomeRespondent;
 import com.iprogrammerr.time.ruler.respondent.activity.ActivitiesRespondent;
 import com.iprogrammerr.time.ruler.respondent.activity.ActivityRespondent;
@@ -118,11 +117,6 @@ public class App {
         Identity<Long> identity = new SessionIdentity();
 
         WelcomeRespondent welcomeRespondent = new WelcomeRespondent(views);
-        TodayRespondent todayRespondent = new TodayRespondent(identity, viewsTemplates);
-        SigningInRespondent signingInRespondent = new SigningInRespondent(todayRespondent, signingInView, users,
-            hashing, identity);
-        SigningUpRespondent signingUpRespondent = new SigningUpRespondent(viewsTemplates, users, hashing, emails);
-        SigningOutRespondent signingOutRespondent = new SigningOutRespondent(signingInRespondent);
         CalendarRespondent calendarRespondent = new CalendarRespondent(identity, calendarView, dates,
             serverClientDates);
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, viewsTemplates);
@@ -135,6 +129,10 @@ public class App {
             serverClientDates);
         ActivitiesRespondent activitiesRespondent = new ActivitiesRespondent(identity, activitiesViews,
             activitiesSearch, serverClientDates);
+        SigningInRespondent signingInRespondent = new SigningInRespondent(dayPlanExecutionRespondent, signingInView,
+            users, hashing, identity);
+        SigningUpRespondent signingUpRespondent = new SigningUpRespondent(viewsTemplates, users, hashing, emails);
+        SigningOutRespondent signingOutRespondent = new SigningOutRespondent(signingInRespondent);
 
         String userGroup = "user/";
 
@@ -142,7 +140,6 @@ public class App {
         signingInRespondent.init(app);
         signingUpRespondent.init(app);
         signingOutRespondent.init(app);
-        todayRespondent.init(userGroup, app);
         calendarRespondent.init(userGroup, app);
         profileRespondent.init(userGroup, app);
         dayPlanExecutionRespondent.init(userGroup, app);

@@ -1,17 +1,29 @@
 import { router, routes, tabsNavigation, dateTimeParams, hiddenDataKeys, paramsKeys, parametrizedEndpoints } from "./app.js";
+import { SmartDate } from "./date/smart-date.js";
 import { HttpConnections } from "./http/http-connections.js";
 
 const yearMonthDay = dateTimeParams.currentYearMonthDayFromUrl();
-tabsNavigation.setYearMonth(yearMonthDay.year, yearMonthDay.month);
-tabsNavigation.setup(document.querySelector("div"), true);
+const httpConnections = new HttpConnections();
+
 document.getElementById("add").onclick = () => {
-    let params = dateTimeParams.dateFromUrlAsParam();
+    let params = dateTimeParams.yearMonthDayAsDateParam(yearMonthDay.year, yearMonthDay.month, yearMonthDay.day);
     params.set(paramsKeys.plan, false);
     router.forwardWithParams(routes.activity, params);
 };
+let yesterday = document.getElementsByClassName("yesterday");
+if (yesterday.length > 0) {
+    yesterday[0].onclick = () => router.forwardWithParams(routes.dayPlanExecution, dateTimeParams.yesterdayAsDateParam());
+}
+setupTabsNavigation();
 setupListNavigation();
-const httpConnections = new HttpConnections();
 
+function setupTabsNavigation() {
+    tabsNavigation.setYearMonth(yearMonthDay.year, yearMonthDay.month);
+    let today = new SmartDate().asYearMonthDay();
+    let allTabsActive = today.year != yearMonthDay.year && today.month != yearMonthDay.month && 
+        today.day != yearMonthDay.day;
+    tabsNavigation.setup(document.querySelector("div"), allTabsActive);
+}
 //TODO page with errors? Dialog? Text?
 function setupListNavigation() {
     let activities = document.getElementsByClassName("activities")[0];
@@ -26,7 +38,7 @@ function setupListNavigation() {
         };
         let spans = a.querySelectorAll("span");
         setupDoneNotDone(spans[0], spans[1], id);
-     }
+    }
 };
 
 function setupDoneNotDone(done, notDone, id) {

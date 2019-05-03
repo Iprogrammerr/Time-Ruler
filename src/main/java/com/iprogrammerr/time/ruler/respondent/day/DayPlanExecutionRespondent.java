@@ -21,6 +21,7 @@ public class DayPlanExecutionRespondent implements GroupedRespondent {
 
     private static final String CACHE_VALUE = "no-store";
     private static final String DATE_PARAM = "date";
+    private static final String TODAY = "today";
     private static final String DAY_PLAN_EXECUTION = "day-plan-execution";
     private final Identity<Long> identity;
     private final DayPlanExecutionViews views;
@@ -28,7 +29,8 @@ public class DayPlanExecutionRespondent implements GroupedRespondent {
     private final LimitedDate limitedDate;
     private final DateParsing parsing;
     private final ServerClientDates serverClientDates;
-    private String redirect;
+    private String todayRedirect;
+    private String dayRedirect;
 
     public DayPlanExecutionRespondent(Identity<Long> identity, DayPlanExecutionViews views, ActivitiesSearch activities,
         LimitedDate limitedDate, DateParsing parsing, ServerClientDates serverClientDates) {
@@ -38,27 +40,36 @@ public class DayPlanExecutionRespondent implements GroupedRespondent {
         this.limitedDate = limitedDate;
         this.parsing = parsing;
         this.serverClientDates = serverClientDates;
-        this.redirect = "";
+        this.todayRedirect = "";
+        this.dayRedirect = "";
     }
 
     @Override
     public void init(String group, Javalin app) {
-        String withGroup = group + DAY_PLAN_EXECUTION;
-        app.get(withGroup, this::renderPlanExecution);
-        redirect = "/" + withGroup;
+        String todayWithGroup = group + TODAY;
+        String dayWithGroup = group + DAY_PLAN_EXECUTION;
+        app.get(todayWithGroup, this::renderPlanExecution);
+        app.get(dayWithGroup, this::renderPlanExecution);
+        todayRedirect = "/" + todayWithGroup;
+        dayRedirect = "/" + dayWithGroup;
     }
 
     private void renderPlanExecution(Context context) {
-        Instant date = limitedDate.fromString(context.queryParam(DATE_PARAM, ""));
+        Instant clientNow = serverClientDates.clientDate(context.req);
+        Instant date = limitedDate.fromString(context.queryParam(DATE_PARAM, ""), clientNow);
         List<Activity> dayActivities = activities.ofUserDate(identity.value(context.req),
             date.getEpochSecond());
-        boolean history = new SmartDate().dayBeginning() > date.getEpochSecond();
+        boolean history = new SmartDate(clientNow).dayBeginning() > date.getEpochSecond();
         context.html(views.view(date, history, dayActivities,
             d -> serverClientDates.clientDate(context.req, d)));
         context.header(Header.CACHE_CONTROL, CACHE_VALUE);
     }
 
+    public void redirect(Context context) {
+        context.redirect(todayRedirect);
+    }
+
     public void redirect(Context context, Instant date) {
-        context.redirect(new UrlQueryBuilder().put(DATE_PARAM, parsing.write(date)).build(redirect));
+        context.redirect(new UrlQueryBuilder().put(DATE_PARAM, parsing.write(date)).build(dayRedirect));
     }
 }
