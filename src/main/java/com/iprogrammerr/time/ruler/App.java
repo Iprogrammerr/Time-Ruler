@@ -45,6 +45,7 @@ import com.iprogrammerr.time.ruler.view.rendering.ActivityViews;
 import com.iprogrammerr.time.ruler.view.rendering.CalendarViews;
 import com.iprogrammerr.time.ruler.view.rendering.DayPlanExecutionViews;
 import com.iprogrammerr.time.ruler.view.rendering.DayPlanViews;
+import com.iprogrammerr.time.ruler.view.rendering.ProfileViews;
 import com.iprogrammerr.time.ruler.view.rendering.SigningInViews;
 import io.javalin.BadRequestResponse;
 import io.javalin.Javalin;
@@ -82,12 +83,13 @@ public class App {
         TemplateEngine engine = new TemplateEngine();
         FileTemplateResolver resolver = new FileTemplateResolver();
         resolver.setCacheable(false);
+        resolver.setPrefix(new File(root, "template").getPath() + File.separator);
         engine.setTemplateResolver(resolver);
         Messages messages = new Messages();
         messages.init("messages.properties");
         engine.setMessageResolver(messages);
         Views views = new HtmlViews(new File(root, "html"));
-        ViewsTemplates viewsTemplates = new HtmlViewsTemplates(new File(root, "template"), engine);
+        ViewsTemplates viewsTemplates = new HtmlViewsTemplates(engine);
 
         SigningInViews signingInView = new SigningInViews(viewsTemplates);
         CalendarViews calendarView = new CalendarViews(viewsTemplates);
@@ -95,6 +97,7 @@ public class App {
         DayPlanViews dayPlanView = new DayPlanViews(viewsTemplates, formatting);
         ActivityViews activityView = new ActivityViews(viewsTemplates, formatting);
         ActivitiesViews activitiesViews = new ActivitiesViews(viewsTemplates, formatting);
+        ProfileViews profileViews = new ProfileViews(viewsTemplates);
 
         Database database = new SqlDatabase(configuration.databaseUser(), configuration.databasePassword(),
             configuration.jdbcUrl());
@@ -119,7 +122,7 @@ public class App {
         WelcomeRespondent welcomeRespondent = new WelcomeRespondent(views);
         CalendarRespondent calendarRespondent = new CalendarRespondent(identity, calendarView, dates,
             serverClientDates);
-        ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, viewsTemplates);
+        ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, profileViews);
         DayPlanExecutionRespondent dayPlanExecutionRespondent = new DayPlanExecutionRespondent(identity,
             dayPlanExecutionView, activitiesSearch, limitedDate, dateParsing, serverClientDates);
         DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, dayPlanView, activitiesSearch,

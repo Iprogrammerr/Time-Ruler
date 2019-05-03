@@ -27,6 +27,7 @@ public class HtmlViewsTemplatesTest {
     public void setup() {
         engine = new TemplateEngine();
         FileTemplateResolver resolver = new FileTemplateResolver();
+        resolver.setPrefix(root + File.separator);
         engine.setTemplateResolver(resolver);
     }
 
@@ -38,15 +39,15 @@ public class HtmlViewsTemplatesTest {
         params.put(TEMPLATE_TEXT, randomStrings.alphabetic());
         Context context = new Context();
         context.setVariables(params);
-        String rendered = engine.process(root + File.separator + TEMPLATE + ".html", context);
-        HtmlViewsTemplates viewsTemplates = new HtmlViewsTemplates(root, engine);
+        String rendered = engine.process(TEMPLATE + ".html", context);
+        HtmlViewsTemplates viewsTemplates = new HtmlViewsTemplates(engine);
         MatcherAssert.assertThat("Rendered templates should be equal", viewsTemplates.rendered(TEMPLATE, params),
             Matchers.equalTo(rendered));
     }
 
     @Test
     public void throwsExceptionIfTemplateDoesNotExist() {
-        HtmlViewsTemplates viewsTemplates = new HtmlViewsTemplates(root, engine);
+        HtmlViewsTemplates viewsTemplates = new HtmlViewsTemplates(engine);
         String nonExistent = new RandomStrings().alphabetic(3);
         String path = root + File.separator + nonExistent + ".html";
         MatcherAssert.assertThat(

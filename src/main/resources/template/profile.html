@@ -12,12 +12,7 @@
 </head>
 
 <body class="marginless">
-    <div class="tab">
-        <button>Today</button>
-        <button>Plan</button>
-        <button>History</button>
-        <button class="active">Profile</button>
-    </div>
+    <div th:replace="fragments.html :: tab"></div>
     <div>
         <form>
             <h1>Email</h1>

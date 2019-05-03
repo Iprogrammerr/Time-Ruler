@@ -2,6 +2,7 @@ package com.iprogrammerr.time.ruler.view.rendering;
 
 import com.iprogrammerr.time.ruler.model.activity.DescribedActivity;
 import com.iprogrammerr.time.ruler.model.date.DateTimeFormatting;
+import com.iprogrammerr.time.ruler.model.rendering.ActiveTab;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateableTime;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
@@ -37,6 +38,7 @@ public class ActivityViews {
 
     public String empty(Instant time, boolean plan) {
         Map<String, Object> params = new HashMap<>();
+        addActiveTab(params, plan);
         String timeString = formatting.time(time);
         params.put(PLAN_TEMPLATE, plan);
         params.put(NAME_TEMPLATE, "");
@@ -46,8 +48,13 @@ public class ActivityViews {
         return templates.rendered(name, params);
     }
 
+    private void addActiveTab(Map<String, Object> params, boolean plan) {
+        params.put(ActiveTab.KEY, plan ? ActiveTab.PLAN : ActiveTab.HISTORY);
+    }
+
     public String withErrors(boolean plan, ValidateableName name, ValidateableTime startTime, ValidateableTime endTime) {
         Map<String, Object> params = new HashMap<>();
+        addActiveTab(params, plan);
         params.put(PLAN_TEMPLATE, plan);
         params.put(INVALID_NAME_TEMPLATE, name.isValid());
         params.put(NAME_TEMPLATE, name.isValid() ? name.value() : "");
@@ -60,7 +67,9 @@ public class ActivityViews {
 
     public String filled(DescribedActivity activity, Function<Long, Instant> timeTransformation) {
         Map<String, Object> params = new HashMap<>();
-        params.put(PLAN_TEMPLATE, !activity.activity.done);
+        boolean plan = !activity.activity.done;
+        addActiveTab(params, plan);
+        params.put(PLAN_TEMPLATE, plan);
         params.put(NAME_TEMPLATE, activity.activity.name);
         String startTime = formatting.time(timeTransformation.apply(activity.activity.startDate));
         params.put(START_TIME_TEMPLATE, startTime);

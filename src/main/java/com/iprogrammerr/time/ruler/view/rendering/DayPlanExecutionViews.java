@@ -2,6 +2,7 @@ package com.iprogrammerr.time.ruler.view.rendering;
 
 import com.iprogrammerr.time.ruler.model.activity.Activity;
 import com.iprogrammerr.time.ruler.model.date.DateTimeFormatting;
+import com.iprogrammerr.time.ruler.model.rendering.ActiveTab;
 import com.iprogrammerr.time.ruler.model.rendering.DayActivity;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 
@@ -33,6 +34,7 @@ public class DayPlanExecutionViews {
 
     public String view(Instant date, boolean history, List<Activity> activities, Function<Long, Instant> timeTransformation) {
         Map<String, Object> params = new HashMap<>();
+        params.put(ActiveTab.KEY, history ? ActiveTab.HISTORY : ActiveTab.TODAY);
         params.put(DATE_TEMPLATE, formatting.date(date));
         params.put(HISTORY_TEMPLATE, history);
         List<DayActivity> viewActivities = new ArrayList<>();

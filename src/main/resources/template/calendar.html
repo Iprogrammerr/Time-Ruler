@@ -3,7 +3,7 @@
 
 <head>
     <title th:text="${plan}? #{planTitle} : #{historyTitle}"></title>
-    <link rel="stylesheet" type="text/css" href="../style.css" />
+    <link rel="stylesheet" type="text/css" href="/style.css" />
     <style>
         @media screen and (max-width: 720px) {
 
@@ -36,12 +36,7 @@
 </head>
 
 <body class="marginless">
-    <div class="tab">
-        <button>Today</button>
-        <button th:class="${plan}? active">Plan</button>
-        <button th:class="!${plan}? active">History</button>
-        <button>Profile</button>
-    </div>
+    <div th:replace="fragments.html :: tab"></div>
     <div class="calendar">
         <div class="month">
             <ul>
@@ -52,13 +47,13 @@
             </ul>
         </div>
         <ul class="weekdays">
-            <li>Mo</li>
-            <li>Tu</li>
-            <li>We</li>
-            <li>Th</li>
-            <li>Fr</li>
-            <li>Sa</li>
-            <li>Su</li>
+            <li th:text="#{mondayShortcut}"></li>
+            <li th:text="#{tuesdayShortcut}"></li>
+            <li th:text="#{wednesdayShortcut}"></li>
+            <li th:text="#{thursdayShortcut}"></li>
+            <li th:text="#{fridayShortcut}"></li>
+            <li th:text="#{saturdayShortcut}"></li>
+            <li th:text="#{sundayShortcut}"></li>
         </ul>
 
         <ul class="days">
@@ -73,6 +68,6 @@
         </ul>
     </div>
 </body>
-<script src="../calendar.js" type="module"></script>
+<script src="/calendar.js" type="module"></script>
 
 </html>

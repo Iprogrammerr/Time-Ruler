@@ -7,12 +7,7 @@
 </head>
 
 <body class="marginless">
-    <div class="tab">
-        <button>Today</button>
-        <button th:class="${plan}? active">Plan</button>
-        <button th:class="!${plan}? active">History</button>
-        <button>Profile</button>
-    </div>
+    <div th:replace="fragments.html :: tab"></div>
     <div class="centered-h">
         <form>
             <p>Name</p>

@@ -14,12 +14,7 @@
 </head>
 
 <body class="marginless">
-    <div class="tab">
-        <button th:class="!${history}? active">Today</button>
-        <button>Plan</button>
-        <button th:class="${history}? active">History</button>
-        <button>Profile</button>
-    </div>
+    <div th:replace="fragments.html :: tab"></div>
     <div class="centered-h" style="padding: 8px 16px">
         <h1 th:text=${date}></h1>
         <p th:class="!${activities.isEmpty()} ? hidden" th:text="#{emptyPlanMessage}"></p>

@@ -43,12 +43,7 @@
 </head>
 
 <body class="marginless">
-    <div class="tab">
-        <button>Today</button>
-        <button th:class="${plan}? active">Plan</button>
-        <button th:class="!${plan}? active">History</button>
-        <button>Profile</button>
-    </div>
+    <div th:replace="fragments.html :: tab"></div>
     <div class="centered-h" style="padding: 8px 16px">
         <h1 th:text=#{userActivities}></h1>
         <input id="search" type="text" th:value="${pattern}"/></input>

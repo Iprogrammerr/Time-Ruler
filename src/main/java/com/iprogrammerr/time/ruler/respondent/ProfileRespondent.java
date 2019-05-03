@@ -1,28 +1,22 @@
 package com.iprogrammerr.time.ruler.respondent;
 
 import com.iprogrammerr.time.ruler.model.Identity;
-import com.iprogrammerr.time.ruler.model.user.User;
 import com.iprogrammerr.time.ruler.model.user.Users;
-import com.iprogrammerr.time.ruler.view.ViewsTemplates;
+import com.iprogrammerr.time.ruler.view.rendering.ProfileViews;
 import io.javalin.Context;
 import io.javalin.Javalin;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ProfileRespondent implements GroupedRespondent {
 
     private static final String PROFILE = "profile";
-    private static final String EMAIL_TEMPLATE = "email";
-    private static final String NAME_TEMPLATE = "name";
     private final Identity<Long> identity;
     private final Users users;
-    private final ViewsTemplates viewsTemplates;
+    private final ProfileViews views;
 
-    public ProfileRespondent(Identity<Long> identity, Users users, ViewsTemplates viewsTemplates) {
+    public ProfileRespondent(Identity<Long> identity, Users users, ProfileViews views) {
         this.identity = identity;
         this.users = users;
-        this.viewsTemplates = viewsTemplates;
+        this.views = views;
     }
 
     @Override
@@ -32,10 +26,6 @@ public class ProfileRespondent implements GroupedRespondent {
 
     //TODO render with proper data
     private void showProfile(Context context) {
-        User user = users.user(identity.value(context.req));
-        Map<String, Object> params = new HashMap<>();
-        params.put(EMAIL_TEMPLATE, user.email);
-        params.put(NAME_TEMPLATE, user.name);
-        context.html(viewsTemplates.rendered(PROFILE, params));
+        context.html(views.view(users.user(identity.value(context.req))));
     }
 }

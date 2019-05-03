@@ -1,5 +1,6 @@
 package com.iprogrammerr.time.ruler.view.rendering;
 
+import com.iprogrammerr.time.ruler.model.rendering.ActiveTab;
 import com.iprogrammerr.time.ruler.model.rendering.CalendarDay;
 import com.iprogrammerr.time.ruler.model.rendering.DayState;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
@@ -13,7 +14,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 
 public class CalendarViews {
 
@@ -40,6 +40,7 @@ public class CalendarViews {
         boolean fromPast) {
         Map<String, Object> params = new HashMap<>();
         params.put(PLAN_TEMPLATE, plan);
+        params.put(ActiveTab.KEY, plan ? ActiveTab.PLAN : ActiveTab.HISTORY);
         params.put(PREV_TEMPLATE, hasPrevious);
         params.put(NEXT_TEMPLATE, hasNext);
         //TODO locale form month?

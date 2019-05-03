@@ -1,0 +1,6 @@
+<div class="tab" th:fragment="tab">
+    <button th:class="${activeTab.name() == 'TODAY'}? active" th:text="#{todayTab}"></button>
+    <button th:class="${activeTab.name() == 'PLAN'}? active" th:text="#{planTab}"></button>
+    <button th:class="${activeTab.name() == 'HISTORY'}? active" th:text="#{historyTab}"></button>
+    <button th:class="${activeTab.name() == 'PROFILE'}? active" th:text="#{profileTab}"></button>
+</div>
