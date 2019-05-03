@@ -9,7 +9,6 @@ import java.util.Map;
 
 public class ProfileViews {
 
-    private static final String PROFILE = "profile";
     private static final String EMAIL_TEMPLATE = "email";
     private static final String NAME_TEMPLATE = "name";
     private final ViewsTemplates templates;
