@@ -57,8 +57,9 @@ export function SmartDate(date = new Date()) {
         };
     };
 
-    this.asIsoDateString = (year, month, day)  => {
-        _date.setUTCFullYear(year, month - 1, day);
+    this.setYearMonthDay = (year, month, day) => _date.setUTCFullYear(year, month - 1, day);
+
+    this.asIsoDateString = ()  => {
         let isoDate = _date.toISOString();
         return isoDate.substring(0, isoDate.indexOf("T"));
     };

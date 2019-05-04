@@ -60,7 +60,7 @@
 
         <ul class="days">
             <li th:each="d : ${days}">
-                <th:block th:switch="${d.state.toString()}">
+                <th:block th:switch="${d.state.name()}">
                     <span th:case="'NOT_AVAILABLE'" class="not-available" th:text="${d.number}"></span>
                     <span th:case="'CURRENT'" class="current" th:text="${d.number}"></span>
                     <span th:case="'AVAILABLE'" class="available" th:text="${d.number}"></span>
@@ -71,5 +71,6 @@
     </div>
 </body>
 <script src="/calendar.js" type="module"></script>
+
 
 </html>

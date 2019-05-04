@@ -2,7 +2,7 @@ import { router, routes, tabsNavigation, dateTimeParams, hiddenDataKeys, paramsK
 import { SmartDate } from "./date/smart-date.js";
 import { HttpConnections } from "./http/http-connections.js";
 
-const yearMonthDay = dateTimeParams.currentYearMonthDayFromUrl();
+const yearMonthDay = dateTimeParams.dateFromUrl().asYearMonthDay();
 const httpConnections = new HttpConnections();
 
 document.getElementById("add").onclick = () => {

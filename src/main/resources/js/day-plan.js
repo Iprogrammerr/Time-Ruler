@@ -1,7 +1,7 @@
 import { router, routes, tabsNavigation, dateTimeParams, hiddenDataKeys, paramsKeys, parametrizedEndpoints } from "./app.js";
 import { HttpConnections } from "./http/http-connections.js";
 
-const yearMonthDay = dateTimeParams.currentYearMonthDayFromUrl();
+const yearMonthDay = dateTimeParams.dateFromUrl().asYearMonthDay();
 tabsNavigation.setYearMonth(yearMonthDay.year, yearMonthDay.month);
 tabsNavigation.setup(document.querySelector("div"), true);
 document.getElementById("add").onclick = () => {

@@ -2,7 +2,7 @@ import { tabsNavigation, router, routes, dateTimeParams, parametrizedEndpoints, 
 import { FormAction } from "./http/form-action.js";
 
 const activityId = urlParams.getOrDefault(paramsKeys.id, 0);
-const date = activityId > 0 ? {} : dateTimeParams.dateFromUrl();
+const date = activityId > 0 ? {} : dateTimeParams.dateFromUrl().asIsoDateString();
 const plan = urlParams.getOrDefault(paramsKeys.plan, "false");
 const form = document.querySelector("form");
 const saveActivity = document.getElementById("save");

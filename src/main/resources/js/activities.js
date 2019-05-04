@@ -2,7 +2,7 @@ import { tabsNavigation, router, routes, paramsKeys, urlParams, hiddenDataKeys, 
 
 const template = urlParams.getOrDefault(paramsKeys.template, 0);
 const activityId = urlParams.getOrDefault(paramsKeys.id, 0);
-const date = dateTimeParams.dateFromUrl();
+const date = dateTimeParams.dateFromUrl().asIsoDateString();
 const page = urlParams.getOrDefault(paramsKeys.page, 0);
 const pattern = urlParams.getOrDefault(paramsKeys.pattern, "");
 const enterKeyCode = 13;

@@ -17,17 +17,9 @@ export function DateTimeParams(urlParams, paramsKeys) {
         };
     };
 
-    this.currentYearMonthDayFromUrl = () => {
+    this.currentYearMonthDayFromUrlDate = () => {
         let yearMonthDay = new SmartDate().asYearMonthDay();
         return this.yearMonthDayFromUrl(yearMonthDay.year, yearMonthDay.month, yearMonthDay.day);
-    };
-
-    this.yearMonthDayFromUrl = (defaultYear, defaultMonth, defaultDay) => {
-        return {
-            year: _urlParams.getOrDefault(_paramsKeys.year, defaultYear),
-            month: _urlParams.getOrDefault(_paramsKeys.month, defaultMonth),
-            day: _urlParams.getOrDefault(_paramsKeys.day, defaultDay)
-        };
     };
 
     this.yearMonthAsParams = (year, month) => params([_paramsKeys.year, _paramsKeys.month], [year, month])
@@ -45,8 +37,11 @@ export function DateTimeParams(urlParams, paramsKeys) {
         return params;
     };
 
-    this.yearMonthDayAsDateParam = (year, month, day) =>
-        params([_paramsKeys.date], [new SmartDate().asIsoDateString(year, month, day)]);
+    this.yearMonthDayAsDateParam = (year, month, day) => {
+        let date = new SmartDate();
+        date.setYearMonthDay(year, month, day);
+        return params([_paramsKeys.date], [date.asIsoDateString()]);
+    };
 
     this.yesterdayAsDateParam = () => {
         let date = new Date();
@@ -56,12 +51,15 @@ export function DateTimeParams(urlParams, paramsKeys) {
     };
 
     this.dateFromUrl = () => {
-        let defaultDate = new SmartDate().asYearMonthDay();
-        return _urlParams.getOrDefault(_paramsKeys.date, this.yearMonthDayAsDateParam(defaultDate.year,
-            defaultDate.month, defaultDate.day));
+        let dateParam = _urlParams.getOrDefault(_paramsKeys.date, "");
+        let date = new Date(dateParam);
+        if (isNaN(date.getTime())) {
+            date = new Date();
+        }
+        return new SmartDate(date);
     };
 
-    this.dateFromUrlAsParam = () => params([_paramsKeys.date], [this.dateFromUrl()]);
+    this.dateFromUrlAsParam = () => params([_paramsKeys.date], [this.dateFromUrl().asIsoDateString()]);
 
     this.dateAsParam = (date) => params([_paramsKeys.date], [date]);
 }

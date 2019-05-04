@@ -36,7 +36,7 @@ export function UrlParams() {
     this.getOrDefault = (key, defaultValue) => {
         let value;
         if (this.has(key)) {
-            value = isNaN(defaultValue) ? this.get(key) : parseInt(this.get(key));
+            value = this.get(key);
         } else {
             value = defaultValue;
         }
