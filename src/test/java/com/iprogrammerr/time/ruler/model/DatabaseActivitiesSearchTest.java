@@ -1,6 +1,6 @@
 package com.iprogrammerr.time.ruler.model;
 
-import com.iprogrammerr.time.ruler.TestDatabaseSetup;
+import com.iprogrammerr.time.ruler.setup.TestDatabaseSetup;
 import com.iprogrammerr.time.ruler.database.DatabaseSession;
 import com.iprogrammerr.time.ruler.database.QueryTemplates;
 import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;

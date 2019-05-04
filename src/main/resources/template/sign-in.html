@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign in</title>
     <link rel="stylesheet" text="text/css" href="style.css" />
     <!--TODO is this a good idea?-->
@@ -17,9 +18,10 @@
         <h1 th:text="${activation}? #{activationCongratulations}"></h1>
         <h1 th:text="${signOut}? #{signOutFarewell}"></h1>
         <p>Email/Login</p>
-        <p th:class="${invalidEmailLogin} ? error-visible : error" id="emailLoginError" th:text="#{invalidEmailLogin}"></p>
+        <p th:class="${invalidEmailLogin} ? error-visible : error" id="emailLoginError" th:text="#{invalidEmailLogin}">
+        </p>
         <input type="text" name="emailLogin" th:value="${emailLogin}"></input>
-        <p>Password</p> 
+        <p>Password</p>
         <p th:class="${invalidPassword} ? error-visible : error" id="passwordError" th:text="#{invalidPassword}"></p>
         <input type="password" name="password" th:value="${password}"></input>
         </br>

@@ -1,5 +1,6 @@
-package com.iprogrammerr.time.ruler;
+package com.iprogrammerr.time.ruler.setup;
 
+import com.iprogrammerr.time.ruler.Configuration;
 import com.iprogrammerr.time.ruler.database.Database;
 import com.iprogrammerr.time.ruler.database.SqlDatabase;
 import org.h2.tools.RunScript;

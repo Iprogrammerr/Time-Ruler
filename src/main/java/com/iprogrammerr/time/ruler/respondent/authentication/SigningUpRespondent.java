@@ -8,6 +8,7 @@ import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateablePassword;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
+import io.javalin.BadRequestResponse;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
@@ -17,7 +18,6 @@ public class SigningUpRespondent implements Respondent {
 
     private static final String SIGN_UP = "sign-up";
     private static final String SIGN_UP_SUCCESS = "sign-up-success";
-    private static final String SIGN_UP_FAILURE = "sign-up-failure";
     private static final String SIGN_IN = "sign-in";
     private static final String FORM_EMAIL = "email";
     private static final String FORM_LOGIN = "login";
@@ -38,21 +38,23 @@ public class SigningUpRespondent implements Respondent {
     @Override
     public void init(Javalin app) {
         app.get(SIGN_UP, ctx -> ctx.html(templates.rendered(SIGN_UP)));
+        app.get(SIGN_UP_SUCCESS, ctx -> {
+            ctx.status(HttpURLConnection.HTTP_OK);
+            ctx.html(templates.rendered(SIGN_UP_SUCCESS));
+        });
         app.post(SIGN_UP, this::signUp);
     }
 
-    //TODO style sign-up-success/failure view
+    //TODO exception handling mechanism
     public void signUp(Context context) {
         ValidateableEmail email = new ValidateableEmail(context.formParam(FORM_EMAIL, ""));
         ValidateableName name = new ValidateableName(context.formParam(FORM_LOGIN, ""));
         ValidateablePassword password = new ValidateablePassword(context.formParam(FORM_PASSWORD, ""));
         if (email.isValid() && name.isValid() && password.isValid()) {
             createUser(email.value(), name.value(), password.value());
-            context.html(SIGN_UP_SUCCESS);
-            context.status(HttpURLConnection.HTTP_CREATED);
+            context.redirect(SIGN_UP_SUCCESS);
         } else {
-            context.html(SIGN_UP_FAILURE);
-            context.status(HttpURLConnection.HTTP_BAD_REQUEST);
+            throw new BadRequestResponse("Sign up failure");
         }
     }
 

@@ -1,7 +1,8 @@
 package com.iprogrammerr.time.ruler.respondent;
 
-import com.iprogrammerr.time.ruler.mock.FakeViews;
 import com.iprogrammerr.time.ruler.mock.JavalinContext;
+import com.iprogrammerr.time.ruler.setup.TestTemplatesSetup;
+import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -10,12 +11,12 @@ public class WelcomeRespondentTest {
 
     @Test
     public void returnsWelcomeView() {
-        FakeViews views = new FakeViews("index.html");
-        WelcomeRespondent respondent = new WelcomeRespondent(views);
+        ViewsTemplates templates = new TestTemplatesSetup().templates();
+        WelcomeRespondent respondent = new WelcomeRespondent(templates);
         JavalinContext javalinContext = new JavalinContext();
         respondent.welcome(javalinContext.context());
         MatcherAssert.assertThat(
-            "Does not return welcome view", views.view(""), Matchers.equalTo(javalinContext.read())
+            "Does not return welcome view", templates.rendered("index"), Matchers.equalTo(javalinContext.read())
         );
 
     }

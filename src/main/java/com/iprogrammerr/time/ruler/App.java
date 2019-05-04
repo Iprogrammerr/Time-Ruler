@@ -36,9 +36,7 @@ import com.iprogrammerr.time.ruler.respondent.authentication.SigningOutResponden
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningUpRespondent;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanExecutionRespondent;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanRespondent;
-import com.iprogrammerr.time.ruler.view.HtmlViews;
 import com.iprogrammerr.time.ruler.view.HtmlViewsTemplates;
-import com.iprogrammerr.time.ruler.view.Views;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import com.iprogrammerr.time.ruler.view.rendering.ActivitiesViews;
 import com.iprogrammerr.time.ruler.view.rendering.ActivityViews;
@@ -88,7 +86,6 @@ public class App {
         Messages messages = new Messages();
         messages.init("messages.properties");
         engine.setMessageResolver(messages);
-        Views views = new HtmlViews(new File(root, "html"));
         ViewsTemplates viewsTemplates = new HtmlViewsTemplates(engine);
 
         SigningInViews signingInView = new SigningInViews(viewsTemplates);
@@ -119,7 +116,7 @@ public class App {
         Hashing hashing = new Hashing();
         Identity<Long> identity = new SessionIdentity();
 
-        WelcomeRespondent welcomeRespondent = new WelcomeRespondent(views);
+        WelcomeRespondent welcomeRespondent = new WelcomeRespondent(viewsTemplates);
         CalendarRespondent calendarRespondent = new CalendarRespondent(identity, calendarView, dates,
             serverClientDates);
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, profileViews);

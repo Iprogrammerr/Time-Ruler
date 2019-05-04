@@ -21,6 +21,10 @@ body {
     text-align: center;
 }
 
+div.centered-h {
+    padding: 0px 8px 8px 8px;
+}
+
 .centered {
     width: 100%;
     position: absolute;

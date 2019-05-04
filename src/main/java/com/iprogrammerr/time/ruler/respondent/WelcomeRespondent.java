@@ -1,16 +1,16 @@
 package com.iprogrammerr.time.ruler.respondent;
 
-import com.iprogrammerr.time.ruler.view.Views;
+import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
 public class WelcomeRespondent implements Respondent {
 
     private static final String WELCOME = "index";
-    private final Views views;
+    private final ViewsTemplates templates;
 
-    public WelcomeRespondent(Views views) {
-        this.views = views;
+    public WelcomeRespondent(ViewsTemplates templates) {
+        this.templates = templates;
     }
 
     @Override
@@ -19,6 +19,6 @@ public class WelcomeRespondent implements Respondent {
     }
 
     public void welcome(Context context) {
-        context.html(views.view(WELCOME));
+        context.html(templates.rendered(WELCOME));
     }
 }

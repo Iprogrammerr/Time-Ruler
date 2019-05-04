@@ -2,13 +2,14 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title th:text="#{dayPlanTitle}"></title>
     <link rel="stylesheet" type="text/css" href="/style.css" />
 </head>
 
 <body class="marginless">
     <div th:replace="fragments.html :: tab"></div>
-    <div class="centered-h" style="padding: 8px 16px">
+    <div class="centered-h">
         <h1 th:text=${date}></h1>
         <p th:class="!${activities.isEmpty()} ? hidden" th:text="#{emptyPlanMessage}"></p>
         <ul class="activities">
