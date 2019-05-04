@@ -23,7 +23,7 @@ public class DatabaseDescriptions implements Descriptions {
 
     @Override
     public DescribedActivity describedActivity(long activityId) {
-        String query = new StringBuilder("SELECT a.*, d.content from activity a ")
+        String query = new StringBuilder("SELECT a.*, d.content FROM activity a ")
             .append("LEFT JOIN description d ON d.activity_id = a.id ")
             .append("WHERE a.id = ?")
             .toString();
@@ -51,6 +51,6 @@ public class DatabaseDescriptions implements Descriptions {
     }
 
     private boolean descriptionExists(long activityId) {
-        return session.select(ResultSet::next, "SELECT id from description WHERE activity_id = ?", activityId);
+        return session.select(ResultSet::next, "SELECT id FROM description WHERE activity_id = ?", activityId);
     }
 }

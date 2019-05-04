@@ -2,13 +2,14 @@ package com.iprogrammerr.time.ruler.respondent.authentication;
 
 import com.iprogrammerr.time.ruler.email.Emails;
 import com.iprogrammerr.time.ruler.model.Hashing;
+import com.iprogrammerr.time.ruler.model.error.ErrorCode;
+import com.iprogrammerr.time.ruler.model.error.ResponseException;
 import com.iprogrammerr.time.ruler.model.user.Users;
 import com.iprogrammerr.time.ruler.respondent.Respondent;
 import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateablePassword;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
-import io.javalin.BadRequestResponse;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
@@ -45,7 +46,6 @@ public class SigningUpRespondent implements Respondent {
         app.post(SIGN_UP, this::signUp);
     }
 
-    //TODO exception handling mechanism
     public void signUp(Context context) {
         ValidateableEmail email = new ValidateableEmail(context.formParam(FORM_EMAIL, ""));
         ValidateableName name = new ValidateableName(context.formParam(FORM_LOGIN, ""));
@@ -54,7 +54,7 @@ public class SigningUpRespondent implements Respondent {
             createUser(email.value(), name.value(), password.value());
             context.redirect(SIGN_UP_SUCCESS);
         } else {
-            throw new BadRequestResponse("Sign up failure");
+            throw new ResponseException(ErrorCode.invalid(email, name, password));
         }
     }
 

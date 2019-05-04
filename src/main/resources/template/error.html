@@ -11,6 +11,9 @@
 <body>
     <h1 th:text="#{errorTitle}"></h1>
     <p th:text="${error}"></p>
+    <button id="back" th:text="#{back}"></button>
 </body>
-
+<script>
+document.getElementById("back").onclick = () => history.back();
+</script>
 </html>

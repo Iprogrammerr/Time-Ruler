@@ -3,6 +3,8 @@ package com.iprogrammerr.time.ruler.respondent.authentication;
 import com.iprogrammerr.time.ruler.model.Hashing;
 import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
+import com.iprogrammerr.time.ruler.model.error.ErrorCode;
+import com.iprogrammerr.time.ruler.model.error.ResponseException;
 import com.iprogrammerr.time.ruler.model.user.User;
 import com.iprogrammerr.time.ruler.model.user.Users;
 import com.iprogrammerr.time.ruler.respondent.Respondent;
@@ -84,7 +86,6 @@ public class SigningInRespondent implements Respondent {
         }
     }
 
-    //TODO simplify update, handle exceptions
     private void activate(Context context, String activation) {
         List<User> inactive = users.allInactive();
         boolean activated = false;
@@ -99,7 +100,7 @@ public class SigningInRespondent implements Respondent {
         if (activated) {
             context.html(views.withActivationCongratulations());
         } else {
-            throw new RuntimeException("Given activation link is invalid");
+            throw new ResponseException(ErrorCode.INVALID_ACTIVATION_LINK);
         }
     }
 

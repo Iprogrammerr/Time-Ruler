@@ -10,20 +10,20 @@ import com.iprogrammerr.time.ruler.model.date.ServerClientDates;
 import com.iprogrammerr.time.ruler.model.date.SmartDate;
 import com.iprogrammerr.time.ruler.model.description.Description;
 import com.iprogrammerr.time.ruler.model.description.Descriptions;
+import com.iprogrammerr.time.ruler.model.error.ErrorCode;
+import com.iprogrammerr.time.ruler.model.error.ResponseException;
 import com.iprogrammerr.time.ruler.respondent.GroupedRespondent;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanExecutionRespondent;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanRespondent;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateableTime;
 import com.iprogrammerr.time.ruler.view.rendering.ActivityViews;
-import io.javalin.BadRequestResponse;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
 import java.time.Instant;
 import java.util.List;
 
-//TODO better exception handling/mapping mechanism
 public class ActivityRespondent implements GroupedRespondent {
 
     private static final String DATE_PARAM = "date";
@@ -130,7 +130,7 @@ public class ActivityRespondent implements GroupedRespondent {
         Instant startTime = start.value();
         Instant endTime = end.value();
         if (startTime.isAfter(endTime)) {
-            throw new BadRequestResponse("Start time can not be greater than end time");
+            throw new ResponseException(ErrorCode.GREATER_START_TIME);
         }
         long userId = identity.value(context.req);
         boolean done = isActivityDone(context);
@@ -143,7 +143,7 @@ public class ActivityRespondent implements GroupedRespondent {
     private void createActivity(Activity activity, String description, List<Activity> dayActivities) {
         for (Activity da : dayActivities) {
             if (activity.intersects(da)) {
-                throw new BadRequestResponse("New activity intersects with existing one");
+                throw new ResponseException(ErrorCode.ACTIVITIES_INTERSECTS);
             }
         }
         long id = activities.create(activity);
@@ -155,7 +155,7 @@ public class ActivityRespondent implements GroupedRespondent {
     private void updateActivity(Context context) {
         long id = context.pathParam(ID, Integer.class).get();
         if (!activities.exists(id)) {
-            throw new BadRequestResponse(String.format("Activity with id = %d does not exist", id));
+            throw new ResponseException(ErrorCode.ACTIVITY_NON_EXISTENT_ID);
         }
         ValidateableName name = new ValidateableName(context.formParam(FORM_NAME, ""), true);
         ValidateableTime start = new ValidateableTime(context.formParam(FORM_START_TIME, ""));
@@ -172,11 +172,10 @@ public class ActivityRespondent implements GroupedRespondent {
         }
     }
 
-    //TODO intersection check does not work properly
     private void updateActivity(Activity activity, String description, List<Activity> dayActivities) {
         for (Activity da : dayActivities) {
             if (activity.id != da.id && activity.intersects(da)) {
-                throw new BadRequestResponse("Activity intersects with existing one");
+                throw new ResponseException(ErrorCode.ACTIVITIES_INTERSECTS);
             }
         }
         activities.update(activity);
@@ -194,7 +193,7 @@ public class ActivityRespondent implements GroupedRespondent {
         if (activities.belongsToUser(identity.value(context.req), activityId)) {
             activities.setDone(activityId, done);
         } else {
-            throw new BadRequestResponse("Given activity does not belong to user");
+            throw new ResponseException(ErrorCode.ACTIVITY_NOT_OWNED);
         }
     }
 }
