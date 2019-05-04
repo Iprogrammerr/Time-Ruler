@@ -3,7 +3,7 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Profile</title>
+    <title th:text="#{profileTitle}"></title>
     <link rel="stylesheet" type="text/css" href="/style.css" />
     <style>
         div {
@@ -16,18 +16,18 @@
     <div th:replace="fragments.html :: tab"></div>
     <div>
         <form>
-            <h1>Email</h1>
+            <h1 th:text="#{email}"></h1>
             <p class="error">Error</p>
             <input type="email" name="email" th:value="${email}"></input>
-            <h1>Name</h1>
+            <h1 th:text="#{name}"></h1>
             <p class="error">Error</p>
             <input type="text" name="name" th:value="${name}"></input>
             </br>
             <input id="save" type="submit" value="Save" class="main"></input>
         </form>
-        <button id="resetPassword" class="main">Reset password</button>
+        <button id="resetPassword" class="main" th:text="#{resetPassword}"></button>
         </br>
-        <button id="logout" class="main">Logout</button>
+        <button id="logout" class="main" th:text="#{logout}"></button>
     </div>
 </body>
 <script src="/profile.js" type="module"></script>

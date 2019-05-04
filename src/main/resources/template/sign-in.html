@@ -3,7 +3,7 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign in</title>
+    <title th:text="#{signInTitle}"></title>
     <link rel="stylesheet" text="text/css" href="style.css" />
     <!--TODO is this a good idea?-->
     <style>
@@ -17,11 +17,11 @@
     <form class="centered">
         <h1 th:text="${activation}? #{activationCongratulations}"></h1>
         <h1 th:text="${signOut}? #{signOutFarewell}"></h1>
-        <p>Email/Login</p>
+        <p th:text="#{emailLogin}"></p>
         <p th:class="${invalidEmailLogin} ? error-visible : error" id="emailLoginError" th:text="#{invalidEmailLogin}">
         </p>
         <input type="text" name="emailLogin" th:value="${emailLogin}"></input>
-        <p>Password</p>
+        <p th:text="#{password}"></p>
         <p th:class="${invalidPassword} ? error-visible : error" id="passwordError" th:text="#{invalidPassword}"></p>
         <input type="password" name="password" th:value="${password}"></input>
         </br>

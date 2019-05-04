@@ -29,8 +29,8 @@ public class SigningInRespondent implements Respondent {
     private final Hashing hashing;
     private final Identity<Long> identity;
 
-    public SigningInRespondent(DayPlanExecutionRespondent respondent, SigningInViews views, Users users, Hashing hashing,
-        Identity<Long> identity) {
+    public SigningInRespondent(DayPlanExecutionRespondent respondent, SigningInViews views, Users users,
+        Hashing hashing, Identity<Long> identity) {
         this.respondent = respondent;
         this.views = views;
         this.users = users;

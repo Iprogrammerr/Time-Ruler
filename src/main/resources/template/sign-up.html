@@ -3,7 +3,7 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign up</title>
+    <title th:text="#{signUp}"></title>
     <link rel="stylesheet" type="text/css" href="style.css" />
     <!--TODO is this a good idea?-->
     <style>
@@ -14,22 +14,22 @@
 </head>
 
 <body>
-    <h1>Sign up to get started</h1>
+    <h1 th:text="#{signUpIncentive}"></h1>
     <form>
-        <p>Email</p>
+        <p th:text="#{email}"></p>
         <p class="error" th:text="#{invalidEmail}"></p>
         <input type="email" name="email"></input>
-        <p>Login</p>
+        <p th:text="#{login}"></p>
         <p class="error" th:text="#{invalidLogin}"></p>
         <input type="text" name="login"></input>
-        <p>Password</p>
+        <p th:text="#{password}"></p>
         <p class="error" th:text="#{invalidPassword}"></p>
         <input type="password" name="password"></input>
-        <p>Password, once again</p>
+        <p th:text="#{repeatPassword}"></p>
         <p class="error" th:text="#{passwordsMismatch}"></p>
         <input type="password" name="repassword"></input>
         </br>
-        <input id="signUp" type="submit" value="Sign up"></input>
+        <input id="signUp" type="submit" th:value="#{signUp}"></input>
     </form>
 </body>
 
