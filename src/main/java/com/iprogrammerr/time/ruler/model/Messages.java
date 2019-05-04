@@ -1,19 +1,28 @@
 package com.iprogrammerr.time.ruler.model;
 
+import com.iprogrammerr.time.ruler.model.error.ErrorCode;
+import com.iprogrammerr.time.ruler.model.error.ErrorsTranslation;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.messageresolver.IMessageResolver;
 
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
-public class Messages implements IMessageResolver {
+public class Messages implements IMessageResolver, ErrorsTranslation {
 
     private final Map<String, String> source;
+    private final String errorsPrefix;
+
+    public Messages(String errorsPrefix) {
+        this.source = new HashMap<>();
+        this.errorsPrefix = errorsPrefix;
+    }
 
     public Messages() {
-        this.source = new HashMap<>();
+        this("error");
     }
 
     public void init(String resource) {
@@ -63,5 +72,16 @@ public class Messages implements IMessageResolver {
     @Override
     public String createAbsentMessageRepresentation(ITemplateContext context, Class<?> origin, String key, Object[] messageParameters) {
         return absentMessage(key);
+    }
+
+    //TODO make it possible to use locale
+    @Override
+    public String translated(ErrorCode code, Locale locale) {
+        String key = errorsPrefix + code.ordinal();
+        String translation = source.get(key);
+        if (translation == null) {
+            translation = absentMessage(key);
+        }
+        return translation;
     }
 }

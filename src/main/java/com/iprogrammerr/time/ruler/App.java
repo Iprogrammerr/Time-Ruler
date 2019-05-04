@@ -27,6 +27,7 @@ import com.iprogrammerr.time.ruler.model.session.SessionIdentity;
 import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.user.Users;
 import com.iprogrammerr.time.ruler.respondent.CalendarRespondent;
+import com.iprogrammerr.time.ruler.respondent.ErrorRespondent;
 import com.iprogrammerr.time.ruler.respondent.ProfileRespondent;
 import com.iprogrammerr.time.ruler.respondent.WelcomeRespondent;
 import com.iprogrammerr.time.ruler.respondent.activity.ActivitiesRespondent;
@@ -43,9 +44,9 @@ import com.iprogrammerr.time.ruler.view.rendering.ActivityViews;
 import com.iprogrammerr.time.ruler.view.rendering.CalendarViews;
 import com.iprogrammerr.time.ruler.view.rendering.DayPlanExecutionViews;
 import com.iprogrammerr.time.ruler.view.rendering.DayPlanViews;
+import com.iprogrammerr.time.ruler.view.rendering.ErrorViews;
 import com.iprogrammerr.time.ruler.view.rendering.ProfileViews;
 import com.iprogrammerr.time.ruler.view.rendering.SigningInViews;
-import io.javalin.BadRequestResponse;
 import io.javalin.Javalin;
 import io.javalin.staticfiles.Location;
 import org.thymeleaf.TemplateEngine;
@@ -95,6 +96,7 @@ public class App {
         ActivityViews activityView = new ActivityViews(viewsTemplates, formatting);
         ActivitiesViews activitiesViews = new ActivitiesViews(viewsTemplates, formatting);
         ProfileViews profileViews = new ProfileViews(viewsTemplates);
+        ErrorViews errorViews = new ErrorViews(viewsTemplates, messages);
 
         Database database = new SqlDatabase(configuration.databaseUser(), configuration.databasePassword(),
             configuration.jdbcUrl());
@@ -105,10 +107,8 @@ public class App {
         Dates dates = new DatabaseDates(session);
         Descriptions descriptions = new DatabaseDescriptions(session);
 
-        EmailServer emailServer = new ConfigurableEmailServer(
-            configuration.adminEmail(), configuration.adminPassword(),
-            configuration.smtpHost(), configuration.smtpPort()
-        );
+        EmailServer emailServer = new ConfigurableEmailServer(configuration.adminEmail(),
+            configuration.adminPassword(), configuration.smtpHost(), configuration.smtpPort());
         Emails emails = new Emails(
             emailServer, configuration.activationLinkBase(), configuration.signUpEmailSubject(),
             configuration.signUpEmailTemplate()
@@ -133,36 +133,27 @@ public class App {
             users, hashing, identity);
         SigningUpRespondent signingUpRespondent = new SigningUpRespondent(viewsTemplates, users, hashing, emails);
         SigningOutRespondent signingOutRespondent = new SigningOutRespondent(signingInRespondent);
+        ErrorRespondent errorRespondent = new ErrorRespondent(errorViews);
 
         String userGroup = "user/";
 
         welcomeRespondent.init(app);
-        signingInRespondent.init(app);
-        signingUpRespondent.init(app);
-        signingOutRespondent.init(app);
         calendarRespondent.init(userGroup, app);
         profileRespondent.init(userGroup, app);
         dayPlanExecutionRespondent.init(userGroup, app);
         dayPlanRespondent.init(userGroup, app);
         activityRespondent.init(userGroup, app);
         activitiesRespondent.init(userGroup, app);
+        signingInRespondent.init(app);
+        signingUpRespondent.init(app);
+        signingOutRespondent.init(app);
+        errorRespondent.init(app);
 
-        //TODO is it a good idea?
+        //TODO Authentication respondent
         app.before(userGroup + "*", ctx -> {
             if (!identity.isValid(ctx.req)) {
                 ctx.redirect("/");
             }
-        });
-        //TODO handle exceptions
-        app.exception(Exception.class, (e, ctx) -> {
-            ctx.status(500);
-            e.printStackTrace();
-            String message = e.getMessage() == null ? "UNKNOWN" : e.getMessage();
-            ctx.html(message);
-        });
-        //TODO proper pages per http code
-        app.exception(BadRequestResponse.class, (e, ctx) -> {
-            ctx.html(String.format("Bad request: %s", e.getMessage()));
         });
         app.start(configuration.port());
     }
