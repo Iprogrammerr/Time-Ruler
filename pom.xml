@@ -8,7 +8,7 @@
     <artifactId>time-ruler</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <name>time-ruler</name>
+    <formName>time-ruler</formName>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

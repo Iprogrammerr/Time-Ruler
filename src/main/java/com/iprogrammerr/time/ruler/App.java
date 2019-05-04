@@ -47,6 +47,7 @@ import com.iprogrammerr.time.ruler.view.rendering.DayPlanViews;
 import com.iprogrammerr.time.ruler.view.rendering.ErrorViews;
 import com.iprogrammerr.time.ruler.view.rendering.ProfileViews;
 import com.iprogrammerr.time.ruler.view.rendering.SigningInViews;
+import com.iprogrammerr.time.ruler.view.rendering.SigningUpViews;
 import io.javalin.Javalin;
 import io.javalin.staticfiles.Location;
 import org.thymeleaf.TemplateEngine;
@@ -89,11 +90,12 @@ public class App {
         engine.setMessageResolver(messages);
         ViewsTemplates viewsTemplates = new HtmlViewsTemplates(engine);
 
-        SigningInViews signingInView = new SigningInViews(viewsTemplates);
-        CalendarViews calendarView = new CalendarViews(viewsTemplates);
-        DayPlanExecutionViews dayPlanExecutionView = new DayPlanExecutionViews(viewsTemplates, formatting);
-        DayPlanViews dayPlanView = new DayPlanViews(viewsTemplates, formatting);
-        ActivityViews activityView = new ActivityViews(viewsTemplates, formatting);
+        SigningInViews signingInViews = new SigningInViews(viewsTemplates, SigningUpRespondent.SIGN_UP);
+        SigningUpViews signingUpViews = new SigningUpViews(viewsTemplates, SigningInRespondent.SIGN_IN);
+        CalendarViews calendarViews = new CalendarViews(viewsTemplates);
+        DayPlanExecutionViews dayPlanExecutionViews = new DayPlanExecutionViews(viewsTemplates, formatting);
+        DayPlanViews dayPlanViews = new DayPlanViews(viewsTemplates, formatting);
+        ActivityViews activityViews = new ActivityViews(viewsTemplates, formatting);
         ActivitiesViews activitiesViews = new ActivitiesViews(viewsTemplates, formatting);
         ProfileViews profileViews = new ProfileViews(viewsTemplates);
         ErrorViews errorViews = new ErrorViews(viewsTemplates, messages);
@@ -117,21 +119,21 @@ public class App {
         Identity<Long> identity = new SessionIdentity();
 
         WelcomeRespondent welcomeRespondent = new WelcomeRespondent(viewsTemplates);
-        CalendarRespondent calendarRespondent = new CalendarRespondent(identity, calendarView, dates,
+        CalendarRespondent calendarRespondent = new CalendarRespondent(identity, calendarViews, dates,
             serverClientDates);
         ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, profileViews);
         DayPlanExecutionRespondent dayPlanExecutionRespondent = new DayPlanExecutionRespondent(identity,
-            dayPlanExecutionView, activitiesSearch, limitedDate, dateParsing, serverClientDates);
-        DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, dayPlanView, activitiesSearch,
+            dayPlanExecutionViews, activitiesSearch, limitedDate, dateParsing, serverClientDates);
+        DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, dayPlanViews, activitiesSearch,
             limitedDate, dateParsing, serverClientDates);
-        ActivityRespondent activityRespondent = new ActivityRespondent(identity, activityView,
+        ActivityRespondent activityRespondent = new ActivityRespondent(identity, activityViews,
             dayPlanExecutionRespondent, dayPlanRespondent, activities, activitiesSearch, descriptions, limitedDate,
             serverClientDates);
         ActivitiesRespondent activitiesRespondent = new ActivitiesRespondent(identity, activitiesViews,
             activitiesSearch, serverClientDates);
-        SigningInRespondent signingInRespondent = new SigningInRespondent(dayPlanExecutionRespondent, signingInView,
+        SigningInRespondent signingInRespondent = new SigningInRespondent(dayPlanExecutionRespondent, signingInViews,
             users, hashing, identity);
-        SigningUpRespondent signingUpRespondent = new SigningUpRespondent(viewsTemplates, users, hashing, emails);
+        SigningUpRespondent signingUpRespondent = new SigningUpRespondent(signingUpViews, users, hashing, emails);
         SigningOutRespondent signingOutRespondent = new SigningOutRespondent(signingInRespondent);
         ErrorRespondent errorRespondent = new ErrorRespondent(errorViews);
 

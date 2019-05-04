@@ -2,8 +2,8 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title th:text="#{signInTitle}"></title>
+    <meta formName="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="#{signIn}"></title>
     <link rel="stylesheet" text="text/css" href="style.css" />
     <!--TODO is this a good idea?-->
     <style>
@@ -14,19 +14,27 @@
 </head>
 
 <body>
-    <form class="centered">
-        <h1 th:text="${activation}? #{activationCongratulations}"></h1>
-        <h1 th:text="${signOut}? #{signOutFarewell}"></h1>
-        <p th:text="#{emailLogin}"></p>
-        <p th:class="${invalidEmailLogin} ? error-visible : error" id="emailLoginError" th:text="#{invalidEmailLogin}">
-        </p>
-        <input type="text" name="emailLogin" th:value="${emailLogin}"></input>
-        <p th:text="#{password}"></p>
-        <p th:class="${invalidPassword} ? error-visible : error" id="passwordError" th:text="#{invalidPassword}"></p>
-        <input type="password" name="password" th:value="${password}"></input>
-        </br>
-        <input id="signIn" type="submit" value="Sign in"></input>
-    </form>
+    <div class="centered">
+        <form>
+            <h1 th:text="${activation}? #{activationCongratulations}"></h1>
+            <h1 th:text="${signOut}? #{signOutFarewell}"></h1>
+            <p th:text="#{emailLogin}"></p>
+            <p th:class="${invalidEmailLogin} ? error-visible : error" id="emailLoginError"
+                th:text="#{invalidEmailLogin}">
+            </p>
+            <input type="text" formName="emailLogin" th:value="${emailLogin}"></input>
+            <p th:text="#{password}"></p>
+            <p th:class="${invalidPassword} ? error-visible : error" id="passwordError" th:text="#{invalidPassword}">
+            </p>
+            <input type="password" formName="password" th:value="${password}"></input>
+            </br>
+            <input id="signIn" type="submit" th:value="#{signIn}"></input>
+        </form>
+        <div>
+            <span th:text="#{signUpQuestionIncentive}"></span>
+            <a th:href="${signUpUrl}" th:text="#{signUp}"></a>
+        </div>
+    </div>
 </body>
 <script src="sign-in.js" type="module"></script>
 

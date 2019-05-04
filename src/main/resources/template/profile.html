@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta formName="viewport" content="width=device-width, initial-scale=1.0" />
     <title th:text="#{profileTitle}"></title>
     <link rel="stylesheet" type="text/css" href="/style.css" />
     <style>
@@ -18,10 +18,10 @@
         <form>
             <h1 th:text="#{email}"></h1>
             <p class="error">Error</p>
-            <input type="email" name="email" th:value="${email}"></input>
-            <h1 th:text="#{name}"></h1>
+            <input type="email" formName="email" th:value="${email}"></input>
+            <h1 th:text="#{formName}"></h1>
             <p class="error">Error</p>
-            <input type="text" name="name" th:value="${name}"></input>
+            <input type="text" formName="formName" th:value="${formName}"></input>
             </br>
             <input id="save" type="submit" value="Save" class="main"></input>
         </form>

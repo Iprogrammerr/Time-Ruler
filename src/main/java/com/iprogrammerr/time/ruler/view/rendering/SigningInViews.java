@@ -12,20 +12,28 @@ public class SigningInViews {
     private static final String INVALID_PASSWORD_TEMPLATE = "invalidPassword";
     private static final String ACTIVATION_TEMPLATE = "activation";
     private static final String SIGN_OUT_TEMPLATE = "signOut";
+    private static final String SIGN_UP_URL_TEMPLATE = "signUpUrl";
     private final ViewsTemplates templates;
     private final String name;
+    private final String signUpUrl;
 
-    public SigningInViews(ViewsTemplates templates, String name) {
+    public SigningInViews(ViewsTemplates templates, String name, String signUpUrl) {
         this.templates = templates;
         this.name = name;
+        this.signUpUrl = signUpUrl;
     }
 
-    public SigningInViews(ViewsTemplates templates) {
-        this(templates, "sign-in");
+    public SigningInViews(ViewsTemplates templates, String signUpUrl) {
+        this(templates, "sign-in", signUpUrl);
     }
 
     public String valid() {
-        return templates.rendered(name);
+        return withSignUpUrl(new HashMap<>());
+    }
+
+    private String withSignUpUrl(Map<String, Object> params) {
+        params.put(SIGN_UP_URL_TEMPLATE, signUpUrl);
+        return templates.rendered(name, params);
     }
 
     public String invalid(String invalidEmailLogin, boolean invalidPassword) {
@@ -37,7 +45,7 @@ public class SigningInViews {
             params.put(INVALID_EMAIL_LOGIN_TEMPLATE, false);
         }
         params.put(INVALID_PASSWORD_TEMPLATE, invalidPassword);
-        return templates.rendered(name, params);
+        return withSignUpUrl(params);
     }
 
     public String withFarewell() {
@@ -48,7 +56,7 @@ public class SigningInViews {
         Map<String, Object> params = new HashMap<>();
         params.put(ACTIVATION_TEMPLATE, !farewell);
         params.put(SIGN_OUT_TEMPLATE, farewell);
-        return templates.rendered(name, params);
+        return withSignUpUrl(params);
     }
 
     public String withActivationCongratulations() {

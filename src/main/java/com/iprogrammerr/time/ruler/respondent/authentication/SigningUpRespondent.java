@@ -9,7 +9,7 @@ import com.iprogrammerr.time.ruler.respondent.Respondent;
 import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateablePassword;
-import com.iprogrammerr.time.ruler.view.ViewsTemplates;
+import com.iprogrammerr.time.ruler.view.rendering.SigningUpViews;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
@@ -17,20 +17,20 @@ import java.net.HttpURLConnection;
 
 public class SigningUpRespondent implements Respondent {
 
-    private static final String SIGN_UP = "sign-up";
+    public static final String SIGN_UP = "sign-up";
     private static final String SIGN_UP_SUCCESS = "sign-up-success";
     private static final String SIGN_IN = "sign-in";
     private static final String FORM_EMAIL = "email";
     private static final String FORM_LOGIN = "login";
     private static final String FORM_PASSWORD = "password";
     private static final String ACTIVATION = "activation";
-    private final ViewsTemplates templates;
+    private final SigningUpViews views;
     private final Users users;
     private final Hashing hashing;
     private final Emails emails;
 
-    public SigningUpRespondent(ViewsTemplates templates, Users users, Hashing hashing, Emails emails) {
-        this.templates = templates;
+    public SigningUpRespondent(SigningUpViews views, Users users, Hashing hashing, Emails emails) {
+        this.views = views;
         this.users = users;
         this.hashing = hashing;
         this.emails = emails;
@@ -38,10 +38,10 @@ public class SigningUpRespondent implements Respondent {
 
     @Override
     public void init(Javalin app) {
-        app.get(SIGN_UP, ctx -> ctx.html(templates.rendered(SIGN_UP)));
+        app.get(SIGN_UP, ctx -> ctx.html(views.view()));
         app.get(SIGN_UP_SUCCESS, ctx -> {
             ctx.status(HttpURLConnection.HTTP_OK);
-            ctx.html(templates.rendered(SIGN_UP_SUCCESS));
+            ctx.html(views.successView());
         });
         app.post(SIGN_UP, this::signUp);
     }

@@ -20,8 +20,8 @@ import java.util.List;
 
 public class SigningInRespondent implements Respondent {
 
+    public static final String SIGN_IN = "sign-in";
     private static final String FAREWELL_PARAM = "farewell";
-    private static final String SIGN_IN = "sign-in";
     private static final String FORM_EMAIL_LOGIN = "emailLogin";
     private static final String FORM_PASSWORD = "password";
     private static final String ACTIVATION = "activation";

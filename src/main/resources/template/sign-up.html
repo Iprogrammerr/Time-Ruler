@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta formName="viewport" content="width=device-width, initial-scale=1.0" />
     <title th:text="#{signUp}"></title>
     <link rel="stylesheet" type="text/css" href="style.css" />
     <!--TODO is this a good idea?-->
@@ -18,19 +18,23 @@
     <form>
         <p th:text="#{email}"></p>
         <p class="error" th:text="#{invalidEmail}"></p>
-        <input type="email" name="email"></input>
+        <input type="email" formName="email"></input>
         <p th:text="#{login}"></p>
         <p class="error" th:text="#{invalidLogin}"></p>
-        <input type="text" name="login"></input>
+        <input type="text" formName="login"></input>
         <p th:text="#{password}"></p>
         <p class="error" th:text="#{invalidPassword}"></p>
-        <input type="password" name="password"></input>
+        <input type="password" formName="password"></input>
         <p th:text="#{repeatPassword}"></p>
         <p class="error" th:text="#{passwordsMismatch}"></p>
-        <input type="password" name="repassword"></input>
+        <input type="password" formName="repassword"></input>
         </br>
         <input id="signUp" type="submit" th:value="#{signUp}"></input>
     </form>
+    <div>
+        <span th:text="#{signInQuestionIncentive}"></span>
+        <a th:href="${signInUrl}" th:text="#{signIn}"></a>
+    </div>
 </body>
 
 <script src="sign-up.js" type="module"></script>

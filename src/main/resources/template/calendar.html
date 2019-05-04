@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta formName="viewport" content="width=device-width, initial-scale=1.0" />
     <title th:text="${plan}? #{planTitle} : #{historyTitle}"></title>
     <link rel="stylesheet" type="text/css" href="/style.css" />
     <style>
@@ -61,7 +61,7 @@
 
         <ul class="days">
             <li th:each="d : ${days}">
-                <th:block th:switch="${d.state.name()}">
+                <th:block th:switch="${d.state.formName()}">
                     <span th:case="'NOT_AVAILABLE'" class="not-available" th:text="${d.number}"></span>
                     <span th:case="'CURRENT'" class="current" th:text="${d.number}"></span>
                     <span th:case="'AVAILABLE'" class="available" th:text="${d.number}"></span>
