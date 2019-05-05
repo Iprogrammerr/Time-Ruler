@@ -22,7 +22,7 @@ public class SigningInRespondent implements Respondent {
 
     public static final String SIGN_IN = "sign-in";
     private static final String FAREWELL_PARAM = "farewell";
-    private static final String FORM_EMAIL_LOGIN = "emailLogin";
+    private static final String FORM_EMAIL_NAME = "emailName";
     private static final String FORM_PASSWORD = "password";
     private static final String ACTIVATION = "activation";
     private final DayPlanExecutionRespondent respondent;
@@ -61,7 +61,7 @@ public class SigningInRespondent implements Respondent {
     }
 
     public void signIn(Context context) {
-        String emailOrLogin = context.formParam(FORM_EMAIL_LOGIN, "");
+        String emailOrLogin = context.formParam(FORM_EMAIL_NAME, "");
         ValidateableEmail email = new ValidateableEmail(emailOrLogin);
         ValidateableName name = new ValidateableName(emailOrLogin);
         ValidateablePassword password = new ValidateablePassword(context.formParam(FORM_PASSWORD, ""));

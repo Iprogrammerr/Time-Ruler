@@ -5,6 +5,7 @@ import { DateTimeParams } from "./date/date-time-params.js";
 import { Validations } from "./validation/validations.js";
 import { TabsNavigation } from "./navigation/tabs-navigation.js";
 import { Cookies } from "./http/cookies.js";
+import { Errors } from "./validation/errors.js";
 
 const host = "http://127.0.0.1:8080/";
 const userRoutePrefix = "user/";
@@ -61,6 +62,7 @@ export const httpConnections = new HttpConnections();
 export const urlParams = new UrlParams();
 export const dateTimeParams = new DateTimeParams(urlParams, paramsKeys);
 export const validations = new Validations();
+export const errors = new Errors();
 
 export const parametrizedEndpoints = {
     createActivity: (date) => router.routeWithParams(routes.activity, dateTimeParams.dateAsParam(date)),

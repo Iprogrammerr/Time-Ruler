@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class SigningInViews {
 
-    private static final String EMAIL_LOGIN_TEMPLATE = "emailLogin";
+    private static final String EMAIL_NAME_TEMPLATE = "emailName";
     private static final String INVALID_EMAIL_LOGIN_TEMPLATE = "invalidEmailLogin";
     private static final String INVALID_PASSWORD_TEMPLATE = "invalidPassword";
     private static final String ACTIVATION_TEMPLATE = "activation";
@@ -39,7 +39,7 @@ public class SigningInViews {
     public String invalid(String invalidEmailLogin, boolean invalidPassword) {
         Map<String, Object> params = new HashMap<>();
         if (!invalidEmailLogin.isEmpty()) {
-            params.put(EMAIL_LOGIN_TEMPLATE, invalidEmailLogin);
+            params.put(EMAIL_NAME_TEMPLATE, invalidEmailLogin);
             params.put(INVALID_EMAIL_LOGIN_TEMPLATE, true);
         } else {
             params.put(INVALID_EMAIL_LOGIN_TEMPLATE, false);

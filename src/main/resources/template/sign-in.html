@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 
 <head>
-    <meta formName="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title th:text="#{signIn}"></title>
     <link rel="stylesheet" text="text/css" href="style.css" />
     <!--TODO is this a good idea?-->
@@ -16,17 +16,17 @@
 <body>
     <div class="centered">
         <form>
-            <h1 th:text="${activation}? #{activationCongratulations}"></h1>
-            <h1 th:text="${signOut}? #{signOutFarewell}"></h1>
-            <p th:text="#{emailLogin}"></p>
-            <p th:class="${invalidEmailLogin} ? error-visible : error" id="emailLoginError"
-                th:text="#{invalidEmailLogin}">
+            <h1 th:if="${activation}" th:text="#{activationCongratulations}"></h1>
+            <h1 th:if="${signOut}" th:text="#{signOutFarewell}"></h1>
+            <p th:text="#{emailName}"></p>
+            <p th:class="${invalidEmailName} ? error: error-hidden" id="emailNameError"
+                th:text="#{invalidEmailName}">
             </p>
-            <input type="text" formName="emailLogin" th:value="${emailLogin}"></input>
+            <input type="text" name="emailName" th:value="${emailName}"></input>
             <p th:text="#{password}"></p>
-            <p th:class="${invalidPassword} ? error-visible : error" id="passwordError" th:text="#{invalidPassword}">
+            <p th:class="${invalidPassword} ? error: error-hidden" id="passwordError" th:text="#{invalidPassword}">
             </p>
-            <input type="password" formName="password" th:value="${password}"></input>
+            <input type="password" name="password" th:value="${password}"></input>
             </br>
             <input id="signIn" type="submit" th:value="#{signIn}"></input>
         </form>

@@ -14,7 +14,7 @@ public class ValidateableEmail implements Validateable<String> {
             int atIndex = email.indexOf('@');
             int dotIndex = email.indexOf('.');
             return email.length() >= MIN_LENGTH && atIndex > 2
-                && (dotIndex - atIndex) > 1 && (email.length() - dotIndex) > 1;
+                && (dotIndex - atIndex) > 2 && (email.length() - dotIndex) > 2;
         });
     }
 

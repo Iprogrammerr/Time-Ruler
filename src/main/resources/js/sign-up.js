@@ -1,7 +1,10 @@
-import { endpoints, validations } from "./app.js";
+import { endpoints, validations, errors } from "./app.js";
 import { FormAction } from "./http/form-action.js";
 
-const errorsParagraphs = document.getElementsByClassName("error");
+const emailError = document.getElementById("invalidEmail");
+const nameError = document.getElementById("invalidName");
+const passwordError = document.getElementById("invalidPassword");
+const passwordsMismatch = document.getElementById("passwordsMismatch");
 const inputs = document.querySelectorAll("input");
 const form = document.querySelector("form");
 const signUp = document.getElementById("signUp");
@@ -16,32 +19,22 @@ signUp.onclick = () => {
 
 function isFormValid() {
     let valid = true;
-    clearErrors();
+    errors.clearAll(emailError, nameError, passwordError, passwordsMismatch);
     if (!validations.isEmailValid(inputs[0].value)) {
         valid = false;
-        setError(errorsParagraphs[0]);
+        errors.set(emailError);
     }
     if (!validations.isNameValid(inputs[1].value)) {
         valid = false;
-        setError(errorsParagraphs[1]);
+        errors.set(nameError);
     }
     if (!validations.isPasswordValid(inputs[2].value)) {
         valid = false;
-        setError(errorsParagraphs[2]);
+        errors.set(passwordError);
     }
     if (!validations.areInputsEqual(inputs[2].value, inputs[3].value)) {
        valid = false;
-       setError(errorsParagraphs[3]); 
+       errors.set(passwordsMismatch); 
     }
     return valid;
-};
-
-function clearErrors() {
-    for (let ep of errorsParagraphs) {
-        ep.style.display = "none";
-    }
-};
-
-function setError(errorComponent) {
-    errorComponent.style.display = "block";
 };

@@ -1,7 +1,7 @@
-import { endpoints, validations } from "./app.js";
+import { endpoints, validations, errors } from "./app.js";
 import { FormAction } from "./http/form-action.js";
 
-const emailLoginError = document.getElementById("emailLoginError");
+const emailNameError = document.getElementById("emailNameError");
 const passwordError = document.getElementById("passwordError");
 const inputs = document.querySelectorAll("input");
 const form = document.querySelector("form");
@@ -17,26 +17,15 @@ signIn.onclick = () => {
 
 function isFormValid() {
     let valid = true;
-    clearErrors();
+    errors.clearAll(emailNameError, passwordError);
     let emailOrLogin = inputs[0].value;
     if (!validations.isEmailValid(emailOrLogin) && !validations.isNameValid(emailOrLogin)) {
         valid = false;
-        let email = emailOrLogin && emailOrLogin.includes('@');
-        setError(emailLoginError, email ? errors.invalidEmail : errors.invalidLogin);
+        errors.set(emailNameError);
     }
     if (!validations.isPasswordValid(inputs[1].value)) {
         valid = false;
-        setError(passwordError, errors.invalidPassword);
+        errors.set(passwordError);
     }
     return valid;
-};
-
-function clearErrors() {
-    emailLoginError.style.display = "none";
-    passwordError.style.display = "none";
-};
-
-function setError(errorComponent, message) {
-    errorComponent.style.display = "block";
-    errorComponent.innerHTML = message;
 };

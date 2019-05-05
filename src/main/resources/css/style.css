@@ -39,13 +39,12 @@ p, p.error {
     margin-bottom: 4px;
 }
 
-p.error, p.error-visible {
+p.error, p.error-hidden {
     color: red;
-    display: none;
 }
 
-p.error-visible {
-    display: block
+p.error-hidden {
+    display: none;
 }
 
 .tab {

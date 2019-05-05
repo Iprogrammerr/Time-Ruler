@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 
 <head>
-    <meta formName="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title th:text="${history}? #{historyDayTitle} : #{todayTitle}"></title>
     <link rel="stylesheet" type="text/css" href="/style.css" />
     <style>
@@ -22,7 +22,7 @@
         <ul class="activities">
             <li th:each="a : ${activities}" th:data-id="${a.id}">
                 <div th:utext="|${a.start} - ${a.end}|"></div>
-                <div th:text="${a.formName}"></div>
+                <div th:text="${a.name}"></div>
                 <span th:class="${a.done}? visible : hidden" th:utext="|#{done} #{checkedIcon}"></span>
                 <span th:class="${a.done}? hidden : visible" th:utext="|#{done} #{uncheckedIcon}"></span>
                 <span class="close">&times;</span>

@@ -2,8 +2,6 @@ package com.iprogrammerr.time.ruler.respondent.authentication;
 
 import com.iprogrammerr.time.ruler.email.Emails;
 import com.iprogrammerr.time.ruler.model.Hashing;
-import com.iprogrammerr.time.ruler.model.error.ErrorCode;
-import com.iprogrammerr.time.ruler.model.error.ResponseException;
 import com.iprogrammerr.time.ruler.model.user.Users;
 import com.iprogrammerr.time.ruler.respondent.Respondent;
 import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
@@ -21,7 +19,7 @@ public class SigningUpRespondent implements Respondent {
     private static final String SIGN_UP_SUCCESS = "sign-up-success";
     private static final String SIGN_IN = "sign-in";
     private static final String FORM_EMAIL = "email";
-    private static final String FORM_LOGIN = "login";
+    private static final String FORM_NAME = "name";
     private static final String FORM_PASSWORD = "password";
     private static final String ACTIVATION = "activation";
     private final SigningUpViews views;
@@ -38,23 +36,24 @@ public class SigningUpRespondent implements Respondent {
 
     @Override
     public void init(Javalin app) {
-        app.get(SIGN_UP, ctx -> ctx.html(views.view()));
+        app.get(SIGN_UP, ctx -> ctx.html(views.valid()));
         app.get(SIGN_UP_SUCCESS, ctx -> {
             ctx.status(HttpURLConnection.HTTP_OK);
-            ctx.html(views.successView());
+            ctx.html(views.success());
         });
         app.post(SIGN_UP, this::signUp);
     }
 
+    //TODO check if email/name is taken
     public void signUp(Context context) {
         ValidateableEmail email = new ValidateableEmail(context.formParam(FORM_EMAIL, ""));
-        ValidateableName name = new ValidateableName(context.formParam(FORM_LOGIN, ""));
+        ValidateableName name = new ValidateableName(context.formParam(FORM_NAME, ""));
         ValidateablePassword password = new ValidateablePassword(context.formParam(FORM_PASSWORD, ""));
         if (email.isValid() && name.isValid() && password.isValid()) {
             createUser(email.value(), name.value(), password.value());
             context.redirect(SIGN_UP_SUCCESS);
         } else {
-            throw new ResponseException(ErrorCode.invalid(email, name, password));
+            context.html(views.invalid(email, name, password));
         }
     }
 

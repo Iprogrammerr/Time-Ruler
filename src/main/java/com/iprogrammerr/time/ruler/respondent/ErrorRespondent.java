@@ -33,11 +33,13 @@ public class ErrorRespondent implements Respondent {
 
     private void handleException(Exception exception, Context context) {
         ErrorCode error;
-        if (exception.getClass().isAssignableFrom(ResponseException.class)) {
+        if (ResponseException.class.isAssignableFrom(exception.getClass())) {
             error = ((ResponseException) exception).error;
         } else {
             error = ErrorCode.UNKNOWN;
         }
+        //TODO for development purposes only
+        exception.printStackTrace();
         redirect(context, error);
     }
 
