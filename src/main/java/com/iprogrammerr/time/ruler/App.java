@@ -1,9 +1,7 @@
 package com.iprogrammerr.time.ruler;
 
-import com.iprogrammerr.time.ruler.database.Database;
 import com.iprogrammerr.time.ruler.database.DatabaseSession;
 import com.iprogrammerr.time.ruler.database.QueryTemplates;
-import com.iprogrammerr.time.ruler.database.SqlDatabase;
 import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
 import com.iprogrammerr.time.ruler.email.ConfigurableEmailServer;
 import com.iprogrammerr.time.ruler.email.EmailServer;
@@ -48,11 +46,14 @@ import com.iprogrammerr.time.ruler.view.rendering.ErrorViews;
 import com.iprogrammerr.time.ruler.view.rendering.ProfileViews;
 import com.iprogrammerr.time.ruler.view.rendering.SigningInViews;
 import com.iprogrammerr.time.ruler.view.rendering.SigningUpViews;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import io.javalin.Javalin;
 import io.javalin.staticfiles.Location;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
 
+import javax.sql.DataSource;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -100,9 +101,12 @@ public class App {
         ProfileViews profileViews = new ProfileViews(viewsTemplates);
         ErrorViews errorViews = new ErrorViews(viewsTemplates, messages);
 
-        Database database = new SqlDatabase(configuration.databaseUser(), configuration.databasePassword(),
-            configuration.jdbcUrl());
-        DatabaseSession session = new SqlDatabaseSession(database, new QueryTemplates());
+        HikariConfig config = new HikariConfig();
+        config.setUsername(configuration.databaseUser());
+        config.setPassword(configuration.databasePassword());
+        config.setJdbcUrl(configuration.jdbcUrl());
+        DataSource dataSource = new HikariDataSource(config);
+        DatabaseSession session = new SqlDatabaseSession(dataSource, new QueryTemplates());
         Users users = new DatabaseUsers(session);
         Activities activities = new DatabaseActivities(session);
         ActivitiesSearch activitiesSearch = new DatabaseActivitiesSearch(session);

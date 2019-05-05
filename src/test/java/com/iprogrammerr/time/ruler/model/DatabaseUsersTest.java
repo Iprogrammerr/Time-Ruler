@@ -1,6 +1,5 @@
 package com.iprogrammerr.time.ruler.model;
 
-import com.iprogrammerr.time.ruler.setup.TestDatabaseSetup;
 import com.iprogrammerr.time.ruler.database.QueryTemplates;
 import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
 import com.iprogrammerr.time.ruler.matcher.ThrowsMatcher;
@@ -8,6 +7,7 @@ import com.iprogrammerr.time.ruler.mock.RandomStrings;
 import com.iprogrammerr.time.ruler.mock.RandomUsers;
 import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.user.User;
+import com.iprogrammerr.time.ruler.setup.TestDatabaseSetup;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -21,13 +21,13 @@ public class DatabaseUsersTest {
 
     @Before
     public void setup() {
-        users = new DatabaseUsers(new SqlDatabaseSession(setup.database(), new QueryTemplates()));
+        users = new DatabaseUsers(new SqlDatabaseSession(setup.source(), new QueryTemplates()));
         setup.setup();
     }
 
     @After
     public void cleanup() {
-        setup.database().close();
+        setup.close();
     }
 
     @Test
