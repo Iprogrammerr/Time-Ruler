@@ -8,8 +8,10 @@ import java.util.Map;
 public class SigningInViews {
 
     private static final String EMAIL_NAME_TEMPLATE = "emailName";
-    private static final String INVALID_EMAIL_LOGIN_TEMPLATE = "invalidEmailLogin";
+    private static final String INVALID_EMAIL_NAME_TEMPLATE = "invalidEmailName";
+    private static final String NON_EXISTENT_USER_TEMPLATE = "nonExistentUser";
     private static final String INVALID_PASSWORD_TEMPLATE = "invalidPassword";
+    private static final String NOT_USER_PASSWORD_TEMPLATE = "notUserPassword";
     private static final String ACTIVATION_TEMPLATE = "activation";
     private static final String SIGN_OUT_TEMPLATE = "signOut";
     private static final String SIGN_UP_URL_TEMPLATE = "signUpUrl";
@@ -27,7 +29,7 @@ public class SigningInViews {
         this(templates, "sign-in", signUpUrl);
     }
 
-    public String valid() {
+    public String validView() {
         return withSignUpUrl(new HashMap<>());
     }
 
@@ -36,30 +38,44 @@ public class SigningInViews {
         return templates.rendered(name, params);
     }
 
-    public String invalid(String invalidEmailLogin, boolean invalidPassword) {
+    public String invalidView(String invalidEmailName, boolean invalidPassword) {
         Map<String, Object> params = new HashMap<>();
-        if (!invalidEmailLogin.isEmpty()) {
-            params.put(EMAIL_NAME_TEMPLATE, invalidEmailLogin);
-            params.put(INVALID_EMAIL_LOGIN_TEMPLATE, true);
+        if (!invalidEmailName.isEmpty()) {
+            params.put(EMAIL_NAME_TEMPLATE, invalidEmailName);
+            params.put(INVALID_EMAIL_NAME_TEMPLATE, true);
         } else {
-            params.put(INVALID_EMAIL_LOGIN_TEMPLATE, false);
+            params.put(INVALID_EMAIL_NAME_TEMPLATE, false);
         }
         params.put(INVALID_PASSWORD_TEMPLATE, invalidPassword);
         return withSignUpUrl(params);
     }
 
-    public String withFarewell() {
-        return withMessage(true);
+    public String nonExistentUserView(String emailName) {
+        Map<String, Object> params = new HashMap<>();
+        params.put(EMAIL_NAME_TEMPLATE, emailName);
+        params.put(NON_EXISTENT_USER_TEMPLATE, true);
+        return withSignUpUrl(params);
     }
 
-    private String withMessage(boolean farewell) {
+    public String notUserPasswordView(String emailName) {
+        Map<String, Object> params = new HashMap<>();
+        params.put(EMAIL_NAME_TEMPLATE, emailName);
+        params.put(NOT_USER_PASSWORD_TEMPLATE, true);
+        return withSignUpUrl(params);
+    }
+
+    public String withFarewellView() {
+        return withMessageView(true);
+    }
+
+    private String withMessageView(boolean farewell) {
         Map<String, Object> params = new HashMap<>();
         params.put(ACTIVATION_TEMPLATE, !farewell);
         params.put(SIGN_OUT_TEMPLATE, farewell);
         return withSignUpUrl(params);
     }
 
-    public String withActivationCongratulations() {
-        return withMessage(false);
+    public String withActivationCongratulationsView() {
+        return withMessageView(false);
     }
 }

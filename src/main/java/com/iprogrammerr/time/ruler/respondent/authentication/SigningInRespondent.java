@@ -17,6 +17,7 @@ import io.javalin.Context;
 import io.javalin.Javalin;
 
 import java.util.List;
+import java.util.Optional;
 
 public class SigningInRespondent implements Respondent {
 
@@ -51,7 +52,7 @@ public class SigningInRespondent implements Respondent {
         if (activation.isEmpty()) {
             if (context.req.getSession(false) == null) {
                 boolean farewell = context.queryParam(FAREWELL_PARAM, Boolean.class, Boolean.toString(false)).get();
-                context.html(farewell ? views.withFarewell() : views.valid());
+                context.html(farewell ? views.withFarewellView() : views.validView());
             } else {
                 respondent.redirect(context);
             }
@@ -68,22 +69,32 @@ public class SigningInRespondent implements Respondent {
         if ((email.isValid() || name.isValid()) && password.isValid()) {
             signInOrSetError(context, email.isValid() ? email.value() : name.value(), hashing.hash(password.value()));
         } else {
-            context.html(views.invalid(emailOrLogin, password.isValid()));
+            context.html(views.invalidView(emailOrLogin, password.isValid()));
         }
     }
 
     private void signInOrSetError(Context context, String emailOrName, String passwordHash) {
-        if (users.existsWithEmailOrName(emailOrName)) {
-            User user = users.byEmailOrName(emailOrName);
-            if (passwordHash.equals(user.password)) {
-                identity.create(user.id, context.req);
+        Optional<User> user = withEmailOrName(emailOrName);
+        if (user.isPresent()) {
+            if (passwordHash.equals(user.get().password)) {
+                identity.create(user.get().id, context.req);
                 respondent.redirect(context);
             } else {
-                context.html(views.invalid(emailOrName, true));
+                context.html(views.notUserPasswordView(emailOrName));
             }
         } else {
-            context.html(views.invalid(emailOrName, false));
+            context.html(views.nonExistentUserView(emailOrName));
         }
+    }
+
+    private Optional<User> withEmailOrName(String emailOrName) {
+        Optional<User> user;
+        if (emailOrName.contains("@")) {
+            user = users.withEmail(emailOrName);
+        } else {
+            user = users.withName(emailOrName);
+        }
+        return user;
     }
 
     private void activate(Context context, String activation) {
@@ -98,7 +109,7 @@ public class SigningInRespondent implements Respondent {
             }
         }
         if (activated) {
-            context.html(views.withActivationCongratulations());
+            context.html(views.withActivationCongratulationsView());
         } else {
             throw new ResponseException(ErrorCode.INVALID_ACTIVATION_LINK);
         }

@@ -88,78 +88,32 @@ public class DatabaseUsersTest {
     }
 
     @Test
-    public void returnsTrueIfUserWithEmailExists() {
+    public void returnsUserWithEmail() {
         User user = new RandomUsers().user();
-        users.create(user.name, user.email, user.password);
-        MatcherAssert.assertThat(
-            "Should return true with existing user", users.existsWithEmailOrName(user.email), Matchers.equalTo(true)
-        );
+        user = user.withId(users.create(user.name, user.email, user.password));
+        MatcherAssert.assertThat("Should return user with email", users.withEmail(user.email).get(),
+            Matchers.equalTo(user));
     }
 
     @Test
-    public void returnsFalseIfUserWithEmailDoesNotExist() {
+    public void returnsEmptyIfEmailIsNotUsed() {
         String email = new RandomStrings().email();
-        MatcherAssert.assertThat(
-            "Should return false with non existing user", users.existsWithEmailOrName(email),
-            Matchers.equalTo(false)
-        );
+        MatcherAssert.assertThat("Should return empty", users.withEmail(email).isPresent(),
+            Matchers.equalTo(false));
     }
 
     @Test
-    public void throwsExceptionIfUserWithEmailDoesNotExist() {
-        String email = new RandomStrings().email();
-        MatcherAssert.assertThat(
-            "Does not throw expected exception",
-            () -> users.byEmailOrName(email),
-            new ThrowsMatcher(String.format("There is no user with %s email", email))
-        );
-    }
-
-    @Test
-    public void findsUserWithEmail() {
+    public void returnsUserWithName() {
         User user = new RandomUsers().user();
-        long id = users.create(user.name, user.email, user.password);
-        MatcherAssert.assertThat(
-            "Can not find user with given email",
-            users.byEmailOrName(user.email),
-            Matchers.equalTo(new User(id, user.name, user.email, user.password, false))
-        );
+        user = user.withId(users.create(user.name, user.email, user.password));
+        MatcherAssert.assertThat("Should return user with name", users.withName(user.name).get(),
+            Matchers.equalTo(user));
     }
 
     @Test
-    public void returnsTrueIfUserWithNameExists() {
-        User user = new RandomUsers().user();
-        users.create(user.name, user.email, user.password);
-        MatcherAssert.assertThat(
-            "Should return true with existing user", users.existsWithEmailOrName(user.name), Matchers.equalTo(true)
-        );
-    }
-
-    @Test
-    public void returnsFalseIfUserWithNameDoesNotExist() {
+    public void returnsEmptyIfNameIsNotUsed() {
         String name = new RandomStrings().alphabetic(5);
-        MatcherAssert.assertThat(
-            "Should return false with non existing user", users.existsWithEmailOrName(name), Matchers.equalTo(false)
-        );
-    }
-
-    @Test
-    public void throwsExceptionIfUserWithNameDoesNotExist() {
-        String name = new RandomStrings().alphabetic(10);
-        MatcherAssert.assertThat(
-            "Does not throw expected exception",
-            () -> users.byEmailOrName(name),
-            new ThrowsMatcher(String.format("There is no user with %s name", name))
-        );
-    }
-
-    @Test
-    public void findsUserWithName() {
-        User user = new RandomUsers().user();
-        long id = users.create(user.name, user.email, user.password);
-        MatcherAssert.assertThat(
-            "Can not find user with given name", users.byEmailOrName(user.name),
-            Matchers.equalTo(new User(id, user.name, user.email, user.password, false))
-        );
+        MatcherAssert.assertThat("Should return empty", users.withName(name).isPresent(),
+            Matchers.equalTo(false));
     }
 }

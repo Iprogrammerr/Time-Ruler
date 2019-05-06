@@ -23,7 +23,7 @@ public class ValidateableEmail implements Validateable<String> {
         if (isValid()) {
             return email;
         }
-        throw new RuntimeException(String.format("%s is not a valid email", email));
+        throw new RuntimeException(String.format("%s is not a validView email", email));
     }
 
     @Override

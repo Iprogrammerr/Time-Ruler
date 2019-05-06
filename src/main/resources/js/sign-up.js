@@ -2,7 +2,9 @@ import { endpoints, validations, errors } from "./app.js";
 import { FormAction } from "./http/form-action.js";
 
 const emailError = document.getElementById("invalidEmail");
+const emailTaken = document.getElementById("emailTaken");
 const nameError = document.getElementById("invalidName");
+const nameTaken = document.getElementById("nameTaken");
 const passwordError = document.getElementById("invalidPassword");
 const passwordsMismatch = document.getElementById("passwordsMismatch");
 const inputs = document.querySelectorAll("input");
@@ -19,7 +21,7 @@ signUp.onclick = () => {
 
 function isFormValid() {
     let valid = true;
-    errors.clearAll(emailError, nameError, passwordError, passwordsMismatch);
+    errors.clearAll(emailError, emailTaken, nameError, nameTaken, passwordError, passwordsMismatch);
     if (!validations.isEmailValid(inputs[0].value)) {
         valid = false;
         errors.set(emailError);

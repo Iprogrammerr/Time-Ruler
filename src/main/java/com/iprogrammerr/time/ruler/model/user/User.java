@@ -31,6 +31,10 @@ public class User {
             resultSet.getString(PASSWORD), resultSet.getBoolean(ACTIVE));
     }
 
+    public User withId(long id) {
+        return new User(id, name, email, password, active);
+    }
+
     @Override
     public String toString() {
         return "User{" +

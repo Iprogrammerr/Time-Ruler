@@ -24,7 +24,7 @@ public class ValidateablePasswordTest {
     @Test
     public void throwsExceptionIfIsNotValid() {
         String password = "L2";
-        String message = String.format("%s is not a valid password", password);
+        String message = String.format("%s is not a validView password", password);
         MatcherAssert.assertThat(
             "Should throw exception with message", new ValidateablePassword(password)::value, new ThrowsMatcher(message)
         );

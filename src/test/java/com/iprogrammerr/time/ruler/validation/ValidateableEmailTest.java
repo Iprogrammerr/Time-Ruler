@@ -39,14 +39,14 @@ public class ValidateableEmailTest {
     @Test
     public void returnsTrueWithProperEmail() {
         ValidateableEmail email = new ValidateableEmail("ceigor94@gmail.com");
-        MatcherAssert.assertThat("Email should be valid", email.isValid(), Matchers.equalTo(true));
+        MatcherAssert.assertThat("Email should be validView", email.isValid(), Matchers.equalTo(true));
     }
 
     @Test
     public void returnsTrueWithNonAsciiEmail() {
         ValidateableEmail email = new ValidateableEmail("cęśćü@mock.com");
         MatcherAssert.assertThat(
-            "Email with non ascii chars should be valid", email.isValid(), Matchers.equalTo(true)
+            "Email with non ascii chars should be validView", email.isValid(), Matchers.equalTo(true)
         );
     }
 
@@ -62,7 +62,7 @@ public class ValidateableEmailTest {
     @Test
     public void throwsExceptionIfIsNotValid() {
         String email = "@d.com";
-        String message = String.format("%s is not a valid email", email);
+        String message = String.format("%s is not a validView email", email);
         MatcherAssert.assertThat(
             "Should throw exception with message", new ValidateableEmail(email)::value, new ThrowsMatcher(message)
         );

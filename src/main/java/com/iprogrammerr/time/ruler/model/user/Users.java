@@ -1,6 +1,7 @@
 package com.iprogrammerr.time.ruler.model.user;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface Users {
 
@@ -10,9 +11,9 @@ public interface Users {
 
     User user(long id);
 
-    boolean existsWithEmailOrName(String emailOrName);
+    Optional<User> withEmail(String email);
 
-    User byEmailOrName(String emailOrName);
+    Optional<User> withName(String name);
 
     long create(String name, String email, String password);
 

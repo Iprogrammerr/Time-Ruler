@@ -38,7 +38,7 @@ public class ValidateableName implements Validateable<String> {
         if (isValid()) {
             return name;
         }
-        throw new RuntimeException(String.format("%s is not a valid name", name));
+        throw new RuntimeException(String.format("%s is not a validView name", name));
     }
 
     @Override

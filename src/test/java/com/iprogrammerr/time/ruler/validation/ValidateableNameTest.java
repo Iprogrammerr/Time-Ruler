@@ -14,7 +14,7 @@ public class ValidateableNameTest {
     }
 
     private void returnsFalse(ValidateableName name) {
-        MatcherAssert.assertThat("Name should not be valid", name.isValid(), Matchers.equalTo(false));
+        MatcherAssert.assertThat("Name should not be validView", name.isValid(), Matchers.equalTo(false));
     }
 
     @Test
@@ -47,7 +47,7 @@ public class ValidateableNameTest {
     @Test
     public void throwsExceptionIfIsNotValid() {
         String name = "L5_";
-        String message = String.format("%s is not a valid name", name);
+        String message = String.format("%s is not a validView name", name);
         MatcherAssert.assertThat(
             "Should throw exception with message", new ValidateableName(name)::value, new ThrowsMatcher(message)
         );

@@ -53,21 +53,13 @@ public class SigningUpViews {
         return withSignInUrl(params);
     }
 
-    public String emailTaken(String email, String name) {
-        return taken(email, name, true, false);
-    }
-
-    private String taken(String email, String name, boolean emailTaken, boolean nameTaken) {
+    public String taken(String email, String name, boolean emailTaken, boolean nameTaken) {
         Map<String, Object> params = new HashMap<>();
         params.put(EMAIL_TEMPLATE, email);
         params.put(NAME_TEMPLATE, name);
         params.put(EMAIL_TAKEN_TEMPLATE, emailTaken);
         params.put(NAME_TAKEN_TEMPLATE, nameTaken);
         return withSignInUrl(params);
-    }
-
-    public String nameTaken(String email, String name) {
-        return taken(email, name, false, true);
     }
 
     public String success() {

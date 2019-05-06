@@ -21,7 +21,7 @@ public class ValidateableTimeTest {
         int hour = random.nextInt(MAX_HOUR_VALUE);
         int minutes = random.nextInt(MAX_MINUTES_VALUE);
         ValidateableTime time = new ValidateableTime(formattedTime(hour, minutes));
-        MatcherAssert.assertThat("Does not accept valid time", time.isValid(), Matchers.equalTo(true));
+        MatcherAssert.assertThat("Does not accept validView time", time.isValid(), Matchers.equalTo(true));
     }
 
     private String formattedTime(int hour, int minute) {
@@ -37,7 +37,7 @@ public class ValidateableTimeTest {
             minutes += MAX_MINUTES_VALUE;
         }
         ValidateableTime time = new ValidateableTime(formattedTime(hour, minutes));
-        MatcherAssert.assertThat("Accepts invalid time", time.isValid(), Matchers.equalTo(false));
+        MatcherAssert.assertThat("Accepts invalidView time", time.isValid(), Matchers.equalTo(false));
     }
 
     @Test
@@ -74,6 +74,6 @@ public class ValidateableTimeTest {
     public void throwsExceptionWhenGettingValueOfNotValid() {
         String time = new RandomStrings().alphabetic();
         MatcherAssert.assertThat("Does not throw exception with proper message", new ValidateableTime(time)::value,
-            new ThrowsMatcher(String.format("%s is not a valid time", time)));
+            new ThrowsMatcher(String.format("%s is not a validView time", time)));
     }
 }

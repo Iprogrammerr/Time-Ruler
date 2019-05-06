@@ -18,11 +18,11 @@
     <form>
         <p th:text="#{email}"></p>
         <p id="invalidEmail" th:class="${invalidEmail} ? error : error-hidden" th:text="#{invalidEmail}"></p>
-        <p th:if="${emailTaken}" class="error" th:text="#{usedEmail}"></p>
+        <p id="emailTaken" th:class="${emailTaken} ? error : error-hidden" th:text="#{usedEmail}"></p>
         <input type="email" name="email" th:value="${email}"></input>
         <p th:text="#{name}"></p>
         <p id="invalidName" th:class="${invalidName} ? error : error-hidden" th:text="#{invalidName}"></p>
-        <p th:if="${nameTaken}" class="error" th:text="#{usedName}"></p>
+        <p id="nameTaken" th:class="${nameTaken} ? error : error-hidden" th:text="#{usedName}"></p>
         <input type="text" name="name" th:value="${name}"></input>
         <p th:text="#{password}"></p>
         <p id="invalidPassword" th:class="${invalidPassword} ? error : error-hidden" th:text="#{invalidPassword}"></p>

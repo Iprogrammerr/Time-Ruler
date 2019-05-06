@@ -20,7 +20,7 @@ public class ValidateablePassword implements Validateable<String> {
         if (isValid()) {
             return password;
         }
-        throw new RuntimeException(String.format("%s is not a valid password", password));
+        throw new RuntimeException(String.format("%s is not a validView password", password));
     }
 
     @Override

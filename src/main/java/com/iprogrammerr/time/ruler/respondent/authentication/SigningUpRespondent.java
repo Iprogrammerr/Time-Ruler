@@ -44,16 +44,25 @@ public class SigningUpRespondent implements Respondent {
         app.post(SIGN_UP, this::signUp);
     }
 
-    //TODO check if email/name is taken
     public void signUp(Context context) {
         ValidateableEmail email = new ValidateableEmail(context.formParam(FORM_EMAIL, ""));
         ValidateableName name = new ValidateableName(context.formParam(FORM_NAME, ""));
         ValidateablePassword password = new ValidateablePassword(context.formParam(FORM_PASSWORD, ""));
         if (email.isValid() && name.isValid() && password.isValid()) {
-            createUser(email.value(), name.value(), password.value());
-            context.redirect(SIGN_UP_SUCCESS);
+            createUserIf(context, email.value(), name.value(), password.value());
         } else {
             context.html(views.invalid(email, name, password));
+        }
+    }
+
+    private void createUserIf(Context context, String email, String name, String password) {
+        boolean emailTaken = users.withEmail(email).isPresent();
+        boolean nameTaken = users.withName(name).isPresent();
+        if (emailTaken || nameTaken) {
+            context.html(views.taken(email, name, emailTaken, nameTaken));
+        } else {
+            createUser(email, name, password);
+            context.redirect(SIGN_UP_SUCCESS);
         }
     }
 

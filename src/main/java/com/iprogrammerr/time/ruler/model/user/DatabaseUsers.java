@@ -6,6 +6,7 @@ import com.iprogrammerr.time.ruler.database.Record;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class DatabaseUsers implements Users {
 
@@ -65,28 +66,19 @@ public class DatabaseUsers implements Users {
     }
 
     @Override
-    public boolean existsWithEmailOrName(String emailOrName) {
-        String template;
-        if (emailOrName.contains("@")) {
-            template = "SELECT id FROM user WHERE email = ?";
-        } else {
-            template = "SELECT id FROM user WHERE name = ?";
+    public Optional<User> withEmail(String email) {
+        return session.select(this::userFromResult, "SELECT * FROM user WHERE email = ?", email);
+    }
+
+    private Optional<User> userFromResult(ResultSet result) throws Exception {
+        if (result.next()) {
+            return Optional.of(new User(result));
         }
-        return session.select(ResultSet::next, template, emailOrName);
+        return Optional.empty();
     }
 
     @Override
-    public User byEmailOrName(String emailOrName) {
-        String exceptionTemplate;
-        String queryTemplate;
-        if (emailOrName.contains("@")) {
-            exceptionTemplate = "There is no user with %s email";
-            queryTemplate = "SELECT * FROM user WHERE email = ?";
-        } else {
-            exceptionTemplate = "There is no user with %s name";
-            queryTemplate = "SELECT * FROM user WHERE name = ?";
-        }
-        return session.select(r -> mapOrThrow(r, exceptionTemplate, emailOrName),
-            queryTemplate, emailOrName);
+    public Optional<User> withName(String name) {
+        return session.select(this::userFromResult, "SELECT * FROM user WHERE name = ?", name);
     }
 }
