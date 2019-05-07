@@ -1,7 +1,10 @@
 import { router, routes, tabsNavigation, dateTimeParams, hiddenDataKeys, paramsKeys, parametrizedEndpoints } from "./app.js";
 import { HttpConnections } from "./http/http-connections.js";
+import { DeleteConfirmation } from "./component/delete-confirmation.js";
 
 const yearMonthDay = dateTimeParams.dateFromUrl().asYearMonthDay();
+const deleteConfirmation = new DeleteConfirmation();
+
 tabsNavigation.setYearMonth(yearMonthDay.year, yearMonthDay.month);
 tabsNavigation.setup(document.querySelector("div"), true);
 document.getElementById("add").onclick = () => {
@@ -20,9 +23,12 @@ function setupListNavigation() {
         a.onclick = () => router.forwardWithParam(routes.activity, paramsKeys.id, id);
         a.getElementsByClassName("close")[0].onclick = (e) => {
             e.stopPropagation();
-            httpConnections.delete(parametrizedEndpoints.deleteActivity(id)).then(r => {
-                removeActivity(activities, a);
-            }).catch(e => alert(e));
+            deleteConfirmation.setup(() => {
+                httpConnections.delete(parametrizedEndpoints.deleteActivity(id)).then(r => {
+                    removeActivity(activities, a);
+                }).catch(e => alert(e));
+            });
+            deleteConfirmation.show();
         };
     }
 };

@@ -4,3 +4,8 @@
     <button th:class="${activeTab.name() == 'HISTORY'}? active" th:text="#{historyTab}"></button>
     <button th:class="${activeTab.name() == 'PROFILE'}? active" th:text="#{profileTab}"></button>
 </div>
+<div id="deleteConfirmation" class="confirmation-hidden" th:fragment="deleteConfirmation">
+    <span th:text="#{confirmation}"></span>
+    <button id="yes" th:text="#{yes}"></button>
+    <button id="no" th:text="#{no}"></button>
+</div>
