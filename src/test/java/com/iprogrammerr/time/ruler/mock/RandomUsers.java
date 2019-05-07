@@ -25,12 +25,20 @@ public class RandomUsers {
     }
 
     public User user() {
-        return user(1 + random.nextLong());
+        return user(random.nextLong());
+    }
+
+    public User inactive() {
+        return user(random.nextLong(), false);
     }
 
     public User user(long id) {
+        return user(id, random.nextBoolean());
+    }
+
+    private User user(long id, boolean active) {
         return new User(id, randomStrings.alphabetic(1 + random.nextInt(MAX_NAME_LENGTH)), randomStrings.email(),
             randomStrings.alphanumeric(1 + MAX_PASSWORD_LENGTH),
-            random.nextBoolean());
+            active);
     }
 }

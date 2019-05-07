@@ -89,7 +89,7 @@ public class DatabaseUsersTest {
 
     @Test
     public void returnsUserWithEmail() {
-        User user = new RandomUsers().user();
+        User user = new RandomUsers().inactive();
         user = user.withId(users.create(user.name, user.email, user.password));
         MatcherAssert.assertThat("Should return user with email", users.withEmail(user.email).get(),
             Matchers.equalTo(user));
@@ -104,7 +104,7 @@ public class DatabaseUsersTest {
 
     @Test
     public void returnsUserWithName() {
-        User user = new RandomUsers().user();
+        User user = new RandomUsers().inactive();
         user = user.withId(users.create(user.name, user.email, user.password));
         MatcherAssert.assertThat("Should return user with name", users.withName(user.name).get(),
             Matchers.equalTo(user));
