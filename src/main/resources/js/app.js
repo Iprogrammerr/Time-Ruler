@@ -49,7 +49,10 @@ export const hiddenInputKeys = {
 export const hiddenDataKeys = {
     id: "data-id",
     plan: "data-plan",
-    date: "data-date"
+    date: "data-date",
+    confirmation: "data-confirmation",
+    doneConfirmation: "data-done-confirmation",
+    notDoneConfirmation: "data-not-done-confirmation"
 };
 
 const cookiesKeys = {

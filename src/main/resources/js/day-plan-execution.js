@@ -1,11 +1,14 @@
 import { router, routes, tabsNavigation, dateTimeParams, hiddenDataKeys, paramsKeys, parametrizedEndpoints } from "./app.js";
 import { SmartDate } from "./date/smart-date.js";
 import { HttpConnections } from "./http/http-connections.js";
-import { DeleteConfirmation } from "./component/delete-confirmation.js";
+import { Confirmation } from "./component/confirmation.js";
 
 const yearMonthDay = dateTimeParams.dateFromUrl().asYearMonthDay();
 const httpConnections = new HttpConnections();
-const deleteConfirmation = new DeleteConfirmation();
+const confirmation = new Confirmation(document.getElementById("confirmation"));
+const deleteConfirmation = document.body.getAttribute(hiddenDataKeys.confirmation);
+const doneConfirmation = document.body.getAttribute(hiddenDataKeys.doneConfirmation);
+const notDoneConfirmation = document.body.getAttribute(hiddenDataKeys.notDoneConfirmation);
 
 document.getElementById("add").onclick = () => {
     let params = dateTimeParams.yearMonthDayAsDateParam(yearMonthDay.year, yearMonthDay.month, yearMonthDay.day);
@@ -34,12 +37,13 @@ function setupListNavigation() {
         a.onclick = () => router.forwardWithParam(routes.activity, paramsKeys.id, id);
         a.getElementsByClassName("close")[0].onclick = (e) => {
             e.stopPropagation();
-            deleteConfirmation.setup(() => {
+            confirmation.setMessage(deleteConfirmation);
+            confirmation.setup(() => {
                 httpConnections.delete(parametrizedEndpoints.deleteActivity(id)).then(r => {
                     removeActivity(activities, a);
                 }).catch(e => alert(e));
             });
-            deleteConfirmation.show();
+            confirmation.show();
         };
         let spans = a.querySelectorAll("span");
         setupDoneNotDone(spans[0], spans[1], id);
@@ -49,17 +53,25 @@ function setupListNavigation() {
 function setupDoneNotDone(done, notDone, id) {
     done.onclick = (e) => {
         e.stopPropagation();
-        httpConnections.put(parametrizedEndpoints.setActivityNotDone(id)).then(r => {
-            notDone.className = "visible";
-            done.className = "hidden";
-        }).catch(e => alert(e));
+        confirmation.setMessage(notDoneConfirmation);
+        confirmation.setup(() => {
+            httpConnections.put(parametrizedEndpoints.setActivityNotDone(id)).then(r => {
+                notDone.className = "visible";
+                done.className = "hidden";
+            }).catch(e => alert(e));
+        });
+        confirmation.show();
     };
     notDone.onclick = (e) => {
         e.stopPropagation();
-        httpConnections.put(parametrizedEndpoints.setActivityDone(id)).then(r => {
-            done.className = "visible";
-            notDone.className = "hidden";
-        }).catch(e => alert(e));
+        confirmation.setMessage(doneConfirmation);
+        confirmation.setup(() => {
+            httpConnections.put(parametrizedEndpoints.setActivityDone(id)).then(r => {
+                done.className = "visible";
+                notDone.className = "hidden";
+            }).catch(e => alert(e));
+        });
+        confirmation.show();
     };
 };
 

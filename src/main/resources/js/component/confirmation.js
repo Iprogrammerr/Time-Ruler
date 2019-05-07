@@ -1,8 +1,8 @@
-export function DeleteConfirmation(component = document.getElementById("deleteConfirmation"), 
-    inAnimation = "fadeIn", outAnimation = "fadeOut") {
+export function Confirmation(component, messageNode = component.querySelector("span"), inAnimation = "fadeIn", outAnimation = "fadeOut") {
 
     const _animationEndEvents = ["animationend", "webkitAnimationEnd"];
     const _component = component;
+    const _messageNode = messageNode;
     const _inAnimation = inAnimation;
     const _outAnimation = outAnimation;
     const _hide = () => _component.style.display = "none";
@@ -10,12 +10,16 @@ export function DeleteConfirmation(component = document.getElementById("deleteCo
     this.setup = (onYesClicked, onNoClicked = () => {}) => {
         document.getElementById("yes").onclick = () => {
             onYesClicked();
-            hide();
+            this.hide();
         };
         document.getElementById("no").onclick = () => {
             onNoClicked();
-            hide();
+            this.hide();
         };
+    };
+
+    this.setMessage = (message) => {
+        _messageNode.replaceChild(document.createTextNode(message), _messageNode.firstChild);
     };
 
     this.show = () => {
@@ -26,7 +30,7 @@ export function DeleteConfirmation(component = document.getElementById("deleteCo
         _component.style.animationName = _inAnimation;
     };
 
-    function hide() {        
+    this.hide = () => {        
         for (let e of _animationEndEvents) {
             _component.addEventListener(e, _hide);
         }
