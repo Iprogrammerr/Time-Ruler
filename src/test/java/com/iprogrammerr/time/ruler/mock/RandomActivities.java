@@ -40,6 +40,10 @@ public class RandomActivities {
         return activity(userId, startDate, random.nextBoolean());
     }
 
+    public Activity activity(long userId) {
+        return activity(userId, random.nextLong());
+    }
+
     public Activity activity(boolean done) {
         return activity(0, Instant.now().getEpochSecond(), done);
     }

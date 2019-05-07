@@ -173,7 +173,6 @@ public class DatabaseActivitiesSearchTest {
         Random random = new Random();
         User user = new RandomUsers(random).user();
         long userId = users.create(user.name, user.email, user.password);
-        long date = Instant.now().getEpochSecond();
         RandomActivities randomActivities = new RandomActivities(random);
         RandomStrings randomStrings = new RandomStrings(random);
         String pattern = randomStrings.alphabetic(1 + random.nextInt(MAX_ACTIVITY_NAME_SIZE));
@@ -181,7 +180,7 @@ public class DatabaseActivitiesSearchTest {
         int toCreate = 1 + random.nextInt(MAX_ACTIVITIES_SIZE);
         int expectedMatches = 0;
         for (int i = 0; i < toCreate; i++) {
-            Activity a = randomActivities.activity(userId, date);
+            Activity a = notMatching(randomActivities, userId, pattern);
             if (random.nextBoolean()) {
                 a = new Activity(a.userId, nameMatchingPattern(pattern, i), a.startDate, a.endDate, a.done);
                 expectedMatches++;
@@ -191,6 +190,14 @@ public class DatabaseActivitiesSearchTest {
 
         MatcherAssert.assertThat("Does not return expected matches", activitiesSearch.matches(userId, pattern),
             Matchers.equalTo(expectedMatches));
+    }
+
+    private Activity notMatching(RandomActivities random, long userId, String pattern) {
+        Activity activity = random.activity(userId);
+        while (activity.name.toLowerCase().startsWith(pattern.toLowerCase())) {
+            activity = random.activity(userId);
+        }
+        return activity;
     }
 
     private String nameMatchingPattern(String pattern, int index) {
