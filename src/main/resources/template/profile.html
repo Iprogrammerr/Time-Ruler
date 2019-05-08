@@ -10,15 +10,29 @@
 <body class="marginless">
     <div th:replace="fragments.html :: tab"></div>
     <div class="centered-h">
-        <form>
+        <form id="profile">
             <h1 th:text="#{email}"></h1>
+            <p id="invalidEmail" th:class="${invalidEmail} ? error : error-hidden" th:text="#{invalidEmail}"></p>
             <input type="email" name="email" th:value="${email}"></input>
             <h1 th:text="#{name}"></h1>
+            <p id="invalidName" th:class="${invalidName} ? error : error-hidden" th:text="#{invalidName}"></p>
             <input type="text" name="name" th:value="${name}"></input>
             </br>
             <input id="save" type="submit" value="Save" class="main"></input>
         </form>
-        <button id="resetPassword" class="main" th:text="#{resetPassword}"></button>
+        <button id="changePassword" class="main" th:text="#{changePassword}"></button>
+        <div id="passwords" th:class="!${showPasswords} ? hidden">
+            <p th:text="#{oldPassword}"></p>
+            <p id="invalidOldPassword" th:class="${invalidOldPassword} ? error : error-hidden"
+                th:text="#{invalidPassword}"></p>
+            <p id="notUserPassword" th:class="${notUserPassword} ? error: error-hidden" th:text="#{notUserPassword}">
+            </p>
+            <input form="profile" type="password" name="oldPassword"></input>
+            <p th:text="#{newPassword}"></p>
+            <p id="invalidNewPassword" th:class="${invalidNewPassword} ? error : error-hidden"
+                th:text="#{invalidPassword}"></p>
+            <input form="profile" type="password" name="newPassword"></input>
+        </div>
         </br>
         <button id="logout" class="main" th:text="#{logout}"></button>
     </div>
