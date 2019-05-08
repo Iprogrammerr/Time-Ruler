@@ -1,5 +1,7 @@
 package com.iprogrammerr.time.ruler.model.activity;
 
+import java.util.Optional;
+
 public interface Activities {
 
     long create(Activity activity);
@@ -8,9 +10,7 @@ public interface Activities {
 
     void delete(long id);
 
-    Activity activity(long id);
-
-    boolean exists(long id);
+    Optional<Activity> activity(long id);
 
     boolean belongsToUser(long userId, long activityId);
 

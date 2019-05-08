@@ -3,7 +3,6 @@ package com.iprogrammerr.time.ruler.model;
 import com.iprogrammerr.time.ruler.database.DatabaseSession;
 import com.iprogrammerr.time.ruler.database.QueryTemplates;
 import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
-import com.iprogrammerr.time.ruler.matcher.ThrowsMatcher;
 import com.iprogrammerr.time.ruler.mock.RandomActivities;
 import com.iprogrammerr.time.ruler.mock.RandomUsers;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
@@ -39,7 +38,6 @@ public class DatabaseActivitiesTest {
         setup.close();
     }
 
-
     @Test
     public void returnsActivityFromId() {
         Random random = new Random();
@@ -48,22 +46,21 @@ public class DatabaseActivitiesTest {
         Activity activity = new RandomActivities(random).activity(userId, Instant.now().getEpochSecond());
         long activityId = activities.create(activity);
         MatcherAssert.assertThat("Should return newly created activity", activity.withId(activityId),
-            Matchers.equalTo(activities.activity(activityId)));
+            Matchers.equalTo(activities.activity(activityId).get()));
     }
 
     @Test
-    public void throwsExceptionIfThereIsNoActivityWithGivenId() {
-        long id = new Random().nextLong();
-        String message = String.format("There is no activity associated with %d id", id);
-        MatcherAssert.assertThat("Does not throw exception with proper message", () -> activities.activity(id),
-            new ThrowsMatcher(message));
+    public void returnsEmptyFromNonExistentId() {
+        MatcherAssert.assertThat("Does not return empty activity",
+            activities.activity(new Random().nextLong()).isPresent(), Matchers.equalTo(false));
     }
 
     @Test
     public void deletesActivity() {
         long id = insertActivityWithUser();
         activities.delete(id);
-        MatcherAssert.assertThat("Should delete activity", activities.exists(id), Matchers.equalTo(false));
+        MatcherAssert.assertThat("Should delete activity", activities.activity(id).isPresent(),
+            Matchers.equalTo(false));
     }
 
     private long insertActivityWithUser(RandomUsers randomUsers, RandomActivities randomActivities, long date) {
@@ -98,9 +95,9 @@ public class DatabaseActivitiesTest {
     @Test
     public void setsActivityDone() {
         long id = insertActivityWithUser();
-        boolean done = !activities.activity(id).done;
+        boolean done = !activities.activity(id).get().done;
         activities.setDone(id, done);
-        MatcherAssert.assertThat("Does not update done status", activities.activity(id).done,
+        MatcherAssert.assertThat("Does not update done status", activities.activity(id).get().done,
             Matchers.equalTo(done));
     }
 }

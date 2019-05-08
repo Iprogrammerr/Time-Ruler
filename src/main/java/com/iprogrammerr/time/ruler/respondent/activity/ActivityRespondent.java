@@ -23,6 +23,7 @@ import io.javalin.Javalin;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 public class ActivityRespondent implements GroupedRespondent {
 
@@ -80,10 +81,10 @@ public class ActivityRespondent implements GroupedRespondent {
         long id = context.queryParam(ID, Long.class, Long.toString(0)).get();
         boolean plan = context.queryParam(PLAN_PARAM, Boolean.class, Boolean.toString(true)).get();
         String view;
-        if (templateId > 0 && activities.exists(templateId)) {
+        if (templateId > 0 && activities.activity(templateId).isPresent()) {
             DescribedActivity activity = descriptions.describedActivity(templateId).withDone(!plan);
             view = views.filled(activity, date -> serverClientDates.clientDate(context.req, date));
-        } else if (id > 0 && activities.exists(id)) {
+        } else if (id > 0 && activities.activity(id).isPresent()) {
             view = views.filled(descriptions.describedActivity(id),
                 date -> serverClientDates.clientDate(context.req, date));
         } else {
@@ -114,7 +115,10 @@ public class ActivityRespondent implements GroupedRespondent {
     }
 
     private void redirectToDay(Context context, Instant date, boolean done) {
-        if (done) {
+        Instant clientNow = serverClientDates.clientDate(context.req);
+        if (new SmartDate(clientNow).isTheSameDay(date)) {
+            dayPlanExecutionRespondent.redirect(context);
+        } else if (done) {
             dayPlanExecutionRespondent.redirect(context, date);
         } else {
             dayPlanRespondent.redirect(context, date);
@@ -154,7 +158,8 @@ public class ActivityRespondent implements GroupedRespondent {
 
     private void updateActivity(Context context) {
         long id = context.pathParam(ID, Integer.class).get();
-        if (!activities.exists(id)) {
+        Optional<Activity> activity = activities.activity(id);
+        if (!activity.isPresent()) {
             throw new ResponseException(ErrorCode.ACTIVITY_NON_EXISTENT_ID);
         }
         ValidateableName name = new ValidateableName(context.formParam(FORM_NAME, ""), true);
@@ -162,11 +167,11 @@ public class ActivityRespondent implements GroupedRespondent {
         ValidateableTime end = new ValidateableTime(context.formParam(FORM_END_TIME, ""));
         String description = context.formParam(FORM_DESCRIPTION, "");
         if (name.isValid() && start.isValid() && end.isValid()) {
-            Instant date = limitedDate.fromString(context.queryParam(DATE_PARAM, ""));
-            Activity activity = activity(context, date, name, start, end).withId(id);
-            updateActivity(activity, description,
+            Instant date = Instant.ofEpochSecond(activity.get().startDate);
+            Activity toUpdateActivity = activity(context, date, name, start, end).withId(id);
+            updateActivity(toUpdateActivity, description,
                 activitiesSearch.ofUserDate(identity.value(context.req), date.getEpochSecond()));
-            redirectToDay(context, date, activity.done);
+            redirectToDay(context, date, toUpdateActivity.done);
         } else {
             context.html(views.withErrors(isActivityDone(context), name, start, end));
         }

@@ -4,6 +4,7 @@ import com.iprogrammerr.time.ruler.database.DatabaseSession;
 import com.iprogrammerr.time.ruler.database.Record;
 
 import java.sql.ResultSet;
+import java.util.Optional;
 
 public class DatabaseActivities implements Activities {
 
@@ -45,18 +46,16 @@ public class DatabaseActivities implements Activities {
     }
 
     @Override
-    public Activity activity(long id) {
+    public Optional<Activity> activity(long id) {
         return session.select(r -> {
+            Optional<Activity> activity;
             if (r.next()) {
-                return new Activity(r);
+                activity = Optional.of(new Activity(r));
+            } else {
+                activity = Optional.empty();
             }
-            throw new RuntimeException(String.format("There is no activity associated with %d id", id));
+            return activity;
         }, "SELECT * from activity WHERE id = ?", id);
-    }
-
-    @Override
-    public boolean exists(long id) {
-        return session.select(ResultSet::next, "SELECT id from activity WHERE id = ?", id);
     }
 
     @Override

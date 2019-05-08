@@ -54,11 +54,17 @@ function setupMonthsNavigation() {
 function setupDaysNavigation() {
     let notAvailableClass = "not-available";
     let days = document.getElementsByClassName("days")[0].children;
+    let date = new SmartDate();
     for (let i = 0; i < days.length; i++) {
         let className = days[i].children[0].className;
         if (className !== notAvailableClass) {
-            let param = dateTimeParams.yearMonthDayAsDateParam(yearMonth.year, yearMonth.month, i + 1);
-            days[i].onclick = () => router.forwardWithParams(state.detailRoute, param);
+            let day = i + 1;
+            if (date.isNow(yearMonth.year, yearMonth.month, day)) {
+                days[i].onclick = () => router.forward(routes.today);
+            } else {
+                let param = dateTimeParams.yearMonthDayAsDateParam(yearMonth.year, yearMonth.month, day);
+                days[i].onclick = () => router.forwardWithParams(state.detailRoute, param);
+            }
         }
     }
 };

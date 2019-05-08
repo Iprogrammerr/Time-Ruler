@@ -61,4 +61,9 @@ public class SmartDate {
     public Instant withTime(Instant time) {
         return ofTimeDate(0, 0, 0).plusSeconds(time.getEpochSecond()).toInstant();
     }
+
+    public boolean isTheSameDay(Instant date) {
+        long seconds = date.getEpochSecond();
+        return seconds >= dayBeginning() && seconds <= dayEnd();
+    }
 }

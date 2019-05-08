@@ -12,7 +12,7 @@ const notDoneConfirmation = document.body.getAttribute(hiddenDataKeys.notDoneCon
 
 document.getElementById("add").onclick = () => {
     let params = dateTimeParams.yearMonthDayAsDateParam(yearMonthDay.year, yearMonthDay.month, yearMonthDay.day);
-    params.set(paramsKeys.plan, false);
+    params.set(paramsKeys.plan, new SmartDate().isNow(yearMonthDay.year, yearMonthDay.month, yearMonthDay.day));
     router.forwardWithParams(routes.activity, params);
 };
 let yesterday = document.getElementsByClassName("yesterday");
@@ -28,7 +28,7 @@ function setupTabsNavigation() {
     let allTabsActive = today.year != yearMonthDay.year && today.month != yearMonthDay.month &&
         today.day != yearMonthDay.day;
     tabsNavigation.setup(document.querySelector("div"), allTabsActive);
-}
+};
 //TODO page with errors? Dialog? Text?
 function setupListNavigation() {
     let activities = document.getElementsByClassName("activities")[0];

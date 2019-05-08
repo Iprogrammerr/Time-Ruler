@@ -57,6 +57,19 @@ export function SmartDate(date = new Date()) {
         };
     };
 
+    this.asZonedYearMonthDay = () => {
+        return {
+            year: _date.getFullYear(),
+            month: _date.getMonth() + 1,
+            day: _date.getDate()
+        };
+    };
+
+    this.isNow = (year, month, day) => {
+        let yearMonthDay = this.asZonedYearMonthDay();
+        return year == yearMonthDay.year && month == yearMonthDay.month && day == yearMonthDay.day;
+    };
+
     this.setYearMonthDay = (year, month, day) => _date.setUTCFullYear(year, month - 1, day);
 
     this.asIsoDateString = ()  => {
