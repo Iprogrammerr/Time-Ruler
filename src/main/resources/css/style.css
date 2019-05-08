@@ -25,13 +25,17 @@ div.centered-h {
     padding: 0px 8px 8px 8px;
 }
 
-.centered {
+.centered, .centered-with-padding {
     width: 100%;
     position: absolute;
     text-align: center;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+}
+
+.centered-with-padding {
+    padding: 4px;
 }
 
 p, p.error {
@@ -61,10 +65,17 @@ p.error-hidden {
     border: none;
     outline: none;
     cursor: pointer;
-    padding: 16px;
+    padding: 16px 8px;
     transition: 0.5s;
     font-size: 2em;
     width: 25%;
+}
+
+@media screen and (max-width: 420px) {
+
+    .tab button {
+        font-size: 1.5em;
+    }
 }
 
 .hidden {

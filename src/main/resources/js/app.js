@@ -7,7 +7,7 @@ import { TabsNavigation } from "./navigation/tabs-navigation.js";
 import { Cookies } from "./http/cookies.js";
 import { Errors } from "./validation/errors.js";
 
-const host = "http://127.0.0.1:8080/";
+const host = `${document.location.origin}/`;
 const userRoutePrefix = "user/";
 
 export const routes = {
