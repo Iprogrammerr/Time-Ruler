@@ -46,9 +46,9 @@ public class SigningUpViews {
     public String invalid(ValidateableEmail email, ValidateableName name, ValidateablePassword password) {
         Map<String, Object> params = new HashMap<>();
         params.put(INVALID_EMAIL_TEMPLATE, !email.isValid());
-        params.put(EMAIL_TEMPLATE, email.isValid() ? email.value() : "");
+        params.put(EMAIL_TEMPLATE, email.value());
         params.put(INVALID_NAME_TEMPLATE, !name.isValid());
-        params.put(NAME_TEMPLATE, name.isValid() ? name.value() : "");
+        params.put(NAME_TEMPLATE, name.value());
         params.put(INVALID_PASSWORD, !password.isValid());
         return withSignInUrl(params);
     }

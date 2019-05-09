@@ -1,20 +1,31 @@
 import { router, routes, tabsNavigation } from "./app.js";
 
 const HIDDEN_DISPLAY = "none";
-const passwords = document.getElementById("passwords");
-let showPasswords = passwords.style.display == HIDDEN_DISPLAY || passwords.className == "hidden";
+const invalidEmail = document.getElementById("invalidEmail");
+const usedEmail = document.getElementById("usedEmail");
+const emailConfirmationSent = document.getElementById("emailConfirmationSent");
+const invalidName = document.getElementById("invalidName");
+const usedName = document.getElementById("usedName");
+const passwordForm = document.getElementById("passwordForm");
+let showPasswordForm = passwordForm.style.display == HIDDEN_DISPLAY || passwordForm.className == "hidden";
 
 tabsNavigation.setup(document.querySelector("div"));
 window.addEventListener("submit", e => e.preventDefault());
-document.getElementById("save").onclick = () => {
-    //save
+document.getElementById("saveEmail").onclick = () => {
+    //saveEmail
+};
+document.getElementById("saveName").onclick = () => {
+    //saveName
+};
+document.getElementById("savePassword").onclick = () => {
+    //savePassword
 };
 document.getElementById("changePassword").onclick = () => {
-    if (showPasswords) {
-        passwords.style.display = "block";
+    if (showPasswordForm) {
+        passwordForm.style.display = "block";
     } else {
-        passwords.style.display = HIDDEN_DISPLAY;
+        passwordForm.style.display = HIDDEN_DISPLAY;
     }
-    showPasswords = !showPasswords;
+    showPasswordForm = !showPasswordForm;
 };
 document.getElementById("logout").onclick = () => router.forward(routes.signOut);

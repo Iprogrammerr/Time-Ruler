@@ -13,6 +13,7 @@ import io.javalin.Javalin;
 
 import java.net.HttpURLConnection;
 
+//TODO modify all post requests to follow Post/Redirect/Get pattern
 public class SigningUpRespondent implements Respondent {
 
     public static final String SIGN_UP = "sign-up";

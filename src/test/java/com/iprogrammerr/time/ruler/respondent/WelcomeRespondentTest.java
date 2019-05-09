@@ -16,7 +16,7 @@ public class WelcomeRespondentTest {
         JavalinContext javalinContext = new JavalinContext();
         respondent.welcome(javalinContext.context());
         MatcherAssert.assertThat(
-            "Does not return welcome validView", templates.rendered("index"), Matchers.equalTo(javalinContext.read())
+            "Does not return welcome defaultView", templates.rendered("index"), Matchers.equalTo(javalinContext.read())
         );
 
     }

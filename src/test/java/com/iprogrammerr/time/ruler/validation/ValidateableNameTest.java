@@ -1,6 +1,5 @@
 package com.iprogrammerr.time.ruler.validation;
 
-import com.iprogrammerr.time.ruler.matcher.ThrowsMatcher;
 import com.iprogrammerr.time.ruler.mock.RandomStrings;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -14,7 +13,7 @@ public class ValidateableNameTest {
     }
 
     private void returnsFalse(ValidateableName name) {
-        MatcherAssert.assertThat("Name should not be validView", name.isValid(), Matchers.equalTo(false));
+        MatcherAssert.assertThat("Name should not be valid", name.isValid(), Matchers.equalTo(false));
     }
 
     @Test
@@ -37,19 +36,9 @@ public class ValidateableNameTest {
     }
 
     @Test
-    public void returnsUnchangedAfterValidation() {
+    public void returnsUnchangedValue() {
         String name = "name";
         ValidateableName validateableName = new ValidateableName(name);
-        validateableName.isValid();
         MatcherAssert.assertThat("Should not be changed", validateableName.value(), Matchers.equalTo(name));
-    }
-
-    @Test
-    public void throwsExceptionIfIsNotValid() {
-        String name = "L5_";
-        String message = String.format("%s is not a validView name", name);
-        MatcherAssert.assertThat(
-            "Should throw exception with message", new ValidateableName(name)::value, new ThrowsMatcher(message)
-        );
     }
 }

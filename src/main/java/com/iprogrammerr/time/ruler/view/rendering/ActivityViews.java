@@ -57,7 +57,7 @@ public class ActivityViews {
         addActiveTab(params, plan);
         params.put(PLAN_TEMPLATE, plan);
         params.put(INVALID_NAME_TEMPLATE, name.isValid());
-        params.put(NAME_TEMPLATE, name.isValid() ? name.value() : "");
+        params.put(NAME_TEMPLATE, name.value());
         params.put(INVALID_START_TIME_TEMPLATE, startTime.isValid());
         params.put(START_TIME_TEMPLATE, startTime.isValid() ? startTime.value() : "");
         params.put(INVALID_END_TIME_TEMPLATE, endTime.isValid());

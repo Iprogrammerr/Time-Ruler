@@ -17,10 +17,7 @@ public class ValidateablePassword implements Validateable<String> {
 
     @Override
     public String value() {
-        if (isValid()) {
-            return password;
-        }
-        throw new RuntimeException(String.format("%s is not a validView password", password));
+        return password;
     }
 
     @Override

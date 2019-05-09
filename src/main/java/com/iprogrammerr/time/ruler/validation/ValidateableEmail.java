@@ -20,10 +20,7 @@ public class ValidateableEmail implements Validateable<String> {
 
     @Override
     public String value() {
-        if (isValid()) {
-            return email;
-        }
-        throw new RuntimeException(String.format("%s is not a validView email", email));
+        return email;
     }
 
     @Override

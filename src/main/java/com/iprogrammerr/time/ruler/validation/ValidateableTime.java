@@ -20,11 +20,11 @@ public class ValidateableTime implements Validateable<Instant> {
             String[] hourMinutes = this.time.split(HH_MM_SEPARATOR);
             int hour = Integer.parseInt(hourMinutes[0].trim());
             if (hour < 0 || hour >= MAX_HOUR) {
-                throw new RuntimeException(String.format("%d is not a validView hour value", hour));
+                throw new RuntimeException(String.format("%d is not a valid hour value", hour));
             }
             int minutes = Integer.parseInt(hourMinutes[1].trim());
             if (minutes < 0 || minutes >= MAX_MINUTE) {
-                throw new RuntimeException(String.format("%d is not a validView minutes value", minutes));
+                throw new RuntimeException(String.format("%d is not a valid minutes value", minutes));
             }
             return Instant.ofEpochSecond(TimeUnit.HOURS.toSeconds(hour) + TimeUnit.MINUTES.toSeconds(minutes));
         });
@@ -46,7 +46,7 @@ public class ValidateableTime implements Validateable<Instant> {
         if (isValid()) {
             return mappedTime.value();
         }
-        throw new RuntimeException(String.format("%s is not a validView time", time));
+        throw new RuntimeException(String.format("%s is not a valid time", time));
     }
 
     @Override
