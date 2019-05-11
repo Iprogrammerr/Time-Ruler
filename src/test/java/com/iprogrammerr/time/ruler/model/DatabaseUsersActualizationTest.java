@@ -94,4 +94,15 @@ public class DatabaseUsersActualizationTest {
     public void updatePasswordNoOp() {
         actualization.updatePassword(new Random().nextLong(), new RandomStrings().alphanumeric());
     }
+
+    @Test
+    public void updatesPasswordByEmail() {
+        Random random = new Random();
+        User user = new RandomUsers(random).user();
+        users.create(user.name, user.email, user.password);
+        String newPassword = new RandomStrings(random).alphanumeric(1 + random.nextInt(MAX_PASSWORD_SIZE));
+        actualization.updatePassword(user.email, newPassword);
+        MatcherAssert.assertThat("Should update a password", users.withEmail(user.email).get().password,
+            Matchers.equalTo(newPassword));
+    }
 }

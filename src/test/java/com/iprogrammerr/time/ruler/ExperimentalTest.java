@@ -6,7 +6,7 @@ import org.junit.Test;
 public class ExperimentalTest {
 
     @Test
-    public void experimentalTest() throws Exception {
+    public void experimentalTest() {
         QueryTemplates templates = new QueryTemplates();
         System.out.println(templates.query("SELECT * FROM activity WHERE id = ? AND done = ?", 1, false));
     }

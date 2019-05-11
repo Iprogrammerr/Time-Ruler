@@ -30,4 +30,9 @@ public class DatabaseUsersActualization implements UsersActualization {
     public void updatePassword(long id, String password) {
         session.update(new Record(User.TABLE).put(User.PASSWORD, password), "id = ?", id);
     }
+
+    @Override
+    public void updatePassword(String email, String password) {
+        session.update(new Record(User.TABLE).put(User.PASSWORD, password), "email = ?", email);
+    }
 }

@@ -140,8 +140,8 @@ public class App {
             activitiesSearch, serverClientDates);
         SigningInRespondent signingInRespondent = new SigningInRespondent(dayPlanExecutionRespondent, signingInViews,
             users, actualization, hashing, identity);
-        PasswordResetRespondent passwordResetRespondent = new PasswordResetRespondent(users, actualization, emails,
-            hashing, passwordResetViews);
+        PasswordResetRespondent passwordResetRespondent = new PasswordResetRespondent(signingInRespondent, users,
+            actualization, emails, hashing, passwordResetViews);
         SigningUpRespondent signingUpRespondent = new SigningUpRespondent(signingUpViews, users, hashing, emails);
         SigningOutRespondent signingOutRespondent = new SigningOutRespondent(signingInRespondent);
         ProfileRespondent profileRespondent = new ProfileRespondent(signingOutRespondent, identity, users,

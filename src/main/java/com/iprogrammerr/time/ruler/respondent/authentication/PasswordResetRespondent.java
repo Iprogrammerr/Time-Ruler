@@ -10,6 +10,7 @@ import com.iprogrammerr.time.ruler.model.user.Users;
 import com.iprogrammerr.time.ruler.model.user.UsersActualization;
 import com.iprogrammerr.time.ruler.respondent.Respondent;
 import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
+import com.iprogrammerr.time.ruler.validation.ValidateablePassword;
 import com.iprogrammerr.time.ruler.view.rendering.PasswordResetViews;
 import io.javalin.Context;
 import io.javalin.Javalin;
@@ -23,14 +24,17 @@ public class PasswordResetRespondent implements Respondent {
     private static final String EMAIL_PARAM = "email";
     private static final String HASH_PARAM = "hash";
     private static final String EMAIL_SENT_PARAM = "emailSent";
+    private static final String PASSWORD_FORM = "password";
+    private final SigningInRespondent respondent;
     private final Users users;
     private final UsersActualization actualization;
     private final Emails emails;
     private final Hashing hashing;
     private final PasswordResetViews views;
 
-    public PasswordResetRespondent(Users users, UsersActualization actualization, Emails emails, Hashing hashing,
-        PasswordResetViews views) {
+    public PasswordResetRespondent(SigningInRespondent respondent, Users users, UsersActualization actualization,
+        Emails emails, Hashing hashing, PasswordResetViews views) {
+        this.respondent = respondent;
         this.users = users;
         this.actualization = actualization;
         this.emails = emails;
@@ -43,6 +47,7 @@ public class PasswordResetRespondent implements Respondent {
         app.get(PASSWORD_RESET, this::showPasswordReset);
         app.get(PASSWORD_RESET_FORM, this::showPasswordResetForm);
         app.post(PASSWORD_RESET, this::sentPasswordResetEmail);
+        app.post(PASSWORD_RESET_FORM, this::resetPassword);
     }
 
     private void showPasswordReset(Context context) {
@@ -77,6 +82,7 @@ public class PasswordResetRespondent implements Respondent {
             .build(PASSWORD_RESET_FORM);
     }
 
+    //TODO limit validity
     private String passwordResetHash(User user) {
         return hashing.hash(String.valueOf(user.id), user.name, user.email, user.password);
     }
@@ -107,5 +113,21 @@ public class PasswordResetRespondent implements Respondent {
             valid = user.isPresent() && passwordResetHash(user.get()).equals(hash);
         }
         return valid;
+    }
+
+    private void resetPassword(Context context) {
+        ValidateableEmail email = new ValidateableEmail(context.queryParam(EMAIL_PARAM, ""));
+        String hash = context.queryParam(HASH_PARAM, "");
+        if (isPasswordResetRequestValid(email, hash)) {
+            ValidateablePassword password = new ValidateablePassword(context.formParam(PASSWORD_FORM));
+            if (password.isValid()) {
+                actualization.updatePassword(email.value(), password.value());
+                respondent.redirectWithNewPassword(context);
+            } else {
+                context.html(views.changePasswordView(passwordResetUrl(context), true));
+            }
+        } else {
+            throw new ResponseException(ErrorCode.INVALID_PASSWORD_RESET_LINK);
+        }
     }
 }

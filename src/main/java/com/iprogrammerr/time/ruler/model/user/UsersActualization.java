@@ -9,4 +9,6 @@ public interface UsersActualization {
     void updateEmail(long id, String email);
 
     void updatePassword(long id, String password);
+
+    void updatePassword(String email, String password);
 }
