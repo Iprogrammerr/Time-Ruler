@@ -22,7 +22,8 @@
             <p th:text="#{emailName}"></p>
             <p th:class="${invalidEmailName} ? error : error-hidden" id="emailNameError" th:text="#{invalidEmailName}">
             </p>
-            <p th:class="${nonExistentUser} ? error : error-hidden" id="nonExistentUser" th:text="#{nonExistentUser}"></p>
+            <p th:class="${nonExistentUser} ? error : error-hidden" id="nonExistentUser" th:text="#{nonExistentUser}">
+            </p>
             <input type="text" name="emailName" th:value="${emailName}"></input>
             <p th:text="#{password}"></p>
             <p th:class="${invalidPassword} ? error: error-hidden" id="passwordError" th:text="#{invalidPassword}">
@@ -36,6 +37,8 @@
         <div>
             <span th:text="#{signUpQuestionIncentive}"></span>
             <a th:href="${signUpUrl}" th:text="#{signUp}"></a>
+            </br>
+            <a th:href="${passwordResetUrl}" th:text=#{forgottenPassword}></a>
         </div>
     </div>
 </body>

@@ -16,26 +16,30 @@ public class SigningInViews {
     private static final String PASSWORD_CHANGE_TEMPLATE = "passwordChange";
     private static final String SIGN_OUT_TEMPLATE = "signOut";
     private static final String SIGN_UP_URL_TEMPLATE = "signUpUrl";
+    private static final String PASSWORD_RESET_URL_TEMPLATE = "passwordResetUrl";
     private final ViewsTemplates templates;
     private final String name;
     private final String signUpUrl;
+    private final String passwordResetUrl;
 
-    public SigningInViews(ViewsTemplates templates, String name, String signUpUrl) {
+    public SigningInViews(ViewsTemplates templates, String name, String signUpUrl, String passwordResetUrl) {
         this.templates = templates;
         this.name = name;
         this.signUpUrl = signUpUrl;
+        this.passwordResetUrl = passwordResetUrl;
     }
 
-    public SigningInViews(ViewsTemplates templates, String signUpUrl) {
-        this(templates, "sign-in", signUpUrl);
+    public SigningInViews(ViewsTemplates templates, String signUpUrl, String passwordResetUrl) {
+        this(templates, "sign-in", signUpUrl, passwordResetUrl);
     }
 
     public String validView() {
-        return withSignUpUrl(new HashMap<>());
+        return withUrls(new HashMap<>());
     }
 
-    private String withSignUpUrl(Map<String, Object> params) {
+    private String withUrls(Map<String, Object> params) {
         params.put(SIGN_UP_URL_TEMPLATE, signUpUrl);
+        params.put(PASSWORD_RESET_URL_TEMPLATE, passwordResetUrl);
         return templates.rendered(name, params);
     }
 
@@ -48,21 +52,21 @@ public class SigningInViews {
             params.put(INVALID_EMAIL_NAME_TEMPLATE, false);
         }
         params.put(INVALID_PASSWORD_TEMPLATE, invalidPassword);
-        return withSignUpUrl(params);
+        return withUrls(params);
     }
 
     public String nonExistentUserView(String emailName) {
         Map<String, Object> params = new HashMap<>();
         params.put(EMAIL_NAME_TEMPLATE, emailName);
         params.put(NON_EXISTENT_USER_TEMPLATE, true);
-        return withSignUpUrl(params);
+        return withUrls(params);
     }
 
     public String notUserPasswordView(String emailName) {
         Map<String, Object> params = new HashMap<>();
         params.put(EMAIL_NAME_TEMPLATE, emailName);
         params.put(NOT_USER_PASSWORD_TEMPLATE, true);
-        return withSignUpUrl(params);
+        return withUrls(params);
     }
 
     public String withNewPasswordView() {
@@ -76,7 +80,7 @@ public class SigningInViews {
     private String withMessageView(String key) {
         Map<String, Object> params = new HashMap<>();
         params.put(key, true);
-        return withSignUpUrl(params);
+        return withUrls(params);
     }
 
     public String withActivationCongratulationsView() {

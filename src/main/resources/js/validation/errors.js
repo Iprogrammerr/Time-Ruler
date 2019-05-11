@@ -11,7 +11,6 @@ export function Errors(errorClassName = "error") {
 
     this.clearAll = (...elements) => {
         for (let e of elements) {
-            console.log(e);
             this.clear(e);
         }
     };

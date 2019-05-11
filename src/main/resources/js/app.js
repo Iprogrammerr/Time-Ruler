@@ -26,6 +26,7 @@ export const routes = {
 
 export const endpoints = {
     signIn: `${host}sign-in`,
+    passwordReset: `${host}password-reset`,
     signUp: `${host}sign-up`,
     signOut: `${host}sign-out`,
     profileEmail: `${host}profile/email`,

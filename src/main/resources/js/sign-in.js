@@ -9,7 +9,7 @@ const inputs = document.querySelectorAll("input");
 const form = document.querySelector("form");
 const signIn = document.getElementById("signIn");
 
-addEventListener("submit", e => e.preventDefault());
+window.addEventListener("submit", e => e.preventDefault());
 signIn.onclick = () => {
     if (isFormValid()) {
         new FormAction(form).submit(endpoints.signIn);

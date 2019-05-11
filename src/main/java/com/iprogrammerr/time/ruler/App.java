@@ -32,6 +32,7 @@ import com.iprogrammerr.time.ruler.respondent.ProfileRespondent;
 import com.iprogrammerr.time.ruler.respondent.WelcomeRespondent;
 import com.iprogrammerr.time.ruler.respondent.activity.ActivitiesRespondent;
 import com.iprogrammerr.time.ruler.respondent.activity.ActivityRespondent;
+import com.iprogrammerr.time.ruler.respondent.authentication.PasswordResetRespondent;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningInRespondent;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningOutRespondent;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningUpRespondent;
@@ -45,6 +46,7 @@ import com.iprogrammerr.time.ruler.view.rendering.CalendarViews;
 import com.iprogrammerr.time.ruler.view.rendering.DayPlanExecutionViews;
 import com.iprogrammerr.time.ruler.view.rendering.DayPlanViews;
 import com.iprogrammerr.time.ruler.view.rendering.ErrorViews;
+import com.iprogrammerr.time.ruler.view.rendering.PasswordResetViews;
 import com.iprogrammerr.time.ruler.view.rendering.ProfileViews;
 import com.iprogrammerr.time.ruler.view.rendering.SigningInViews;
 import com.iprogrammerr.time.ruler.view.rendering.SigningUpViews;
@@ -93,7 +95,9 @@ public class App {
         engine.setMessageResolver(messages);
         ViewsTemplates viewsTemplates = new HtmlViewsTemplates(engine);
 
-        SigningInViews signingInViews = new SigningInViews(viewsTemplates, SigningUpRespondent.SIGN_UP);
+        SigningInViews signingInViews = new SigningInViews(viewsTemplates, SigningUpRespondent.SIGN_UP,
+            PasswordResetRespondent.PASSWORD_RESET);
+        PasswordResetViews passwordResetViews = new PasswordResetViews(viewsTemplates);
         SigningUpViews signingUpViews = new SigningUpViews(viewsTemplates, SigningInRespondent.SIGN_IN);
         CalendarViews calendarViews = new CalendarViews(viewsTemplates);
         DayPlanExecutionViews dayPlanExecutionViews = new DayPlanExecutionViews(viewsTemplates, formatting);
@@ -139,6 +143,8 @@ public class App {
             activitiesSearch, serverClientDates);
         SigningInRespondent signingInRespondent = new SigningInRespondent(dayPlanExecutionRespondent, signingInViews,
             users, actualization, hashing, identity);
+        PasswordResetRespondent passwordResetRespondent = new PasswordResetRespondent(users, actualization, emailServer,
+            hashing, passwordResetViews);
         SigningUpRespondent signingUpRespondent = new SigningUpRespondent(signingUpViews, users, hashing, emails);
         SigningOutRespondent signingOutRespondent = new SigningOutRespondent(signingInRespondent);
         ProfileRespondent profileRespondent = new ProfileRespondent(signingOutRespondent, identity, users,
@@ -155,6 +161,7 @@ public class App {
         activityRespondent.init(userGroup, app);
         activitiesRespondent.init(userGroup, app);
         signingInRespondent.init(app);
+        passwordResetRespondent.init(app);
         signingUpRespondent.init(app);
         signingOutRespondent.init(app);
         errorRespondent.init(app);
