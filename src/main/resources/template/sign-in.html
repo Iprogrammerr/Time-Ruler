@@ -24,6 +24,8 @@
             </p>
             <p th:class="${nonExistentUser} ? error : error-hidden" id="nonExistentUser" th:text="#{nonExistentUser}">
             </p>
+            <p th:class="${inactiveAccount} ? error: error-hidden" id="inactiveAccount" th:text="#{inactiveAccount}">
+            </p>
             <input type="text" name="emailName" th:value="${emailName}"></input>
             <p th:text="#{password}"></p>
             <p th:class="${invalidPassword} ? error: error-hidden" id="passwordError" th:text="#{invalidPassword}">

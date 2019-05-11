@@ -12,6 +12,6 @@ change.onclick = () => {
         form.submit();
         send.disabled = true;
     } else {
-        errors.set(invaliPassword);
+        errors.set(invalidPassword);
     }
 };

@@ -79,7 +79,7 @@ public class SigningInRespondent implements Respondent {
         }
     }
 
-    public void signIn(Context context) {
+    private void signIn(Context context) {
         String emailOrLogin = context.formParam(FORM_EMAIL_NAME, "");
         ValidateableEmail email = new ValidateableEmail(emailOrLogin);
         ValidateableName name = new ValidateableName(emailOrLogin);
@@ -94,9 +94,12 @@ public class SigningInRespondent implements Respondent {
     private void signInOrSetError(Context context, String emailOrName, String passwordHash) {
         Optional<User> user = withEmailOrName(emailOrName);
         if (user.isPresent()) {
-            if (passwordHash.equals(user.get().password)) {
-                identity.create(user.get().id, context.req);
+            User userVal = user.get();
+            if (userVal.active && passwordHash.equals(userVal.password)) {
+                identity.create(userVal.id, context.req);
                 respondent.redirect(context);
+            } else if (!userVal.active) {
+                context.html(views.notActiveUserView(emailOrName));
             } else {
                 context.html(views.notUserPasswordView(emailOrName));
             }

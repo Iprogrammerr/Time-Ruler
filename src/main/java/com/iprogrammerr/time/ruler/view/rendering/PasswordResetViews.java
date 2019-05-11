@@ -12,8 +12,9 @@ public class PasswordResetViews {
     private static final String INVALID_EMAIL_TEMPLATE = "invalidEmail";
     private static final String UNKNOWN_EMAIL_TEMPLATE = "unknownEmail";
     private static final String EMAIL_TEMPLATE = "email";
+    private static final String INACTIVE_ACCOUNT_TEMPLATE = "inactiveAccount";
     private static final String INVALID_PASSWORD_TEMPLATE = "invalidPassword";
-    private static final String PASWORD_RESET_URL_TEMPLATE = "passwordResetUrl";
+    private static final String PASSWORD_RESET_URL_TEMPLATE = "passwordResetUrl";
     private final ViewsTemplates templates;
     private final String emailSendName;
     private final String changePasswordName;
@@ -50,9 +51,16 @@ public class PasswordResetViews {
         return templates.rendered(emailSendName, params);
     }
 
+    public String inactiveAccountView(String email) {
+        Map<String, Object> params = new HashMap<>();
+        params.put(EMAIL_TEMPLATE, email);
+        params.put(INACTIVE_ACCOUNT_TEMPLATE, true);
+        return templates.rendered(emailSendName, params);
+    }
+
     public String changePasswordView(String passwordResetUrl, boolean invalidPassword) {
         Map<String, Object> params = new HashMap<>();
-        params.put(PASWORD_RESET_URL_TEMPLATE, passwordResetUrl);
+        params.put(PASSWORD_RESET_URL_TEMPLATE, passwordResetUrl);
         params.put(INVALID_PASSWORD_TEMPLATE, invalidPassword);
         return templates.rendered(changePasswordName, params);
     }

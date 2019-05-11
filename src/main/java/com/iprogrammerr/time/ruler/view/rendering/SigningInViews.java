@@ -12,6 +12,7 @@ public class SigningInViews {
     private static final String NON_EXISTENT_USER_TEMPLATE = "nonExistentUser";
     private static final String INVALID_PASSWORD_TEMPLATE = "invalidPassword";
     private static final String NOT_USER_PASSWORD_TEMPLATE = "notUserPassword";
+    private static final String INACTIVE_ACCOUNT_TEMPLATE = "inactiveAccount";
     private static final String ACTIVATION_TEMPLATE = "activation";
     private static final String PASSWORD_CHANGE_TEMPLATE = "passwordChange";
     private static final String SIGN_OUT_TEMPLATE = "signOut";
@@ -66,6 +67,13 @@ public class SigningInViews {
         Map<String, Object> params = new HashMap<>();
         params.put(EMAIL_NAME_TEMPLATE, emailName);
         params.put(NOT_USER_PASSWORD_TEMPLATE, true);
+        return withUrls(params);
+    }
+
+    public String notActiveUserView(String emailName) {
+        Map<String, Object> params = new HashMap<>();
+        params.put(EMAIL_NAME_TEMPLATE, emailName);
+        params.put(INACTIVE_ACCOUNT_TEMPLATE, true);
         return withUrls(params);
     }
 

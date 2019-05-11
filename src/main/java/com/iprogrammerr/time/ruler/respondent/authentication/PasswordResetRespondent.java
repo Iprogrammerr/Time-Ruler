@@ -70,8 +70,12 @@ public class PasswordResetRespondent implements Respondent {
         ValidateableEmail email = new ValidateableEmail(context.formParam(EMAIL_PARAM, ""));
         Optional<User> user = users.withEmail(email.value());
         if (email.isValid() && user.isPresent()) {
-            emails.sendPasswordResetEmail(user.get().email, passwordResetLink(user.get()));
-            redirect(context, email, true);
+            if (user.get().active) {
+                emails.sendPasswordResetEmail(user.get().email, passwordResetLink(user.get()));
+                redirect(context, email, true);
+            } else {
+                context.html(views.inactiveAccountView(email.value()));
+            }
         } else {
             redirect(context, email, false);
         }
@@ -121,7 +125,7 @@ public class PasswordResetRespondent implements Respondent {
         if (isPasswordResetRequestValid(email, hash)) {
             ValidateablePassword password = new ValidateablePassword(context.formParam(PASSWORD_FORM));
             if (password.isValid()) {
-                actualization.updatePassword(email.value(), password.value());
+                actualization.updatePassword(email.value(), hashing.hash(password.value()));
                 respondent.redirectWithNewPassword(context);
             } else {
                 context.html(views.changePasswordView(passwordResetUrl(context), true));
