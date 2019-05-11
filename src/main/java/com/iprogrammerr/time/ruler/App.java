@@ -122,10 +122,7 @@ public class App {
 
         EmailServer emailServer = new ConfigurableEmailServer(configuration.adminEmail(),
             configuration.adminPassword(), configuration.smtpHost(), configuration.smtpPort());
-        Emails emails = new Emails(
-            emailServer, configuration.activationLinkBase(), configuration.signUpEmailSubject(),
-            configuration.signUpEmailTemplate()
-        );
+        Emails emails = new Emails(emailServer, configuration);
         Hashing hashing = new Hashing();
         Identity<Long> identity = new SessionIdentity();
 
@@ -143,7 +140,7 @@ public class App {
             activitiesSearch, serverClientDates);
         SigningInRespondent signingInRespondent = new SigningInRespondent(dayPlanExecutionRespondent, signingInViews,
             users, actualization, hashing, identity);
-        PasswordResetRespondent passwordResetRespondent = new PasswordResetRespondent(users, actualization, emailServer,
+        PasswordResetRespondent passwordResetRespondent = new PasswordResetRespondent(users, actualization, emails,
             hashing, passwordResetViews);
         SigningUpRespondent signingUpRespondent = new SigningUpRespondent(signingUpViews, users, hashing, emails);
         SigningOutRespondent signingOutRespondent = new SigningOutRespondent(signingInRespondent);

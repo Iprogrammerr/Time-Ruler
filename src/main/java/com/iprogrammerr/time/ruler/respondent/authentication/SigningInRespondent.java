@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 //TODO modify all post requests to follow Post/Redirect/Get pattern
+// Do not allow inactive users to sign in
 public class SigningInRespondent implements Respondent {
 
     public static final String SIGN_IN = "sign-in";

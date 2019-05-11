@@ -28,10 +28,7 @@ public class EmailsTest {
             configuration.adminEmail(), configuration.adminPassword(), configuration.smtpHost(),
             configuration.smtpPort()
         );
-        emails = new Emails(
-            emailServer, configuration.activationLinkBase(), configuration.signUpEmailSubject(),
-            configuration.signUpEmailTemplate()
-        );
+        emails = new Emails(emailServer, configuration);
     }
 
     //@Test
@@ -51,7 +48,7 @@ public class EmailsTest {
         String recipient = strings.email();
         String linkSuffix = strings.alphanumeric(1 + new Random().nextInt(MAX_ACTIVATION_LINK_SUFFIX_LENGTH));
         String text = String.format(
-            configuration.signUpEmailTemplate(), configuration.activationLinkBase() + linkSuffix
+            configuration.signUpEmailTemplate(), configuration.emailsLinksBase() + linkSuffix
         );
         emails.sendSignUpEmail(recipient, linkSuffix);
         MimeMessage received = rule.getReceivedMessages()[0];

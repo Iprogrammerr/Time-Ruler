@@ -12,27 +12,31 @@ public class PasswordResetViews {
     private static final String INVALID_EMAIL_TEMPLATE = "invalidEmail";
     private static final String UNKNOWN_EMAIL_TEMPLATE = "unknownEmail";
     private static final String EMAIL_TEMPLATE = "email";
+    private static final String INVALID_PASSWORD_TEMPLATE = "invalidPassword";
+    private static final String PASWORD_RESET_URL_TEMPLATE = "passwordResetUrl";
     private final ViewsTemplates templates;
-    private final String name;
+    private final String emailSendName;
+    private final String changePasswordName;
 
-    public PasswordResetViews(ViewsTemplates templates, String name) {
+    public PasswordResetViews(ViewsTemplates templates, String emailSendName, String changePasswordName) {
         this.templates = templates;
-        this.name = name;
+        this.emailSendName = emailSendName;
+        this.changePasswordName = changePasswordName;
     }
 
     public PasswordResetViews(ViewsTemplates templates) {
-        this(templates, "password-reset");
+        this(templates, "password-reset", "password-reset-form");
     }
 
-    public String view() {
-        return templates.rendered(name);
+    public String sendEmailView() {
+        return templates.rendered(emailSendName);
     }
 
     public String emailSentView(String email) {
         Map<String, Object> params = new HashMap<>();
         params.put(LINK_SENT_TEMPLATE, true);
         params.put(EMAIL_TEMPLATE, email);
-        return templates.rendered(name, params);
+        return templates.rendered(emailSendName, params);
     }
 
     public String invalidEmailView(ValidateableEmail email) {
@@ -43,6 +47,13 @@ public class PasswordResetViews {
             params.put(INVALID_EMAIL_TEMPLATE, true);
         }
         params.put(EMAIL_TEMPLATE, email.value());
-        return templates.rendered(name, params);
+        return templates.rendered(emailSendName, params);
+    }
+
+    public String changePasswordView(String passwordResetUrl, boolean invalidPassword) {
+        Map<String, Object> params = new HashMap<>();
+        params.put(PASWORD_RESET_URL_TEMPLATE, passwordResetUrl);
+        params.put(INVALID_PASSWORD_TEMPLATE, invalidPassword);
+        return templates.rendered(changePasswordName, params);
     }
 }

@@ -15,9 +15,11 @@ public class Configuration {
     private static final String ADMIN_PASSWORD = "admin.password";
     private static final String SMTP_HOST = "smtp.host";
     private static final String SMTP_PORT = "smtp.port";
-    private static final String ACTIVATION_LINK_BASE = "activationLinkBase";
+    private static final String EMAILS_LINKS_BASE = "emailsLinksBase";
     private static final String SIGN_UP_EMAIL_SUBJECT = "signUpEmailSubject";
     private static final String SIGN_UP_EMAIL_TEMPLATE = "signUpEmailTemplate";
+    private static final String PASSWORD_RESET_EMAIL_SUBJECT = "passwordResetEmailSubject";
+    private static final String PASSWORD_RESET_EMAIL_TEMPLATE = "passwordResetEmailTemplate";
     private final Properties properties;
 
     public Configuration(Properties properties) {
@@ -40,12 +42,12 @@ public class Configuration {
     }
 
     public int port() {
-        return Integer.parseInt(getOrThrow(PORT));
+        return Integer.parseInt(notNull(PORT));
     }
 
     public String resourcesPath() {
         String path;
-        if (Boolean.parseBoolean(getOrThrow(COMPILED_RESOURCES))) {
+        if (Boolean.parseBoolean(notNull(COMPILED_RESOURCES))) {
             path = Configuration.class.getResource("/").getPath();
         } else {
             String classPath = Configuration.class.getResource(".").getPath();
@@ -55,51 +57,62 @@ public class Configuration {
     }
 
     public String databaseUser() {
-        return getOrThrow(DATABASE_USER);
+        return notNull(DATABASE_USER);
     }
 
     public String databasePassword() {
-        return getOrThrow(DATABASE_PASSWORD);
+        return notNull(DATABASE_PASSWORD);
     }
 
     public String jdbcUrl() {
-        return getOrThrow(JDBC_URL);
+        return notNull(JDBC_URL);
     }
 
     public String adminEmail() {
-        return getOrThrow(ADMIN_EMAIL);
+        return notNull(ADMIN_EMAIL);
     }
 
     public String adminPassword() {
-        return getOrThrow(ADMIN_PASSWORD);
+        return notNull(ADMIN_PASSWORD);
     }
 
     public String smtpHost() {
-        return getOrThrow(SMTP_HOST);
+        return notNull(SMTP_HOST);
     }
 
     public int smtpPort() {
-        return Integer.parseInt(getOrThrow(SMTP_PORT));
+        return Integer.parseInt(notNull(SMTP_PORT));
     }
 
-    public String activationLinkBase() {
-        return getOrThrow(ACTIVATION_LINK_BASE);
+    public String emailsLinksBase() {
+        return notNull(EMAILS_LINKS_BASE);
     }
 
     public String signUpEmailSubject() {
-        return getOrThrow(SIGN_UP_EMAIL_SUBJECT);
+        return notNull(SIGN_UP_EMAIL_SUBJECT);
     }
 
     public String signUpEmailTemplate() {
-        String template = getOrThrow(SIGN_UP_EMAIL_TEMPLATE);
+        return validatedEmailTemplate(SIGN_UP_EMAIL_TEMPLATE);
+    }
+
+    private String validatedEmailTemplate(String key) {
+        String template = notNull(key);
         if (!template.contains("%s")) {
-            throw new RuntimeException("Template must contain %s sign for inserting activation link");
+            throw new RuntimeException("Template must contain %s sign for inserting a link");
         }
         return template;
     }
 
+    public String passwordResetEmailSubject() {
+        return notNull(PASSWORD_RESET_EMAIL_SUBJECT);
+    }
 
-    private String getOrThrow(String key) {
+    public String passwordResetEmailTemplate() {
+        return validatedEmailTemplate(PASSWORD_RESET_EMAIL_TEMPLATE);
+    }
+
+    private String notNull(String key) {
         String value = properties.getProperty(key);
         if (value == null) {
             throw new RuntimeException(String.format("There is no property associated with %s key", key));
