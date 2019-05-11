@@ -31,7 +31,7 @@ export function Validations(minEmailNameLength = 3, minNameLength = 3, minPasswo
             valid = atIndex > minEmailNameLength && (dotIndex - atIndex) > 2 && (email.length - dotIndex) > 2;   
         }
         return valid;
-    }
+    };
 
     this.isPasswordValid = (password) => password.length >= _minPasswordLength;
     

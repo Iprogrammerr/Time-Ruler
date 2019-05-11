@@ -6,6 +6,7 @@ import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.user.User;
 import com.iprogrammerr.time.ruler.model.user.Users;
+import com.iprogrammerr.time.ruler.respondent.authentication.SigningOutRespondent;
 import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateablePassword;
@@ -34,6 +35,7 @@ public class ProfileRespondent implements GroupedRespondent {
     private static final String INVALID_OLD_PASSWORD_PARAM = "invalidOldPassword";
     private static final String NOT_USER_PASSWORD_PARAM = "notUserPassword";
     private static final String INVALID_NEW_PASSWORD_PARAM = "invalidNewPassword";
+    private final SigningOutRespondent respondent;
     private final Identity<Long> identity;
     private final Users users;
     private final Hashing hashing;
@@ -41,8 +43,9 @@ public class ProfileRespondent implements GroupedRespondent {
     private final ProfileViews views;
     private String redirect;
 
-    public ProfileRespondent(Identity<Long> identity, Users users, Hashing hashing, EmailServer emailServer,
-        ProfileViews views) {
+    public ProfileRespondent(SigningOutRespondent respondent, Identity<Long> identity, Users users, Hashing hashing,
+        EmailServer emailServer, ProfileViews views) {
+        this.respondent = respondent;
         this.identity = identity;
         this.users = users;
         this.hashing = hashing;
@@ -72,17 +75,18 @@ public class ProfileRespondent implements GroupedRespondent {
         boolean invalidOldPassword = queryParam(context, INVALID_OLD_PASSWORD_PARAM);
         boolean notUserPassword = queryParam(context, NOT_USER_PASSWORD_PARAM);
         boolean invalidNewPassword = queryParam(context, INVALID_NEW_PASSWORD_PARAM);
+        User user = users.user(identity.value(context.req));
         String view;
         if (confirmationEmailSent) {
-            view = views.confirmationEmailSentView(users.user(identity.value(context.req)));
+            view = views.confirmationEmailSentView(user);
         } else if ((invalidEmail && !email.isValid()) || usedEmail) {
-            view = views.invalidEmailView(email, usedEmail);
+            view = views.invalidEmailView(email, usedEmail, user.name);
         } else if ((invalidName && !name.isValid()) || usedName) {
-            view = views.invalidNameView(name, usedName);
+            view = views.invalidNameView(name, usedName, user.email);
         } else if (invalidOldPassword || notUserPassword || invalidNewPassword) {
-            view = views.invalidPasswordView(invalidOldPassword, notUserPassword, invalidNewPassword);
+            view = views.invalidPasswordView(user, invalidOldPassword, notUserPassword, invalidNewPassword);
         } else {
-            view = views.defaultView(users.user(identity.value(context.req)));
+            view = views.defaultView(user);
         }
         context.html(view);
     }
@@ -129,8 +133,8 @@ public class ProfileRespondent implements GroupedRespondent {
         } else if (!oldPassword.isValid() || !newPassword.isValid()) {
             redirectToInvalidPassword(context, oldPassword, false, newPassword);
         } else {
-            users.update(user.withPassword(newPassword.value()));
-            context.redirect(redirect);
+            users.update(user.withPassword(hashing.hash(newPassword.value())));
+            respondent.newPasswordSignOut(context);
         }
     }
 

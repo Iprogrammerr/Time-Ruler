@@ -24,6 +24,7 @@ public class SigningInRespondent implements Respondent {
 
     public static final String SIGN_IN = "sign-in";
     private static final String FAREWELL_PARAM = "farewell";
+    private static final String NEW_PASSWORD_PARAM = "newPassword";
     private static final String FORM_EMAIL_NAME = "emailName";
     private static final String FORM_PASSWORD = "password";
     private static final String ACTIVATION = "activation";
@@ -52,13 +53,25 @@ public class SigningInRespondent implements Respondent {
         String activation = context.queryParam(ACTIVATION, "");
         if (activation.isEmpty()) {
             if (context.req.getSession(false) == null) {
-                boolean farewell = context.queryParam(FAREWELL_PARAM, Boolean.class, Boolean.toString(false)).get();
-                context.html(farewell ? views.withFarewellView() : views.validView());
+                showProperSignIn(context);
             } else {
                 respondent.redirect(context);
             }
         } else {
             activate(context, activation);
+        }
+    }
+
+    private void showProperSignIn(Context context) {
+        boolean farewell = context.queryParam(FAREWELL_PARAM, Boolean.class, Boolean.toString(false)).get();
+        boolean newPassword = context.queryParam(NEW_PASSWORD_PARAM, Boolean.class,
+            Boolean.toString(false)).get();
+        if (farewell) {
+            context.html(views.withFarewellView());
+        } else if (newPassword) {
+            context.html(views.withNewPasswordView());
+        } else {
+            context.html(views.validView());
         }
     }
 
@@ -121,6 +134,10 @@ public class SigningInRespondent implements Respondent {
     }
 
     public void redirectWithFarewell(Context context) {
-        context.redirect(new UrlQueryBuilder().put(FAREWELL_PARAM, true).build(SIGN_IN));
+        context.redirect(new UrlQueryBuilder().put(FAREWELL_PARAM, true).build("/" + SIGN_IN));
+    }
+
+    public void redirectWithNewPassword(Context context) {
+        context.redirect(new UrlQueryBuilder().put(NEW_PASSWORD_PARAM, true).build("/" + SIGN_IN));
     }
 }

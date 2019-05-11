@@ -22,6 +22,11 @@ public class SigningOutRespondent implements Respondent {
     }
 
     private void signOut(Context context) {
+        clearData(context);
+        respondent.redirectWithFarewell(context);
+    }
+
+    private void clearData(Context context) {
         HttpSession session = context.req.getSession(false);
         if (session != null) {
             session.invalidate();
@@ -33,6 +38,10 @@ public class SigningOutRespondent implements Respondent {
                 context.cookie(c);
             }
         }
-        respondent.redirectWithFarewell(context);
+    }
+
+    public void newPasswordSignOut(Context context) {
+        clearData(context);
+        respondent.redirectWithNewPassword(context);
     }
 }

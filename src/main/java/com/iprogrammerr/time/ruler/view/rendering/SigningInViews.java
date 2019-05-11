@@ -13,6 +13,7 @@ public class SigningInViews {
     private static final String INVALID_PASSWORD_TEMPLATE = "invalidPassword";
     private static final String NOT_USER_PASSWORD_TEMPLATE = "notUserPassword";
     private static final String ACTIVATION_TEMPLATE = "activation";
+    private static final String PASSWORD_CHANGE_TEMPLATE = "passwordChange";
     private static final String SIGN_OUT_TEMPLATE = "signOut";
     private static final String SIGN_UP_URL_TEMPLATE = "signUpUrl";
     private final ViewsTemplates templates;
@@ -64,18 +65,21 @@ public class SigningInViews {
         return withSignUpUrl(params);
     }
 
-    public String withFarewellView() {
-        return withMessageView(true);
+    public String withNewPasswordView() {
+        return withMessageView(PASSWORD_CHANGE_TEMPLATE);
     }
 
-    private String withMessageView(boolean farewell) {
+    public String withFarewellView() {
+        return withMessageView(SIGN_OUT_TEMPLATE);
+    }
+
+    private String withMessageView(String key) {
         Map<String, Object> params = new HashMap<>();
-        params.put(ACTIVATION_TEMPLATE, !farewell);
-        params.put(SIGN_OUT_TEMPLATE, farewell);
+        params.put(key, true);
         return withSignUpUrl(params);
     }
 
     public String withActivationCongratulationsView() {
-        return withMessageView(false);
+        return withMessageView(ACTIVATION_TEMPLATE);
     }
 }

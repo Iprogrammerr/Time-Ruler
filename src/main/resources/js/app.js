@@ -28,6 +28,9 @@ export const endpoints = {
     signIn: `${host}sign-in`,
     signUp: `${host}sign-up`,
     signOut: `${host}sign-out`,
+    profileEmail: `${host}profile/email`,
+    profileName: `${host}profile/name`,
+    profilePassword: `${host}profile/password`
 };
 
 export const paramsKeys = {

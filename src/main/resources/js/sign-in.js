@@ -20,8 +20,8 @@ signIn.onclick = () => {
 function isFormValid() {
     let valid = true;
     errors.clearAll(emailNameError, nonExistentUser, passwordError, notUserPassword);
-    let emailOrLogin = inputs[0].value;
-    if (!validations.isEmailValid(emailOrLogin) && !validations.isNameValid(emailOrLogin)) {
+    let emailOrName = inputs[0].value;
+    if (!validations.isEmailValid(emailOrName) && !validations.isNameValid(emailOrName)) {
         valid = false;
         errors.set(emailNameError);
     }

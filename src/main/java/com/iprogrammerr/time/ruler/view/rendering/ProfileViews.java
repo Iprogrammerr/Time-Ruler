@@ -55,24 +55,29 @@ public class ProfileViews {
         return defaultView(user, true);
     }
 
-    public String invalidEmailView(ValidateableEmail email, boolean usedEmail) {
+    public String invalidEmailView(ValidateableEmail email, boolean usedEmail, String name) {
         Map<String, Object> params = new HashMap<>();
         params.put(EMAIL_TEMPLATE, email.value());
         params.put(INVALID_EMAIL_TEMPLATE, !email.isValid());
         params.put(USED_EMAIL_TEMPLATE, usedEmail);
+        params.put(NAME_TEMPLATE, name);
         return withActiveTabSet(params);
     }
 
-    public String invalidNameView(ValidateableName name, boolean usedName) {
+    public String invalidNameView(ValidateableName name, boolean usedName, String email) {
         Map<String, Object> params = new HashMap<>();
         params.put(NAME_TEMPLATE, name.value());
         params.put(INVALID_NAME_TEMPLATE, !name.isValid());
         params.put(USED_NAME_TEMPLATE, usedName);
+        params.put(EMAIL_TEMPLATE, email);
         return withActiveTabSet(params);
     }
 
-    public String invalidPasswordView(boolean invalidOldPassword, boolean notUserPassword, boolean invalidNewPassword) {
+    public String invalidPasswordView(User user, boolean invalidOldPassword, boolean notUserPassword,
+        boolean invalidNewPassword) {
         Map<String, Object> params = new HashMap<>();
+        params.put(EMAIL_TEMPLATE, user.email);
+        params.put(NAME_TEMPLATE, user.name);
         params.put(SHOW_PASSWORDS_TEMPLATE, true);
         params.put(INVALID_OLD_PASSWORD_TEMPLATE, invalidOldPassword);
         params.put(NOT_USER_PASSWORD_TEMPLATE, notUserPassword);

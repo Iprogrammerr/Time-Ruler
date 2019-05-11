@@ -125,8 +125,6 @@ public class App {
         WelcomeRespondent welcomeRespondent = new WelcomeRespondent(viewsTemplates);
         CalendarRespondent calendarRespondent = new CalendarRespondent(identity, calendarViews, dates,
             serverClientDates);
-        ProfileRespondent profileRespondent = new ProfileRespondent(identity, users, hashing, emailServer,
-            profileViews);
         DayPlanExecutionRespondent dayPlanExecutionRespondent = new DayPlanExecutionRespondent(identity,
             dayPlanExecutionViews, activitiesSearch, limitedDate, dateParsing, serverClientDates);
         DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, dayPlanViews, activitiesSearch,
@@ -140,6 +138,8 @@ public class App {
             users, hashing, identity);
         SigningUpRespondent signingUpRespondent = new SigningUpRespondent(signingUpViews, users, hashing, emails);
         SigningOutRespondent signingOutRespondent = new SigningOutRespondent(signingInRespondent);
+        ProfileRespondent profileRespondent = new ProfileRespondent(signingOutRespondent, identity, users, hashing,
+            emailServer, profileViews);
         ErrorRespondent errorRespondent = new ErrorRespondent(errorViews);
 
         String userGroup = "user/";
