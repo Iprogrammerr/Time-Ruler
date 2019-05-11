@@ -35,18 +35,6 @@ public class User {
         return new User(id, name, email, password, active);
     }
 
-    public User withName(String name) {
-        return new User(this.id, name, this.email, this.password, this.active);
-    }
-
-    public User withEmail(String email) {
-        return new User(this.id, this.name, email, this.password, this.active);
-    }
-
-    public User withPassword(String password) {
-        return new User(this.id, this.name, this.email, password, this.active);
-    }
-
     @Override
     public String toString() {
         return "User{" +

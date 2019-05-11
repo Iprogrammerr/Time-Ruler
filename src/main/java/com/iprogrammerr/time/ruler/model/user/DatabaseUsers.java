@@ -43,16 +43,6 @@ public class DatabaseUsers implements Users {
     }
 
     @Override
-    public void update(User user) {
-        session.update(
-            new Record(User.TABLE)
-                .put(User.NAME, user.name).put(User.EMAIL, user.email).put(User.PASSWORD, user.password)
-                .put(User.ACTIVE, user.active),
-            "id = ?", user.id
-        );
-    }
-
-    @Override
     public User user(long id) {
         return session.select(r -> mapOrThrow(r, "There is no user with %s id", String.valueOf(id)),
             "SELECT * FROM user WHERE id = ?", id);

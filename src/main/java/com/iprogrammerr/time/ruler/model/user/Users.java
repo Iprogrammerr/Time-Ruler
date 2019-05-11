@@ -16,6 +16,4 @@ public interface Users {
     Optional<User> withName(String name);
 
     long create(String name, String email, String password);
-
-    void update(User user);
 }

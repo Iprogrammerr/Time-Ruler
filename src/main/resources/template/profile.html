@@ -12,14 +12,15 @@
     <div class="centered-h">
         <form id="emailForm">
             <h1 th:text="#{email}"></h1>
+            <p id="emailChanged" th:class="!${emailChanged} ? hidden" th:text="#{emailChanged}"></p>
             <p id="invalidEmail" th:class="${invalidEmail} ? error : error-hidden" th:text="#{invalidEmail}"></p>
             <p id="usedEmail" th:class="${usedEmail} ? error : error-hidden" th:text="#{usedEmail}"></p>
-            <p id="confirmationEmailSent" th:class="!${confirmationEmailSent} ? hidden" th:text="#{confirmationEmailSent}"></p>
             <input type="email" name="email" th:value="${email}"></input>
             <input id="saveEmail" type="submit" th:value="#{save}" class="main"></input>
         </form>
         <form id="nameForm">
             <h1 th:text="#{name}"></h1>
+            <p id="nameChanged" th:class="!${nameChanged} ? hidden" th:text="#{nameChanged}"></p>
             <p id="invalidName" th:class="${invalidName} ? error : error-hidden" th:text="#{invalidName}"></p>
             <p id="usedName" th:class="${usedName} ? error : error-hidden" th:text="#{usedName}"></p>
             <input type="text" name="name" th:value="${name}"></input>

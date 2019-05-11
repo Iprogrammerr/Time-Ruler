@@ -1,11 +1,11 @@
 package com.iprogrammerr.time.ruler.respondent;
 
-import com.iprogrammerr.time.ruler.email.EmailServer;
 import com.iprogrammerr.time.ruler.model.Hashing;
 import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.user.User;
 import com.iprogrammerr.time.ruler.model.user.Users;
+import com.iprogrammerr.time.ruler.model.user.UsersActualization;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningOutRespondent;
 import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
@@ -14,7 +14,6 @@ import com.iprogrammerr.time.ruler.view.rendering.ProfileViews;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
-//TODO modify all post requests to follow Post/Redirect/Get pattern
 public class ProfileRespondent implements GroupedRespondent {
 
     private static final String PROFILE = "profile";
@@ -26,10 +25,11 @@ public class ProfileRespondent implements GroupedRespondent {
     private static final String FORM_OLD_PASSWORD = "oldPassword";
     private static final String FORM_NEW_PASSWORD = "newPassword";
     private static final String EMAIL_PARAM = FORM_EMAIL;
+    private static final String EMAIL_CHANGED_PARAM = "emailChanged";
     private static final String INVALID_EMAIL_PARAM = "invalidEmail";
     private static final String USED_EMAIL_PARAM = "usedEmail";
-    private static final String CONFIRMATION_EMAIL_SENT_PARAM = "confirmationEmailSent";
     private static final String NAME_PARAM = FORM_NAME;
+    private static final String NAME_CHANGED_PARAM = "nameChanged";
     private static final String INVALID_NAME_PARAM = "invalidName";
     private static final String USED_NAME_PARAM = "usedName";
     private static final String INVALID_OLD_PASSWORD_PARAM = "invalidOldPassword";
@@ -38,18 +38,18 @@ public class ProfileRespondent implements GroupedRespondent {
     private final SigningOutRespondent respondent;
     private final Identity<Long> identity;
     private final Users users;
+    private final UsersActualization actualization;
     private final Hashing hashing;
-    private final EmailServer emailServer;
     private final ProfileViews views;
     private String redirect;
 
-    public ProfileRespondent(SigningOutRespondent respondent, Identity<Long> identity, Users users, Hashing hashing,
-        EmailServer emailServer, ProfileViews views) {
+    public ProfileRespondent(SigningOutRespondent respondent, Identity<Long> identity, Users users,
+        UsersActualization actualization, Hashing hashing, ProfileViews views) {
         this.respondent = respondent;
         this.identity = identity;
         this.users = users;
+        this.actualization = actualization;
         this.hashing = hashing;
-        this.emailServer = emailServer;
         this.views = views;
         this.redirect = "";
     }
@@ -67,9 +67,10 @@ public class ProfileRespondent implements GroupedRespondent {
     private void showProfile(Context context) {
         ValidateableEmail email = new ValidateableEmail(context.queryParam(EMAIL_PARAM, ""));
         ValidateableName name = new ValidateableName(context.queryParam(NAME_PARAM, ""));
+        boolean emailChanged = queryParam(context, EMAIL_CHANGED_PARAM);
         boolean invalidEmail = queryParam(context, INVALID_EMAIL_PARAM);
         boolean usedEmail = queryParam(context, USED_EMAIL_PARAM);
-        boolean confirmationEmailSent = queryParam(context, CONFIRMATION_EMAIL_SENT_PARAM);
+        boolean nameChanged = queryParam(context, NAME_CHANGED_PARAM);
         boolean invalidName = queryParam(context, INVALID_NAME_PARAM);
         boolean usedName = queryParam(context, USED_NAME_PARAM);
         boolean invalidOldPassword = queryParam(context, INVALID_OLD_PASSWORD_PARAM);
@@ -77,16 +78,18 @@ public class ProfileRespondent implements GroupedRespondent {
         boolean invalidNewPassword = queryParam(context, INVALID_NEW_PASSWORD_PARAM);
         User user = users.user(identity.value(context.req));
         String view;
-        if (confirmationEmailSent) {
-            view = views.confirmationEmailSentView(user);
-        } else if ((invalidEmail && !email.isValid()) || usedEmail) {
+        if ((invalidEmail && !email.isValid()) || usedEmail) {
             view = views.invalidEmailView(email, usedEmail, user.name);
         } else if ((invalidName && !name.isValid()) || usedName) {
             view = views.invalidNameView(name, usedName, user.email);
         } else if (invalidOldPassword || notUserPassword || invalidNewPassword) {
             view = views.invalidPasswordView(user, invalidOldPassword, notUserPassword, invalidNewPassword);
+        } else if (emailChanged) {
+            view = views.emailChangedView(user);
+        } else if (nameChanged) {
+            view = views.nameChangedView(user);
         } else {
-            view = views.defaultView(user);
+            view = views.view(user);
         }
         context.html(view);
     }
@@ -102,16 +105,11 @@ public class ProfileRespondent implements GroupedRespondent {
         } else if (!email.isValid()) {
             redirectToInvalidEmail(context, email, false);
         } else {
-            sendConfirmationEmail(email.value());
-            redirectToWithEmailSentMessage(context);
+            actualization.updateEmail(identity.value(context.req), email.value());
+            redirectToEmailChanged(context);
         }
     }
 
-    private void sendConfirmationEmail(String recipient) {
-        //TODO send meaningful link
-    }
-
-    //TODO improve update queries
     private void updateName(Context context) {
         ValidateableName name = new ValidateableName(context.formParam(FORM_NAME));
         if (name.isValid() && users.withName(name.value()).isPresent()) {
@@ -119,8 +117,8 @@ public class ProfileRespondent implements GroupedRespondent {
         } else if (!name.isValid()) {
             redirectToInvalidName(context, name, false);
         } else {
-            users.update(users.user(identity.value(context.req)).withName(name.value()));
-            context.redirect(redirect);
+            actualization.updateName(identity.value(context.req), name.value());
+            redirectToNameChanged(context);
         }
     }
 
@@ -133,15 +131,23 @@ public class ProfileRespondent implements GroupedRespondent {
         } else if (!oldPassword.isValid() || !newPassword.isValid()) {
             redirectToInvalidPassword(context, oldPassword, false, newPassword);
         } else {
-            users.update(user.withPassword(hashing.hash(newPassword.value())));
+            actualization.updatePassword(user.id, hashing.hash(newPassword.value()));
             respondent.newPasswordSignOut(context);
         }
+    }
+
+    private void redirectToEmailChanged(Context context) {
+        context.redirect(new UrlQueryBuilder().put(EMAIL_CHANGED_PARAM, true).build(redirect));
     }
 
     private void redirectToInvalidEmail(Context context, ValidateableEmail email, boolean usedEmail) {
         String url = new UrlQueryBuilder().put(EMAIL_PARAM, email.value()).put(INVALID_EMAIL_PARAM, !email.isValid())
             .put(USED_EMAIL_PARAM, usedEmail).build(redirect);
         context.redirect(url);
+    }
+
+    private void redirectToNameChanged(Context context) {
+        context.redirect(new UrlQueryBuilder().put(NAME_CHANGED_PARAM, true).build(redirect));
     }
 
     private void redirectToInvalidName(Context context, ValidateableName name, boolean usedName) {
@@ -157,9 +163,5 @@ public class ProfileRespondent implements GroupedRespondent {
             .put(INVALID_NEW_PASSWORD_PARAM, !newPassword.isValid())
             .build(redirect);
         context.redirect(url);
-    }
-
-    private void redirectToWithEmailSentMessage(Context context) {
-        context.redirect(new UrlQueryBuilder().put(CONFIRMATION_EMAIL_SENT_PARAM, true).build(redirect));
     }
 }

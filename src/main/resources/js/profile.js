@@ -3,12 +3,13 @@ import { FormAction } from "./http/form-action.js";
 
 const HIDDEN_DISPLAY = "none";
 const emailForm = document.getElementById("emailForm");
+const emailChanged = document.getElementById("emailChanged");
 const invalidEmail = document.getElementById("invalidEmail");
 const usedEmail = document.getElementById("usedEmail");
-const confirmationEmailSent = document.getElementById("confirmationEmailSent");
 const saveEmail = document.getElementById("saveEmail");
 
 const nameForm = document.getElementById("nameForm");
+const nameChanged = document.getElementById("nameChanged");
 const invalidName = document.getElementById("invalidName");
 const usedName = document.getElementById("usedName");
 const saveName = document.getElementById("saveName");
@@ -32,7 +33,7 @@ tabsNavigation.setup(document.querySelector("div"));
 window.addEventListener("submit", e => e.preventDefault());
 
 saveEmail.onclick = () => {
-    confirmationEmailSent.style.display = HIDDEN_DISPLAY;
+    clearMessages();
     errors.clearAll(invalidEmail, usedEmail);
     if (validations.isEmailValid(inputs.email.value)) {
         new FormAction(emailForm).submit(endpoints.profileEmail);
@@ -42,7 +43,13 @@ saveEmail.onclick = () => {
     }
 };
 
+function clearMessages() {
+    emailChanged.style.display = HIDDEN_DISPLAY;
+    nameChanged.style.display = HIDDEN_DISPLAY;
+};
+
 saveName.onclick = () => {
+    clearMessages();
     errors.clearAll(invalidName, usedName);
     if (validations.isNameValid(inputs.name.value)) {
         new FormAction(nameForm).submit(endpoints.profileName);
@@ -53,6 +60,7 @@ saveName.onclick = () => {
 };
 
 savePassword.onclick = () => {
+    clearMessages();
     errors.clearAll(invalidOldPassword, notUserPassword, invalidNewPassword);
     let oldValid = validations.isPasswordValid(inputs.oldPassword.value);
     let newValid = validations.isPasswordValid(inputs.newPassword.value);

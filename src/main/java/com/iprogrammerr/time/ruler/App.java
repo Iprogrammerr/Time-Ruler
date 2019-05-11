@@ -23,7 +23,9 @@ import com.iprogrammerr.time.ruler.model.description.DatabaseDescriptions;
 import com.iprogrammerr.time.ruler.model.description.Descriptions;
 import com.iprogrammerr.time.ruler.model.session.SessionIdentity;
 import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
+import com.iprogrammerr.time.ruler.model.user.DatabaseUsersActualization;
 import com.iprogrammerr.time.ruler.model.user.Users;
+import com.iprogrammerr.time.ruler.model.user.UsersActualization;
 import com.iprogrammerr.time.ruler.respondent.CalendarRespondent;
 import com.iprogrammerr.time.ruler.respondent.ErrorRespondent;
 import com.iprogrammerr.time.ruler.respondent.ProfileRespondent;
@@ -108,6 +110,7 @@ public class App {
         DataSource dataSource = new HikariDataSource(config);
         DatabaseSession session = new SqlDatabaseSession(dataSource, new QueryTemplates());
         Users users = new DatabaseUsers(session);
+        UsersActualization actualization = new DatabaseUsersActualization(session);
         Activities activities = new DatabaseActivities(session);
         ActivitiesSearch activitiesSearch = new DatabaseActivitiesSearch(session);
         Dates dates = new DatabaseDates(session);
@@ -135,11 +138,11 @@ public class App {
         ActivitiesRespondent activitiesRespondent = new ActivitiesRespondent(identity, activitiesViews,
             activitiesSearch, serverClientDates);
         SigningInRespondent signingInRespondent = new SigningInRespondent(dayPlanExecutionRespondent, signingInViews,
-            users, hashing, identity);
+            users, actualization, hashing, identity);
         SigningUpRespondent signingUpRespondent = new SigningUpRespondent(signingUpViews, users, hashing, emails);
         SigningOutRespondent signingOutRespondent = new SigningOutRespondent(signingInRespondent);
-        ProfileRespondent profileRespondent = new ProfileRespondent(signingOutRespondent, identity, users, hashing,
-            emailServer, profileViews);
+        ProfileRespondent profileRespondent = new ProfileRespondent(signingOutRespondent, identity, users,
+            actualization, hashing, profileViews);
         ErrorRespondent errorRespondent = new ErrorRespondent(errorViews);
 
         String userGroup = "user/";

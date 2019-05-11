@@ -58,16 +58,6 @@ public class DatabaseUsersTest {
     }
 
     @Test
-    public void updates() {
-        RandomUsers randomUsers = new RandomUsers();
-        User toCreate = randomUsers.user();
-        long id = users.create(toCreate.name, toCreate.email, toCreate.password);
-        User toUpdate = randomUsers.user(id);
-        users.update(toUpdate);
-        MatcherAssert.assertThat("Update failure", users.user(id), Matchers.equalTo(toUpdate));
-    }
-
-    @Test
     public void throwsExceptionIfUserWithIdDoesNotExist() {
         long id = 1;
         MatcherAssert.assertThat(

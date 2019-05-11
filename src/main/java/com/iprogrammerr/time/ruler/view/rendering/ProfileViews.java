@@ -12,10 +12,11 @@ import java.util.Map;
 public class ProfileViews {
 
     private static final String EMAIL_TEMPLATE = "email";
+    private static final String EMAIL_CHANGED = "emailChanged";
     private static final String INVALID_EMAIL_TEMPLATE = "invalidEmail";
     private static final String USED_EMAIL_TEMPLATE = "usedEmail";
-    private static final String CONFIRMATION_EMAIL_SENT_TEMPLATE = "confirmationEmailSent";
     private static final String NAME_TEMPLATE = "name";
+    private static final String NAME_CHANGED = "nameChanged";
     private static final String INVALID_NAME_TEMPLATE = "invalidName";
     private static final String USED_NAME_TEMPLATE = "usedName";
     private static final String SHOW_PASSWORDS_TEMPLATE = "showPasswords";
@@ -34,15 +35,16 @@ public class ProfileViews {
         this(templates, "profile");
     }
 
-    public String defaultView(User user) {
-        return defaultView(user, false);
+    public String view(User user) {
+        return view(user, false, false);
     }
 
-    private String defaultView(User user, boolean emailConfirmationSent) {
+    private String view(User user, boolean emailChanged, boolean nameChanged) {
         Map<String, Object> params = new HashMap<>();
         params.put(EMAIL_TEMPLATE, user.email);
-        params.put(CONFIRMATION_EMAIL_SENT_TEMPLATE, emailConfirmationSent);
         params.put(NAME_TEMPLATE, user.name);
+        params.put(EMAIL_CHANGED, emailChanged);
+        params.put(NAME_CHANGED, nameChanged);
         return withActiveTabSet(params);
     }
 
@@ -51,8 +53,12 @@ public class ProfileViews {
         return templates.rendered(name, params);
     }
 
-    public String confirmationEmailSentView(User user) {
-        return defaultView(user, true);
+    public String emailChangedView(User user) {
+        return view(user, true, false);
+    }
+
+    public String nameChangedView(User user) {
+        return view(user, false, true);
     }
 
     public String invalidEmailView(ValidateableEmail email, boolean usedEmail, String name) {

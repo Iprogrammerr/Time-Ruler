@@ -97,7 +97,7 @@ public class DatabaseActivitiesTest {
         long id = insertActivityWithUser();
         boolean done = !activities.activity(id).get().done;
         activities.setDone(id, done);
-        MatcherAssert.assertThat("Does not update done status", activities.activity(id).get().done,
+        MatcherAssert.assertThat("Does not activate done status", activities.activity(id).get().done,
             Matchers.equalTo(done));
     }
 }

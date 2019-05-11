@@ -147,7 +147,7 @@ public class DatabaseActivitiesSearchTest {
             Activity a = randomActivities.activity(userId, ascending ? date + i : date - i);
             userActivities.add(a.withId(activities.create(a)));
         }
-        int offset = toCreate / (1 + random.nextInt(toCreate - 1));
+        int offset = random.nextInt(toCreate);
         int limit = toCreate - offset;
         MatcherAssert.assertThat("Does not return limited list with offset properly sorted",
             activitiesSearch.userActivities(userId, offset, limit, ascending),

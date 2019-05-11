@@ -7,6 +7,7 @@ import com.iprogrammerr.time.ruler.model.error.ErrorCode;
 import com.iprogrammerr.time.ruler.model.error.ResponseException;
 import com.iprogrammerr.time.ruler.model.user.User;
 import com.iprogrammerr.time.ruler.model.user.Users;
+import com.iprogrammerr.time.ruler.model.user.UsersActualization;
 import com.iprogrammerr.time.ruler.respondent.Respondent;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanExecutionRespondent;
 import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
@@ -31,14 +32,16 @@ public class SigningInRespondent implements Respondent {
     private final DayPlanExecutionRespondent respondent;
     private final SigningInViews views;
     private final Users users;
+    private final UsersActualization actualization;
     private final Hashing hashing;
     private final Identity<Long> identity;
 
     public SigningInRespondent(DayPlanExecutionRespondent respondent, SigningInViews views, Users users,
-        Hashing hashing, Identity<Long> identity) {
+        UsersActualization actualization, Hashing hashing, Identity<Long> identity) {
         this.respondent = respondent;
         this.views = views;
         this.users = users;
+        this.actualization = actualization;
         this.hashing = hashing;
         this.identity = identity;
     }
@@ -117,7 +120,7 @@ public class SigningInRespondent implements Respondent {
         for (User u : inactive) {
             String hash = userHash(u.email, u.name, u.id);
             if (activation.equals(hash)) {
-                users.update(new User(u.id, u.name, u.email, u.password, true));
+                actualization.activate(u.id);
                 activated = true;
                 break;
             }

@@ -93,7 +93,7 @@ public class DatabaseDescriptionsTest {
         description = new Description(activity.id,
             description.content.substring(0, 1 + random.nextInt(description.content.length())));
         descriptions.updateOrCreate(description);
-        MatcherAssert.assertThat("Does not update description", description.content,
+        MatcherAssert.assertThat("Does not activate description", description.content,
             Matchers.equalTo(descriptions.describedActivity(activity.id).description));
     }
 
