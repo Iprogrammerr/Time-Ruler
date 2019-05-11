@@ -34,7 +34,7 @@ public class YearMonth {
                 String.format("%d is not a proper year value. It has to be in %d - %d range.", defaultYear, 0, maxYear)
             );
         }
-        int year = queryParams.integer(yearKey, defaultYear);
+        int year = queryParams.integerValue(yearKey, defaultYear);
         if (isYearInvalid(year)) {
             year = defaultYear;
         }
@@ -52,7 +52,7 @@ public class YearMonth {
                     MAX_MONTH)
             );
         }
-        int month = queryParams.integer(monthKey, defaultMonth);
+        int month = queryParams.integerValue(monthKey, defaultMonth);
         if (isMonthInvalid(month)) {
             month = defaultMonth;
         }

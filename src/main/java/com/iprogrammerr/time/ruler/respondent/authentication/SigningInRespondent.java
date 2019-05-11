@@ -20,8 +20,6 @@ import io.javalin.Javalin;
 import java.util.List;
 import java.util.Optional;
 
-//TODO modify all post requests to follow Post/Redirect/Get pattern
-// Do not allow inactive users to sign in
 public class SigningInRespondent implements Respondent {
 
     public static final String SIGN_IN = "sign-in";
@@ -29,6 +27,11 @@ public class SigningInRespondent implements Respondent {
     private static final String NEW_PASSWORD_PARAM = "newPassword";
     private static final String FORM_EMAIL_NAME = "emailName";
     private static final String FORM_PASSWORD = "password";
+    private static final String EMAIL_NAME_PARAM = FORM_EMAIL_NAME;
+    private static final String NON_EXISTENT_USER_PARAM = "nonExistentUser";
+    private static final String INACTIVE_ACCOUNT_PARAM = "inactiveAccount";
+    private static final String INVALID_PASSWORD_PARAM = "invalidPassword";
+    private static final String NOT_USER_PASSWORD_PARAM = "notUserPassword";
     private static final String ACTIVATION = "activation";
     private final DayPlanExecutionRespondent respondent;
     private final SigningInViews views;
@@ -67,29 +70,57 @@ public class SigningInRespondent implements Respondent {
     }
 
     private void showProperSignIn(Context context) {
-        boolean farewell = context.queryParam(FAREWELL_PARAM, Boolean.class, Boolean.toString(false)).get();
-        boolean newPassword = context.queryParam(NEW_PASSWORD_PARAM, Boolean.class,
-            Boolean.toString(false)).get();
+        boolean farewell = queryParam(context, FAREWELL_PARAM);
+        boolean newPassword = queryParam(context, NEW_PASSWORD_PARAM);
+        boolean nonExistentUser = queryParam(context, NON_EXISTENT_USER_PARAM);
+        boolean inactiveAccount = queryParam(context, INACTIVE_ACCOUNT_PARAM);
+        boolean notUserPassword = queryParam(context, NOT_USER_PASSWORD_PARAM);
+        boolean invalidPassword = queryParam(context, INVALID_PASSWORD_PARAM);
+        String emailName = context.queryParam(EMAIL_NAME_PARAM, "");
+        String view;
         if (farewell) {
-            context.html(views.withFarewellView());
+            view = views.withFarewellView();
         } else if (newPassword) {
-            context.html(views.withNewPasswordView());
+            view = views.withNewPasswordView();
+        } else if (emailName.isEmpty()) {
+            view = views.validView();
         } else {
-            context.html(views.validView());
+            view = views.invalidView(emailName, nonExistentUser, inactiveAccount, notUserPassword, invalidPassword);
         }
+        context.html(view);
+    }
+
+    private boolean queryParam(Context context, String key) {
+        return context.queryParam(key, Boolean.class, Boolean.toString(false)).get();
     }
 
     private void signIn(Context context) {
-        String emailOrLogin = context.formParam(FORM_EMAIL_NAME, "");
-        ValidateableEmail email = new ValidateableEmail(emailOrLogin);
-        ValidateableName name = new ValidateableName(emailOrLogin);
+        String emailName = context.formParam(FORM_EMAIL_NAME, "");
+        ValidateableEmail email = new ValidateableEmail(emailName);
+        ValidateableName name = new ValidateableName(emailName);
         ValidateablePassword password = new ValidateablePassword(context.formParam(FORM_PASSWORD, ""));
         if ((email.isValid() || name.isValid()) && password.isValid()) {
             signInOrSetError(context, email.isValid() ? email.value() : name.value(), hashing.hash(password.value()));
+        } else if (!password.isValid()) {
+            redirect(context, emailName, INVALID_PASSWORD_PARAM, true);
         } else {
-            context.html(views.invalidView(emailOrLogin, password.isValid()));
+            redirect(context, EMAIL_NAME_PARAM, emailName);
         }
     }
+
+    private void redirect(Context context, String key, Object param) {
+        context.redirect(new UrlQueryBuilder().put(key, param).build("/" + SIGN_IN));
+    }
+
+    private void redirect(Context context, String emailName, String key, Object param) {
+        if (emailName.isEmpty()) {
+            redirect(context, key, param);
+        } else {
+            context.redirect(new UrlQueryBuilder().put(EMAIL_NAME_PARAM, emailName)
+                .put(key, param).build("/" + SIGN_IN));
+        }
+    }
+
 
     private void signInOrSetError(Context context, String emailOrName, String passwordHash) {
         Optional<User> user = withEmailOrName(emailOrName);
@@ -99,12 +130,12 @@ public class SigningInRespondent implements Respondent {
                 identity.create(userVal.id, context.req);
                 respondent.redirect(context);
             } else if (!userVal.active) {
-                context.html(views.notActiveUserView(emailOrName));
+                redirect(context, emailOrName, INACTIVE_ACCOUNT_PARAM, true);
             } else {
-                context.html(views.notUserPasswordView(emailOrName));
+                redirect(context, emailOrName, NOT_USER_PASSWORD_PARAM, true);
             }
         } else {
-            context.html(views.nonExistentUserView(emailOrName));
+            redirect(context, emailOrName, NON_EXISTENT_USER_PARAM, true);
         }
     }
 
@@ -118,6 +149,7 @@ public class SigningInRespondent implements Respondent {
         return user;
     }
 
+    //TODO refactor to follow POST/REDIRECT/GET
     private void activate(Context context, String activation) {
         List<User> inactive = users.allInactive();
         boolean activated = false;
@@ -141,10 +173,10 @@ public class SigningInRespondent implements Respondent {
     }
 
     public void redirectWithFarewell(Context context) {
-        context.redirect(new UrlQueryBuilder().put(FAREWELL_PARAM, true).build("/" + SIGN_IN));
+        redirect(context, FAREWELL_PARAM, true);
     }
 
     public void redirectWithNewPassword(Context context) {
-        context.redirect(new UrlQueryBuilder().put(NEW_PASSWORD_PARAM, true).build("/" + SIGN_IN));
+        redirect(context, NEW_PASSWORD_PARAM, true);
     }
 }

@@ -1,5 +1,7 @@
 package com.iprogrammerr.time.ruler.view.rendering;
 
+import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
+import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 
 import java.util.HashMap;
@@ -44,11 +46,29 @@ public class SigningInViews {
         return templates.rendered(name, params);
     }
 
-    public String invalidView(String invalidEmailName, boolean invalidPassword) {
+    public String invalidView(String emailName, boolean nonExistentUser, boolean inactiveAccount,
+        boolean notUserPassword, boolean invalidPassword) {
+        String view;
+        if (nonExistentUser) {
+            view = nonExistentUserView(emailName);
+        } else if (inactiveAccount) {
+            view = notActiveUserView(emailName);
+        } else if (notUserPassword) {
+            view = notUserPasswordView(emailName);
+        } else {
+            view = invalidView(emailName, invalidPassword);
+        }
+        return view;
+    }
+
+    private String invalidView(String invalidEmailName, boolean invalidPassword) {
         Map<String, Object> params = new HashMap<>();
         if (!invalidEmailName.isEmpty()) {
             params.put(EMAIL_NAME_TEMPLATE, invalidEmailName);
-            params.put(INVALID_EMAIL_NAME_TEMPLATE, true);
+            boolean valid = invalidEmailName.contains("@") ?
+                new ValidateableEmail(invalidEmailName).isValid() :
+                new ValidateableName(invalidEmailName).isValid();
+            params.put(INVALID_EMAIL_NAME_TEMPLATE, valid);
         } else {
             params.put(INVALID_EMAIL_NAME_TEMPLATE, false);
         }
@@ -56,21 +76,21 @@ public class SigningInViews {
         return withUrls(params);
     }
 
-    public String nonExistentUserView(String emailName) {
+    private String nonExistentUserView(String emailName) {
         Map<String, Object> params = new HashMap<>();
         params.put(EMAIL_NAME_TEMPLATE, emailName);
         params.put(NON_EXISTENT_USER_TEMPLATE, true);
         return withUrls(params);
     }
 
-    public String notUserPasswordView(String emailName) {
+    private String notUserPasswordView(String emailName) {
         Map<String, Object> params = new HashMap<>();
         params.put(EMAIL_NAME_TEMPLATE, emailName);
         params.put(NOT_USER_PASSWORD_TEMPLATE, true);
         return withUrls(params);
     }
 
-    public String notActiveUserView(String emailName) {
+    private String notActiveUserView(String emailName) {
         Map<String, Object> params = new HashMap<>();
         params.put(EMAIL_NAME_TEMPLATE, emailName);
         params.put(INACTIVE_ACCOUNT_TEMPLATE, true);

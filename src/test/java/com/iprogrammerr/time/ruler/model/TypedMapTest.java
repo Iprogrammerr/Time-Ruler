@@ -21,7 +21,7 @@ public class TypedMapTest {
         Map<String, List<String>> source = new HashMap<>();
         source.put(key, Collections.singletonList(value));
         TypedMap typedMap = new TypedMap(source);
-        MatcherAssert.assertThat("Does not return proper string value", typedMap.string(key, key),
+        MatcherAssert.assertThat("Does not return proper stringValue value", typedMap.stringValue(key, key),
             Matchers.equalTo(value));
     }
 
@@ -31,7 +31,7 @@ public class TypedMapTest {
         String key = randomStrings.alphabetic();
         String defaultValue = randomStrings.alphabetic();
         TypedMap typedMap = new TypedMap(new HashMap<>());
-        MatcherAssert.assertThat("Does not return default string value", typedMap.string(key, defaultValue),
+        MatcherAssert.assertThat("Does not return default stringValue value", typedMap.stringValue(key, defaultValue),
             Matchers.equalTo(defaultValue));
     }
 
@@ -43,7 +43,7 @@ public class TypedMapTest {
         Map<String, List<String>> source = new HashMap<>();
         source.put(key, Collections.singletonList(String.valueOf(value)));
         TypedMap typedMap = new TypedMap(source);
-        MatcherAssert.assertThat("Does not return proper int value", typedMap.integer(key, value),
+        MatcherAssert.assertThat("Does not return proper int value", typedMap.integerValue(key, value),
             Matchers.equalTo(value));
     }
 
@@ -53,7 +53,7 @@ public class TypedMapTest {
         String key = randomStrings.alphabetic();
         int defaultValue = new Random().nextInt();
         TypedMap typedMap = new TypedMap(new HashMap<>());
-        MatcherAssert.assertThat("Does not return default int value", typedMap.integer(key, defaultValue),
+        MatcherAssert.assertThat("Does not return default int value", typedMap.integerValue(key, defaultValue),
             Matchers.equalTo(defaultValue));
     }
 

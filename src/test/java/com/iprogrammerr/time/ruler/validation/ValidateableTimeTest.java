@@ -52,7 +52,7 @@ public class ValidateableTimeTest {
     @Test
     public void returnsFalseWithAlphabeticInput() {
         ValidateableTime time = new ValidateableTime(new RandomStrings().alphabetic());
-        MatcherAssert.assertThat("Accepts alphabetic string as input", time.isValid(), Matchers.equalTo(false));
+        MatcherAssert.assertThat("Accepts alphabetic stringValue as input", time.isValid(), Matchers.equalTo(false));
     }
 
     @Test

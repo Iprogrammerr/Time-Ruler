@@ -12,7 +12,7 @@ public class TypedMap {
         this.source = source;
     }
 
-    public String string(String key, String defaultValue) {
+    public String stringValue(String key, String defaultValue) {
         List<String> values = source.getOrDefault(key, Collections.singletonList(defaultValue));
         String value;
         if (values.isEmpty()) {
@@ -23,7 +23,11 @@ public class TypedMap {
         return value;
     }
 
-    public int integer(String key, int defaultValue) {
+    public String stringValue(String key) {
+        return stringValue(key, "");
+    }
+
+    public int integerValue(String key, int defaultValue) {
         List<String> values = source.getOrDefault(key, Collections.singletonList(String.valueOf(defaultValue)));
         int value;
         try {
@@ -36,5 +40,20 @@ public class TypedMap {
             value = defaultValue;
         }
         return value;
+    }
+
+    public boolean booleanValue(String key, boolean defaultValue) {
+        boolean value;
+        List<String> values = source.get(key);
+        if (values == null || values.isEmpty()) {
+            value = defaultValue;
+        } else {
+            value = values.get(0).toLowerCase().equals(Boolean.toString(true));
+        }
+        return value;
+    }
+
+    public boolean booleanValue(String key) {
+        return booleanValue(key, false);
     }
 }
