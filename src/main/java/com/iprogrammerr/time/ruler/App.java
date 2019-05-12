@@ -38,6 +38,8 @@ import com.iprogrammerr.time.ruler.respondent.authentication.SigningOutResponden
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningUpRespondent;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanExecutionRespondent;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanRespondent;
+import com.iprogrammerr.time.ruler.route.activity.ActivitiesRoutes;
+import com.iprogrammerr.time.ruler.route.activity.ActivityRoutes;
 import com.iprogrammerr.time.ruler.route.authentication.PasswordResetRoutes;
 import com.iprogrammerr.time.ruler.route.authentication.SigningInRoutes;
 import com.iprogrammerr.time.ruler.route.authentication.SigningOutRoutes;
@@ -159,8 +161,6 @@ public class App {
         profileRespondent.init(userGroup, app);
         dayPlanExecutionRespondent.init(userGroup, app);
         dayPlanRespondent.init(userGroup, app);
-        activityRespondent.init(userGroup, app);
-        activitiesRespondent.init(userGroup, app);
         errorRespondent.init(app);
 
         SigningUpRoutes signingUpRoutes = new SigningUpRoutes(signingUpRespondent);
@@ -168,10 +168,16 @@ public class App {
         SigningOutRoutes signingOutRoutes = new SigningOutRoutes(signingOutRespondent);
         PasswordResetRoutes passwordResetRoutes = new PasswordResetRoutes(passwordResetRespondent);
 
+        ActivityRoutes activityRoutes = new ActivityRoutes(activityRespondent);
+        ActivitiesRoutes activitiesRoutes = new ActivitiesRoutes(activitiesRespondent);
+
         signingInRoutes.init(app);
         passwordResetRoutes.init(app);
         signingUpRoutes.init(app);
         signingOutRoutes.init(app);
+
+        activityRoutes.init(userGroup, app);
+        activitiesRoutes.init(userGroup, app);
 
         //TODO Authentication respondent
         app.before(userGroup + "*", ctx -> {

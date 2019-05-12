@@ -1,6 +1,8 @@
 package com.iprogrammerr.time.ruler.respondent.activity;
 
 import com.iprogrammerr.time.ruler.model.Identity;
+import com.iprogrammerr.time.ruler.model.QueryParamKey;
+import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.ActivitiesSearch;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
@@ -12,34 +14,27 @@ import com.iprogrammerr.time.ruler.model.description.Description;
 import com.iprogrammerr.time.ruler.model.description.Descriptions;
 import com.iprogrammerr.time.ruler.model.error.ErrorCode;
 import com.iprogrammerr.time.ruler.model.error.ResponseException;
-import com.iprogrammerr.time.ruler.respondent.GroupedRespondent;
+import com.iprogrammerr.time.ruler.model.form.ActivityForm;
+import com.iprogrammerr.time.ruler.respondent.HtmlResponse;
+import com.iprogrammerr.time.ruler.respondent.Redirection;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanExecutionRespondent;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanRespondent;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateableTime;
 import com.iprogrammerr.time.ruler.view.rendering.ActivityViews;
-import io.javalin.Context;
-import io.javalin.Javalin;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-public class ActivityRespondent implements GroupedRespondent {
+public class ActivityRespondent {
 
-    private static final String DATE_PARAM = "date";
-    private static final String PLAN_PARAM = "plan";
-    private static final String TEMPLATE_PARAM = "template";
-    private static final String FORM_NAME = "name";
-    private static final String FORM_START_TIME = "start";
-    private static final String FORM_END_TIME = "end";
-    private static final String FORM_DESCRIPTION = "description";
-    private static final String FORM_DONE = "done";
-    private static final String ACTIVITY = "activity";
-    private static final String ID = "id";
-    private static final String ACTIVITY_WITH_ID = ACTIVITY + "/:" + ID;
-    private static final String ACTIVITY_DONE = ACTIVITY + "/done/:" + ID;
-    private static final String ACTIVITY_NOT_DONE = ACTIVITY + "/not-done/:" + ID;
+    public static final String ACTIVITY = "activity";
+    public static final String ID = "id";
+    public static final String ACTIVITY_WITH_ID = ACTIVITY + "/:" + ID;
+    public static final String ACTIVITY_DONE = ACTIVITY + "/done/:" + ID;
+    public static final String ACTIVITY_NOT_DONE = ACTIVITY + "/not-done/:" + ID;
     private final Identity<Long> identity;
     private final ActivityViews views;
     private final DayPlanExecutionRespondent dayPlanExecutionRespondent;
@@ -49,9 +44,12 @@ public class ActivityRespondent implements GroupedRespondent {
     private final Descriptions descriptions;
     private final LimitedDate limitedDate;
     private final ServerClientDates serverClientDates;
+    private String prefix;
 
-    public ActivityRespondent(Identity<Long> identity, ActivityViews views, DayPlanExecutionRespondent dayPlanExecutionRespondent,
-        DayPlanRespondent dayPlanRespondent, Activities activities, ActivitiesSearch activitiesSearch, Descriptions descriptions,
+    public ActivityRespondent(Identity<Long> identity, ActivityViews views,
+        DayPlanExecutionRespondent dayPlanExecutionRespondent,
+        DayPlanRespondent dayPlanRespondent, Activities activities, ActivitiesSearch activitiesSearch,
+        Descriptions descriptions,
         LimitedDate limitedDate, ServerClientDates serverClientDates) {
         this.identity = identity;
         this.views = views;
@@ -62,85 +60,92 @@ public class ActivityRespondent implements GroupedRespondent {
         this.descriptions = descriptions;
         this.limitedDate = limitedDate;
         this.serverClientDates = serverClientDates;
+        this.prefix = "";
     }
 
-    @Override
-    public void init(String group, Javalin app) {
-        String withGroupActivity = group + ACTIVITY;
-        String withGroupActivityId = group + ACTIVITY_WITH_ID;
-        app.get(withGroupActivity, this::showActivity);
-        app.post(withGroupActivity, this::createActivity);
-        app.post(withGroupActivityId, this::updateActivity);
-        app.put(group + ACTIVITY_DONE, ctx -> setActivityDone(ctx, true));
-        app.put(group + ACTIVITY_NOT_DONE, ctx -> setActivityDone(ctx, false));
-        app.delete(withGroupActivityId, this::deleteActivity);
-    }
-
-    private void showActivity(Context context) {
-        long templateId = context.queryParam(TEMPLATE_PARAM, Long.class, Long.toString(0)).get();
-        long id = context.queryParam(ID, Long.class, Long.toString(0)).get();
-        boolean plan = context.queryParam(PLAN_PARAM, Boolean.class, Boolean.toString(true)).get();
+    public HtmlResponse activityPage(HttpServletRequest request, long templateId, long id,
+        boolean plan) {
         String view;
         if (templateId > 0 && activities.activity(templateId).isPresent()) {
             DescribedActivity activity = descriptions.describedActivity(templateId).withDone(!plan);
-            view = views.filled(activity, date -> serverClientDates.clientDate(context.req, date));
+            view = views.filled(activity, date -> serverClientDates.clientDate(request, date));
         } else if (id > 0 && activities.activity(id).isPresent()) {
             view = views.filled(descriptions.describedActivity(id),
-                date -> serverClientDates.clientDate(context.req, date));
+                date -> serverClientDates.clientDate(request, date));
         } else {
-            view = views.empty(serverClientDates.clientDate(context.req), isActivityPlanned(context));
+            view = views.empty(serverClientDates.clientDate(request), plan);
         }
-        context.html(view);
+        return new HtmlResponse(view);
     }
 
-    private boolean isActivityPlanned(Context context) {
-        return context.queryParam(PLAN_PARAM, Boolean.class, Boolean.toString(true)).get();
+    public HtmlResponse invalidActivityPage(String name, String startTime, String endTime, String description,
+        boolean plan) {
+        return new HtmlResponse(views.withErrors(plan, new ValidateableName(name),
+            new ValidateableTime(startTime), new ValidateableTime(endTime), description));
     }
 
-    //TODO this ought to be simpler
-    private void createActivity(Context context) {
-        ValidateableName name = new ValidateableName(context.formParam(FORM_NAME, ""), true);
-        ValidateableTime start = new ValidateableTime(context.formParam(FORM_START_TIME, ""));
-        ValidateableTime end = new ValidateableTime(context.formParam(FORM_END_TIME, ""));
-        String description = context.formParam(FORM_DESCRIPTION, "");
+    public Redirection createActivity(HttpServletRequest request, String date, ActivityForm form) {
+        Redirection redirection;
+        ValidateableName name = new ValidateableName(form.name, true);
+        ValidateableTime start = new ValidateableTime(form.startTime);
+        ValidateableTime end = new ValidateableTime(form.endTime);
         if (name.isValid() && start.isValid() && end.isValid()) {
-            Instant date = limitedDate.fromString(context.queryParam(DATE_PARAM, ""));
-            Activity activity = activity(context, date, name, start, end);
-            createActivity(activity, description,
-                activitiesSearch.ofUserDate(identity.value(context.req), date.getEpochSecond()));
-            redirectToDay(context, date, activity.done);
+            Instant validatedDate = limitedDate.fromString(date);
+            Activity activity = activity(request, validatedDate, name, start, end, form.done);
+            createActivity(activity, form.description,
+                activitiesSearch.ofUserDate(identity.value(request), validatedDate.getEpochSecond()));
+            redirection = dayRedirection(request, validatedDate, activity.done);
         } else {
-            context.html(views.withErrors(isActivityDone(context), name, start, end));
+            redirection = errorsRedirection(date, form.name, form.startTime, form.endTime, !form.done);
         }
+        return redirection;
     }
 
-    private void redirectToDay(Context context, Instant date, boolean done) {
-        Instant clientNow = serverClientDates.clientDate(context.req);
+    private Redirection dayRedirection(HttpServletRequest request, Instant date, boolean done) {
+        Redirection redirection;
+        Instant clientNow = serverClientDates.clientDate(request);
         if (new SmartDate(clientNow).isTheSameDay(date)) {
-            dayPlanExecutionRespondent.redirect(context);
+            redirection = dayPlanExecutionRespondent.redirection();
         } else if (done) {
-            dayPlanExecutionRespondent.redirect(context, date);
+            redirection = dayPlanExecutionRespondent.redirection(date);
         } else {
-            dayPlanRespondent.redirect(context, date);
+            redirection = dayPlanRespondent.redirection(date);
         }
+        return redirection;
     }
 
-    private boolean isActivityDone(Context context) {
-        return context.formParam(FORM_DONE, Boolean.class).get();
+    private Redirection errorsRedirection(String date, String name, String startTime, String endTime,
+        boolean plan) {
+        return new Redirection(errorsQuery(name, startTime, endTime).put(QueryParamKey.PLAN, plan)
+            .put(QueryParamKey.DATE, date).build(redirectionBase()));
+
     }
 
-    private Activity activity(Context context, Instant date, ValidateableName name,
-        ValidateableTime start, ValidateableTime end) {
+    private Redirection errorsRedirection(long id, String name, String startTime, String endTime) {
+        return new Redirection(errorsQuery(name, startTime, endTime).put(QueryParamKey.ID, id)
+            .build(redirectionBase()));
+    }
+
+    private String redirectionBase() {
+        return "/" + prefix + ACTIVITY;
+    }
+
+    private UrlQueryBuilder errorsQuery(String name, String startTime, String endTime) {
+        return new UrlQueryBuilder().put(QueryParamKey.NAME, name).put(QueryParamKey.START, startTime)
+            .put(QueryParamKey.END, endTime);
+    }
+
+    private Activity activity(HttpServletRequest request, Instant date, ValidateableName name,
+        ValidateableTime start, ValidateableTime end, boolean done) {
         Instant startTime = start.value();
         Instant endTime = end.value();
         if (startTime.isAfter(endTime)) {
             throw new ResponseException(ErrorCode.GREATER_START_TIME);
         }
-        long userId = identity.value(context.req);
-        boolean done = isActivityDone(context);
+        long userId = identity.value(request);
         SmartDate smartDate = new SmartDate(date.getEpochSecond());
-        long startDate = serverClientDates.serverDate(context.req, smartDate.withTime(startTime)).getEpochSecond();
-        long endDate = serverClientDates.serverDate(context.req, smartDate.withTime(endTime)).getEpochSecond();
+        long startDate = serverClientDates.serverDate(request, smartDate.withTime(startTime)).getEpochSecond();
+        long endDate = serverClientDates.serverDate(request, smartDate.withTime(endTime)).getEpochSecond();
         return new Activity(userId, name.value(), startDate, endDate, done);
     }
 
@@ -156,25 +161,27 @@ public class ActivityRespondent implements GroupedRespondent {
         }
     }
 
-    private void updateActivity(Context context) {
-        long id = context.pathParam(ID, Integer.class).get();
+    //TODO does activity belong to user?
+    public Redirection updateActivity(HttpServletRequest request, long id, ActivityForm form) {
         Optional<Activity> activity = activities.activity(id);
         if (!activity.isPresent()) {
             throw new ResponseException(ErrorCode.ACTIVITY_NON_EXISTENT_ID);
         }
-        ValidateableName name = new ValidateableName(context.formParam(FORM_NAME, ""), true);
-        ValidateableTime start = new ValidateableTime(context.formParam(FORM_START_TIME, ""));
-        ValidateableTime end = new ValidateableTime(context.formParam(FORM_END_TIME, ""));
-        String description = context.formParam(FORM_DESCRIPTION, "");
+        Redirection redirection;
+        ValidateableName name = new ValidateableName(form.name, true);
+        ValidateableTime start = new ValidateableTime(form.startTime);
+        ValidateableTime end = new ValidateableTime(form.endTime);
         if (name.isValid() && start.isValid() && end.isValid()) {
             Instant date = Instant.ofEpochSecond(activity.get().startDate);
-            Activity toUpdateActivity = activity(context, date, name, start, end).withId(id);
-            updateActivity(toUpdateActivity, description,
-                activitiesSearch.ofUserDate(identity.value(context.req), date.getEpochSecond()));
-            redirectToDay(context, date, toUpdateActivity.done);
+            Activity toUpdateActivity = activity(request, date, name, start, end,
+                activity.get().done).withId(id);
+            updateActivity(toUpdateActivity, form.description,
+                activitiesSearch.ofUserDate(identity.value(request), date.getEpochSecond()));
+            redirection = dayRedirection(request, date, toUpdateActivity.done);
         } else {
-            context.html(views.withErrors(isActivityDone(context), name, start, end));
+            redirection = errorsRedirection(id, form.name, form.startTime, form.endTime);
         }
+        return redirection;
     }
 
     private void updateActivity(Activity activity, String description, List<Activity> dayActivities) {
@@ -189,16 +196,23 @@ public class ActivityRespondent implements GroupedRespondent {
         }
     }
 
-    private void deleteActivity(Context context) {
-        activities.delete(context.pathParam(ID, Integer.class).get());
-    }
-
-    private void setActivityDone(Context context, boolean done) {
-        long activityId = context.pathParam(ID, Long.class).get();
-        if (activities.belongsToUser(identity.value(context.req), activityId)) {
-            activities.setDone(activityId, done);
+    public void deleteActivity(HttpServletRequest request, long id) {
+        if (activities.belongsToUser(identity.value(request), id)) {
+            activities.delete(id);
         } else {
             throw new ResponseException(ErrorCode.ACTIVITY_NOT_OWNED);
         }
+    }
+
+    public void setActivityDone(HttpServletRequest request, long id, boolean done) {
+        if (activities.belongsToUser(identity.value(request), id)) {
+            activities.setDone(id, done);
+        } else {
+            throw new ResponseException(ErrorCode.ACTIVITY_NOT_OWNED);
+        }
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
     }
 }

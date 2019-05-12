@@ -52,16 +52,18 @@ public class ActivityViews {
         params.put(ActiveTab.KEY, plan ? ActiveTab.PLAN : ActiveTab.HISTORY);
     }
 
-    public String withErrors(boolean plan, ValidateableName name, ValidateableTime startTime, ValidateableTime endTime) {
+    public String withErrors(boolean plan, ValidateableName name, ValidateableTime startTime,
+        ValidateableTime endTime, String description) {
         Map<String, Object> params = new HashMap<>();
         addActiveTab(params, plan);
         params.put(PLAN_TEMPLATE, plan);
-        params.put(INVALID_NAME_TEMPLATE, name.isValid());
+        params.put(INVALID_NAME_TEMPLATE, !name.isValid());
         params.put(NAME_TEMPLATE, name.value());
-        params.put(INVALID_START_TIME_TEMPLATE, startTime.isValid());
-        params.put(START_TIME_TEMPLATE, startTime.isValid() ? startTime.value() : "");
-        params.put(INVALID_END_TIME_TEMPLATE, endTime.isValid());
-        params.put(END_TIME_TEMPLATE, endTime.isValid() ? endTime.value() : "");
+        params.put(INVALID_START_TIME_TEMPLATE, !startTime.isValid());
+        params.put(START_TIME_TEMPLATE, startTime.value());
+        params.put(INVALID_END_TIME_TEMPLATE, !endTime.isValid());
+        params.put(END_TIME_TEMPLATE, endTime.value());
+        params.put(DESCRIPTION_TEMPLATE, description);
         return templates.rendered(this.name, params);
     }
 

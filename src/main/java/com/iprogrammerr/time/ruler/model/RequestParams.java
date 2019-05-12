@@ -37,6 +37,25 @@ public class RequestParams {
         return booleanParam(key, false);
     }
 
+    public long longParam(QueryParamKey key, long defaultValue) {
+        long value;
+        List<String> values = params.get(key.value);
+        if (noValues(values)) {
+            value = defaultValue;
+        } else {
+            try {
+                value = Long.parseLong(values.get(0));
+            } catch (Exception e) {
+                value = defaultValue;
+            }
+        }
+        return value;
+    }
+
+    public int intParam(QueryParamKey key, int defaultValue) {
+        return (int) longParam(key, defaultValue);
+    }
+
     public String stringParam(QueryParamKey key, String defaultValue) {
         String value;
         List<String> values = params.get(key.value);

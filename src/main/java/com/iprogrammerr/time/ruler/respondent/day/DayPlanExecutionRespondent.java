@@ -74,7 +74,7 @@ public class DayPlanExecutionRespondent implements GroupedRespondent {
         return new Redirection(todayRedirect);
     }
 
-    public void redirect(Context context, Instant date) {
-        context.redirect(new UrlQueryBuilder().put(DATE_PARAM, parsing.write(date)).build(dayRedirect));
+    public Redirection redirection(Instant date) {
+        return new Redirection(new UrlQueryBuilder().put(DATE_PARAM, parsing.write(date)).build(dayRedirect));
     }
 }

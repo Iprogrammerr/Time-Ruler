@@ -7,6 +7,7 @@ import com.iprogrammerr.time.ruler.model.date.DateParsing;
 import com.iprogrammerr.time.ruler.model.date.LimitedDate;
 import com.iprogrammerr.time.ruler.model.date.ServerClientDates;
 import com.iprogrammerr.time.ruler.respondent.GroupedRespondent;
+import com.iprogrammerr.time.ruler.respondent.Redirection;
 import com.iprogrammerr.time.ruler.view.rendering.DayPlanViews;
 import io.javalin.Context;
 import io.javalin.Javalin;
@@ -25,9 +26,10 @@ public class DayPlanRespondent implements GroupedRespondent {
     private final LimitedDate limitedDate;
     private final DateParsing parsing;
     private final ServerClientDates serverClientDates;
-    private String redirect;
+    private String redirection;
 
-    public DayPlanRespondent(Identity<Long> identity, DayPlanViews views, ActivitiesSearch activities, LimitedDate limitedDate,
+    public DayPlanRespondent(Identity<Long> identity, DayPlanViews views, ActivitiesSearch activities,
+        LimitedDate limitedDate,
         DateParsing parsing, ServerClientDates serverClientDates) {
         this.identity = identity;
         this.views = views;
@@ -35,14 +37,14 @@ public class DayPlanRespondent implements GroupedRespondent {
         this.limitedDate = limitedDate;
         this.parsing = parsing;
         this.serverClientDates = serverClientDates;
-        this.redirect = "";
+        this.redirection = "";
     }
 
     @Override
     public void init(String group, Javalin app) {
         String withGroup = group + DAY_PLAN;
         app.get(withGroup, this::showDayPlan);
-        redirect = "/" + withGroup;
+        redirection = "/" + withGroup;
     }
 
     private void showDayPlan(Context context) {
@@ -53,6 +55,10 @@ public class DayPlanRespondent implements GroupedRespondent {
     }
 
     public void redirect(Context context, Instant date) {
-        context.redirect(new UrlQueryBuilder().put(DATE_PARAM, parsing.write(date)).build(redirect));
+        context.redirect(new UrlQueryBuilder().put(DATE_PARAM, parsing.write(date)).build(redirection));
+    }
+
+    public Redirection redirection(Instant date) {
+        return new Redirection(new UrlQueryBuilder().put(DATE_PARAM, parsing.write(date)).build(redirection));
     }
 }

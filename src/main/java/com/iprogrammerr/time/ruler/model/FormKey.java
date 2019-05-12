@@ -2,8 +2,8 @@ package com.iprogrammerr.time.ruler.model;
 
 public enum FormKey {
     EMAIL("email"), EMAIL_NAME("emailName"), NAME("name"), PASSWORD("password"),
-    OLD_PASSWORD("oldPassword"), NEW_PASSWORD("newPassword"), START_TIME("startTime"),
-    END_TIME("endTime"), DESCRIPTION("description");
+    OLD_PASSWORD("oldPassword"), NEW_PASSWORD("newPassword"), START_TIME("start"),
+    END_TIME("end"), DESCRIPTION("description"), DONE("done");
 
     public final String value;
 

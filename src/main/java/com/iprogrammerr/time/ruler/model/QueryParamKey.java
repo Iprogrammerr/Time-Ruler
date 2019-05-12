@@ -6,7 +6,10 @@ public enum QueryParamKey {
     INACTIVE_ACCOUNT("inactiveAccount"), INVALID_EMAIL("invalidEmail"),
     INVALID_NAME("invalidName"), INVALID_PASSWORD("invalidPassword"),
     NOT_USER_PASSWORD("notUserPassword"), ACTIVATION("activation"), HASH("hash"),
-    EMAIL_SENT("emailSent"), EMAIL_TAKEN("emailTaken"), NAME_TAKEN("nameTaken");
+    EMAIL_SENT("emailSent"), EMAIL_TAKEN("emailTaken"), NAME_TAKEN("nameTaken"),
+    PLAN("plan"), PAGE("page"), PATTERN("pattern"), DATE("date"),
+    TEMPLATE("template"), START("start"), END("end"), DESCRIPTION("description"),
+    ID("id");
 
     public final String value;
 

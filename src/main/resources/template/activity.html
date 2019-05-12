@@ -12,7 +12,7 @@
     <div class="centered-h">
         <form>
             <p th:text="#{name}"></p>
-            <p th:text="${invalidName}? #{invalidName}" class="error"></p>
+            <p th:text="#{invalidName}" th:class="${invalidName}? error : error-hidden"></p>
             <input type="text" name="name" th:value="${name}"></input>
             <p th:text="#{startTime}"></p>
             <p th:text="${invalidStartTime}? #{invalidTime}" class="error"></p>
