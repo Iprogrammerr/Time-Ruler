@@ -47,9 +47,8 @@ public class ActivityRespondent {
     private String prefix;
 
     public ActivityRespondent(Identity<Long> identity, ActivityViews views,
-        DayPlanExecutionRespondent dayPlanExecutionRespondent,
-        DayPlanRespondent dayPlanRespondent, Activities activities, ActivitiesSearch activitiesSearch,
-        Descriptions descriptions,
+        DayPlanExecutionRespondent dayPlanExecutionRespondent, DayPlanRespondent dayPlanRespondent,
+        Activities activities, ActivitiesSearch activitiesSearch, Descriptions descriptions,
         LimitedDate limitedDate, ServerClientDates serverClientDates) {
         this.identity = identity;
         this.views = views;
