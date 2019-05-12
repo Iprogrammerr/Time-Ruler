@@ -2,6 +2,7 @@ package com.iprogrammerr.time.ruler.respondent.authentication;
 
 import com.iprogrammerr.time.ruler.model.Hashing;
 import com.iprogrammerr.time.ruler.model.Identity;
+import com.iprogrammerr.time.ruler.model.QueryParamKey;
 import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.error.ErrorCode;
 import com.iprogrammerr.time.ruler.model.error.ResponseException;
@@ -11,7 +12,6 @@ import com.iprogrammerr.time.ruler.model.user.UsersActualization;
 import com.iprogrammerr.time.ruler.respondent.HtmlResponse;
 import com.iprogrammerr.time.ruler.respondent.HtmlResponseRedirection;
 import com.iprogrammerr.time.ruler.respondent.Redirection;
-import com.iprogrammerr.time.ruler.respondent.day.DayPlanExecutionRespondent;
 import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateablePassword;
@@ -24,24 +24,14 @@ import java.util.Optional;
 public class SigningInRespondent {
 
     public static final String SIGN_IN = "sign-in";
-    private static final String FAREWELL_PARAM = "farewell";
-    private static final String NEW_PASSWORD_PARAM = "newPassword";
-    private static final String FORM_EMAIL_NAME = "emailName";
-    private static final String EMAIL_NAME_PARAM = FORM_EMAIL_NAME;
-    private static final String NON_EXISTENT_USER_PARAM = "nonExistentUser";
-    private static final String INACTIVE_ACCOUNT_PARAM = "inactiveAccount";
-    private static final String INVALID_PASSWORD_PARAM = "invalidPassword";
-    private static final String NOT_USER_PASSWORD_PARAM = "notUserPassword";
-    private final DayPlanExecutionRespondent respondent;
     private final SigningInViews views;
     private final Users users;
     private final UsersActualization actualization;
     private final Hashing hashing;
     private final Identity<Long> identity;
 
-    public SigningInRespondent(DayPlanExecutionRespondent respondent, SigningInViews views, Users users,
-        UsersActualization actualization, Hashing hashing, Identity<Long> identity) {
-        this.respondent = respondent;
+    public SigningInRespondent(SigningInViews views, Users users, UsersActualization actualization, Hashing hashing,
+        Identity<Long> identity) {
         this.views = views;
         this.users = users;
         this.actualization = actualization;
@@ -81,23 +71,23 @@ public class SigningInRespondent {
             redirection = signInOrSetError(request, email.isValid() ? email.value() : name.value(),
                 hashing.hash(password));
         } else if (!validateablePassword.isValid()) {
-            redirection = redirect(emailName, INVALID_PASSWORD_PARAM, true);
+            redirection = redirect(emailName, QueryParamKey.INVALID_PASSWORD, true);
         } else {
-            redirection = redirect(EMAIL_NAME_PARAM, emailName);
+            redirection = redirect(QueryParamKey.EMAIL_NAME, emailName);
         }
         return redirection;
     }
 
-    private Redirection redirect(String key, Object param) {
+    private Redirection redirect(QueryParamKey key, Object param) {
         return new Redirection(new UrlQueryBuilder().put(key, param).build("/" + SIGN_IN));
     }
 
-    private Redirection redirect(String emailName, String key, Object param) {
+    private Redirection redirect(String emailName, QueryParamKey key, Object param) {
         Redirection redirection;
         if (emailName.isEmpty()) {
             redirection = redirect(key, param);
         } else {
-            redirection = new Redirection(new UrlQueryBuilder().put(EMAIL_NAME_PARAM, emailName)
+            redirection = new Redirection(new UrlQueryBuilder().put(QueryParamKey.EMAIL_NAME, emailName)
                 .put(key, param).build("/" + SIGN_IN));
         }
         return redirection;
@@ -113,12 +103,12 @@ public class SigningInRespondent {
                 //TODO proper redirect;
                 redirection = new Redirection("??");
             } else if (!userVal.active) {
-                redirection = redirect(emailOrName, INACTIVE_ACCOUNT_PARAM, true);
+                redirection = redirect(emailOrName, QueryParamKey.INACTIVE_ACCOUNT, true);
             } else {
-                redirection = redirect(emailOrName, NOT_USER_PASSWORD_PARAM, true);
+                redirection = redirect(emailOrName, QueryParamKey.NOT_USER_PASSWORD, true);
             }
         } else {
-            redirection = redirect(emailOrName, NON_EXISTENT_USER_PARAM, true);
+            redirection = redirect(emailOrName, QueryParamKey.NON_EXISTENT_USER, true);
         }
         return redirection;
     }
@@ -156,10 +146,10 @@ public class SigningInRespondent {
     }
 
     public Redirection redirectWithFarewell() {
-        return redirect(FAREWELL_PARAM, true);
+        return redirect(QueryParamKey.FAREWELL, true);
     }
 
     public Redirection redirectWithNewPassword() {
-        return redirect(NEW_PASSWORD_PARAM, true);
+        return redirect(QueryParamKey.NEW_PASSWORD, true);
     }
 }

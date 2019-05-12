@@ -62,7 +62,7 @@ public class Messages implements IMessageResolver, ErrorsTranslation {
     }
 
     public String absentMessage(String key) {
-        return String.format("There is no message associated with %s key", key);
+        return String.format("There is no message associated with %s value", key);
     }
 
     public String resolveMessage(String key) {

@@ -32,7 +32,7 @@ import com.iprogrammerr.time.ruler.respondent.ProfileRespondent;
 import com.iprogrammerr.time.ruler.respondent.WelcomeRespondent;
 import com.iprogrammerr.time.ruler.respondent.activity.ActivitiesRespondent;
 import com.iprogrammerr.time.ruler.respondent.activity.ActivityRespondent;
-import com.iprogrammerr.time.ruler.respondent.authentication.PasswordResetRespondent;
+import com.iprogrammerr.time.ruler.respondent.authentication.PasswordResetRespondentOld;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningInRespondentOld;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningOutRespondent;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningUpRespondent;
@@ -96,7 +96,7 @@ public class App {
         ViewsTemplates viewsTemplates = new HtmlViewsTemplates(engine);
 
         SigningInViews signingInViews = new SigningInViews(viewsTemplates, SigningUpRespondent.SIGN_UP,
-            PasswordResetRespondent.PASSWORD_RESET);
+            PasswordResetRespondentOld.PASSWORD_RESET);
         PasswordResetViews passwordResetViews = new PasswordResetViews(viewsTemplates);
         SigningUpViews signingUpViews = new SigningUpViews(viewsTemplates, SigningInRespondentOld.SIGN_IN);
         CalendarViews calendarViews = new CalendarViews(viewsTemplates);
@@ -140,7 +140,7 @@ public class App {
             activitiesSearch, serverClientDates);
         SigningInRespondentOld signingInRespondent = new SigningInRespondentOld(dayPlanExecutionRespondent, signingInViews,
             users, actualization, hashing, identity);
-        PasswordResetRespondent passwordResetRespondent = new PasswordResetRespondent(signingInRespondent, users,
+        PasswordResetRespondentOld passwordResetRespondent = new PasswordResetRespondentOld(signingInRespondent, users,
             actualization, emails, hashing, passwordResetViews);
         SigningUpRespondent signingUpRespondent = new SigningUpRespondent(signingUpViews, users, hashing, emails);
         SigningOutRespondent signingOutRespondent = new SigningOutRespondent(signingInRespondent);

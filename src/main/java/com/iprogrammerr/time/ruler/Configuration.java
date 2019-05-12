@@ -115,7 +115,7 @@ public class Configuration {
     private String notNull(String key) {
         String value = properties.getProperty(key);
         if (value == null) {
-            throw new RuntimeException(String.format("There is no property associated with %s key", key));
+            throw new RuntimeException(String.format("There is no property associated with %s value", key));
         }
         return value;
     }

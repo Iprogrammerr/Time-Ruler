@@ -19,6 +19,10 @@ public class UrlQueryBuilder {
         return this;
     }
 
+    public UrlQueryBuilder put(QueryParamKey key, Object value) {
+        return put(key.value, value);
+    }
+
     public String build(String base) {
         StringBuilder builder = new StringBuilder(base);
         builder.append(START);

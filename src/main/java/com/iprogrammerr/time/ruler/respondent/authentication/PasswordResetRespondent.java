@@ -2,37 +2,33 @@ package com.iprogrammerr.time.ruler.respondent.authentication;
 
 import com.iprogrammerr.time.ruler.email.Emails;
 import com.iprogrammerr.time.ruler.model.Hashing;
+import com.iprogrammerr.time.ruler.model.QueryParamKey;
 import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.error.ErrorCode;
 import com.iprogrammerr.time.ruler.model.error.ResponseException;
 import com.iprogrammerr.time.ruler.model.user.User;
 import com.iprogrammerr.time.ruler.model.user.Users;
 import com.iprogrammerr.time.ruler.model.user.UsersActualization;
-import com.iprogrammerr.time.ruler.respondent.Respondent;
+import com.iprogrammerr.time.ruler.respondent.HtmlResponse;
+import com.iprogrammerr.time.ruler.respondent.Redirection;
 import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
 import com.iprogrammerr.time.ruler.validation.ValidateablePassword;
 import com.iprogrammerr.time.ruler.view.rendering.PasswordResetViews;
-import io.javalin.Context;
-import io.javalin.Javalin;
 
 import java.util.Optional;
 
-public class PasswordResetRespondent implements Respondent {
+public class PasswordResetRespondent {
 
     public static final String PASSWORD_RESET = "password-reset";
-    private static final String PASSWORD_RESET_FORM = "password-reset-form";
-    private static final String EMAIL_PARAM = "email";
-    private static final String HASH_PARAM = "hash";
-    private static final String EMAIL_SENT_PARAM = "emailSent";
-    private static final String PASSWORD_FORM = "password";
-    private final SigningInRespondentOld respondent;
+    public static final String PASSWORD_RESET_FORM = "password-reset-form";
+    private final SigningInRespondent respondent;
     private final Users users;
     private final UsersActualization actualization;
     private final Emails emails;
     private final Hashing hashing;
     private final PasswordResetViews views;
 
-    public PasswordResetRespondent(SigningInRespondentOld respondent, Users users, UsersActualization actualization,
+    public PasswordResetRespondent(SigningInRespondent respondent, Users users, UsersActualization actualization,
         Emails emails, Hashing hashing, PasswordResetViews views) {
         this.respondent = respondent;
         this.users = users;
@@ -42,47 +38,45 @@ public class PasswordResetRespondent implements Respondent {
         this.views = views;
     }
 
-    @Override
-    public void init(Javalin app) {
-        app.get(PASSWORD_RESET, this::showPasswordReset);
-        app.get(PASSWORD_RESET_FORM, this::showPasswordResetForm);
-        app.post(PASSWORD_RESET, this::sentPasswordResetEmail);
-        app.post(PASSWORD_RESET_FORM, this::resetPassword);
-    }
-
-    private void showPasswordReset(Context context) {
-        ValidateableEmail email = new ValidateableEmail(context.queryParam(EMAIL_PARAM, ""));
-        boolean emailSent = context.queryParam(EMAIL_SENT_PARAM, Boolean.class, Boolean.toString(false)).get();
-        if (emailSent && email.isValid()) {
-            context.html(views.emailSentView(email.value()));
-        } else if (shouldShowEmptyPasswordReset(email)) {
-            context.html(views.sendEmailView());
+    public HtmlResponse passwordResetPage(String email, boolean emailSent, boolean inactiveAccount) {
+        ValidateableEmail validateableEmail = new ValidateableEmail(email);
+        HtmlResponse response;
+        if (emailSent && validateableEmail.isValid()) {
+            response = new HtmlResponse(views.emailSentView(email));
+        } else if (shouldShowEmptyPasswordReset(validateableEmail)) {
+            response = new HtmlResponse(views.sendEmailView());
+        } else if (inactiveAccount) {
+            response = new HtmlResponse(views.inactiveAccountView(email));
         } else {
-            context.html(views.invalidEmailView(email));
+            response = new HtmlResponse(views.invalidEmailView(validateableEmail));
         }
+        return response;
     }
 
     private boolean shouldShowEmptyPasswordReset(ValidateableEmail email) {
         return email.value().isEmpty() || (email.isValid() && users.withEmail(email.value()).isPresent());
     }
 
-    private void sentPasswordResetEmail(Context context) {
-        ValidateableEmail email = new ValidateableEmail(context.formParam(EMAIL_PARAM, ""));
-        Optional<User> user = users.withEmail(email.value());
-        if (email.isValid() && user.isPresent()) {
+    public Redirection sentPasswordResetEmail(String email) {
+        Redirection redirection;
+        ValidateableEmail validateableEmail = new ValidateableEmail(email);
+        Optional<User> user = users.withEmail(email);
+        if (validateableEmail.isValid() && user.isPresent()) {
             if (user.get().active) {
                 emails.sendPasswordResetEmail(user.get().email, passwordResetLink(user.get()));
-                redirect(context, email, true);
+                redirection = passwordResetRedirection(email, true, false);
             } else {
-                context.html(views.inactiveAccountView(email.value()));
+                redirection = passwordResetRedirection(email, false, true);
             }
         } else {
-            redirect(context, email, false);
+            redirection = passwordResetRedirection(email, false, false);
         }
+        return redirection;
     }
 
     private String passwordResetLink(User user) {
-        return new UrlQueryBuilder().put(EMAIL_PARAM, user.email).put(HASH_PARAM, passwordResetHash(user))
+        return new UrlQueryBuilder().put(QueryParamKey.EMAIL, user.email)
+            .put(QueryParamKey.HASH, passwordResetHash(user))
             .build(PASSWORD_RESET_FORM);
     }
 
@@ -91,23 +85,18 @@ public class PasswordResetRespondent implements Respondent {
         return hashing.hash(String.valueOf(user.id), user.name, user.email, user.password);
     }
 
-    private void redirect(Context context, ValidateableEmail email, boolean emailSent) {
-        context.redirect(new UrlQueryBuilder().put(EMAIL_PARAM, email.value())
-            .put(EMAIL_SENT_PARAM, emailSent).build());
+    private Redirection passwordResetRedirection(String email, boolean emailSent, boolean inactiveAccount) {
+        return new Redirection(new UrlQueryBuilder().put(QueryParamKey.EMAIL, email)
+            .put(QueryParamKey.EMAIL_SENT, emailSent).put(QueryParamKey.INACTIVE_ACCOUNT, inactiveAccount)
+            .build(PASSWORD_RESET));
     }
 
-    private void showPasswordResetForm(Context context) {
-        ValidateableEmail email = new ValidateableEmail(context.queryParam(EMAIL_PARAM, ""));
-        String hash = context.queryParam(HASH_PARAM, "");
-        if (isPasswordResetRequestValid(email, hash)) {
-            context.html(views.changePasswordView(passwordResetUrl(context), false));
-        } else {
-            throw new ResponseException(ErrorCode.INVALID_PASSWORD_RESET_LINK);
+    public HtmlResponse passwordResetForm(String email, String hash, String passwordResetUrl) {
+        ValidateableEmail validateableEmail = new ValidateableEmail(email);
+        if (isPasswordResetRequestValid(validateableEmail, hash)) {
+            return new HtmlResponse(views.changePasswordView(passwordResetUrl, false));
         }
-    }
-
-    private String passwordResetUrl(Context context) {
-        return context.path() + "?" + context.queryString();
+        throw new ResponseException(ErrorCode.INVALID_PASSWORD_RESET_LINK);
     }
 
     private boolean isPasswordResetRequestValid(ValidateableEmail email, String hash) {
@@ -119,19 +108,24 @@ public class PasswordResetRespondent implements Respondent {
         return valid;
     }
 
-    private void resetPassword(Context context) {
-        ValidateableEmail email = new ValidateableEmail(context.queryParam(EMAIL_PARAM, ""));
-        String hash = context.queryParam(HASH_PARAM, "");
-        if (isPasswordResetRequestValid(email, hash)) {
-            ValidateablePassword password = new ValidateablePassword(context.formParam(PASSWORD_FORM));
-            if (password.isValid()) {
-                actualization.updatePassword(email.value(), hashing.hash(password.value()));
-                respondent.redirectWithNewPassword(context);
+    public Redirection resetPassword(String email, String hash, String password, String passwordResetFormUrl) {
+        Redirection redirection;
+        ValidateableEmail validateableEmail = new ValidateableEmail(email);
+        if (isPasswordResetRequestValid(validateableEmail, hash)) {
+            if (new ValidateablePassword(password).isValid()) {
+                actualization.updatePassword(email, hashing.hash(password));
+                redirection = respondent.redirectWithNewPassword();
             } else {
-                context.html(views.changePasswordView(passwordResetUrl(context), true));
+                redirection = passwordResetFormRedirection(passwordResetFormUrl);
             }
         } else {
             throw new ResponseException(ErrorCode.INVALID_PASSWORD_RESET_LINK);
         }
+        return redirection;
+    }
+
+    private Redirection passwordResetFormRedirection(String passwordResetUrl) {
+        return new Redirection(new UrlQueryBuilder().put(QueryParamKey.INVALID_PASSWORD, true)
+            .build(passwordResetUrl));
     }
 }

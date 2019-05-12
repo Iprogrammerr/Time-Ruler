@@ -60,7 +60,7 @@ public class MessagesTest {
         while (allMessages.containsKey(key)) {
             key = strings.alphabetic();
         }
-        String expected = String.format("There is no message associated with %s key", key);
+        String expected = String.format("There is no message associated with %s value", key);
         MatcherAssert.assertThat("Does not return proper absent message", messages.absentMessage(key),
             Matchers.equalTo(expected));
     }
