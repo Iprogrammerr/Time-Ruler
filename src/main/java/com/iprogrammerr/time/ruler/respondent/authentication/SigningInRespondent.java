@@ -8,31 +8,30 @@ import com.iprogrammerr.time.ruler.model.error.ResponseException;
 import com.iprogrammerr.time.ruler.model.user.User;
 import com.iprogrammerr.time.ruler.model.user.Users;
 import com.iprogrammerr.time.ruler.model.user.UsersActualization;
-import com.iprogrammerr.time.ruler.respondent.Respondent;
+import com.iprogrammerr.time.ruler.respondent.HtmlResponse;
+import com.iprogrammerr.time.ruler.respondent.HtmlResponseRedirection;
+import com.iprogrammerr.time.ruler.respondent.Redirection;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanExecutionRespondent;
 import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateablePassword;
 import com.iprogrammerr.time.ruler.view.rendering.SigningInViews;
-import io.javalin.Context;
-import io.javalin.Javalin;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
-public class SigningInRespondent implements Respondent {
+public class SigningInRespondent {
 
     public static final String SIGN_IN = "sign-in";
     private static final String FAREWELL_PARAM = "farewell";
     private static final String NEW_PASSWORD_PARAM = "newPassword";
     private static final String FORM_EMAIL_NAME = "emailName";
-    private static final String FORM_PASSWORD = "password";
     private static final String EMAIL_NAME_PARAM = FORM_EMAIL_NAME;
     private static final String NON_EXISTENT_USER_PARAM = "nonExistentUser";
     private static final String INACTIVE_ACCOUNT_PARAM = "inactiveAccount";
     private static final String INVALID_PASSWORD_PARAM = "invalidPassword";
     private static final String NOT_USER_PASSWORD_PARAM = "notUserPassword";
-    private static final String ACTIVATION = "activation";
     private final DayPlanExecutionRespondent respondent;
     private final SigningInViews views;
     private final Users users;
@@ -50,93 +49,78 @@ public class SigningInRespondent implements Respondent {
         this.identity = identity;
     }
 
-    @Override
-    public void init(Javalin app) {
-        app.get(SIGN_IN, this::renderSignIn);
-        app.post(SIGN_IN, this::signIn);
-    }
-
-    private void renderSignIn(Context context) {
-        String activation = context.queryParam(ACTIVATION, "");
+    public HtmlResponseRedirection signInPage(String activation, String emailName, boolean farewell,
+        boolean newPassword, boolean nonExistentUser, boolean inactiveAccount, boolean notUserPassword,
+        boolean invalidPassword) {
+        HtmlResponseRedirection response;
         if (activation.isEmpty()) {
-            if (context.req.getSession(false) == null) {
-                showProperSignIn(context);
+            String view;
+            if (farewell) {
+                view = views.withFarewellView();
+            } else if (newPassword) {
+                view = views.withNewPasswordView();
+            } else if (emailName.isEmpty()) {
+                view = views.validView();
             } else {
-                respondent.redirect(context);
+                view = views.invalidView(emailName, nonExistentUser, inactiveAccount, notUserPassword, invalidPassword);
             }
+            response = new HtmlResponseRedirection(view);
         } else {
-            activate(context, activation);
+            //TODO refactor
+            response = new HtmlResponseRedirection(new HtmlResponse(""), activate(activation));
         }
+        return response;
     }
 
-    private void showProperSignIn(Context context) {
-        boolean farewell = queryParam(context, FAREWELL_PARAM);
-        boolean newPassword = queryParam(context, NEW_PASSWORD_PARAM);
-        boolean nonExistentUser = queryParam(context, NON_EXISTENT_USER_PARAM);
-        boolean inactiveAccount = queryParam(context, INACTIVE_ACCOUNT_PARAM);
-        boolean notUserPassword = queryParam(context, NOT_USER_PASSWORD_PARAM);
-        boolean invalidPassword = queryParam(context, INVALID_PASSWORD_PARAM);
-        String emailName = context.queryParam(EMAIL_NAME_PARAM, "");
-        String view;
-        if (farewell) {
-            view = views.withFarewellView();
-        } else if (newPassword) {
-            view = views.withNewPasswordView();
-        } else if (emailName.isEmpty()) {
-            view = views.validView();
-        } else {
-            view = views.invalidView(emailName, nonExistentUser, inactiveAccount, notUserPassword, invalidPassword);
-        }
-        context.html(view);
-    }
-
-    private boolean queryParam(Context context, String key) {
-        return context.queryParam(key, Boolean.class, Boolean.toString(false)).get();
-    }
-
-    private void signIn(Context context) {
-        String emailName = context.formParam(FORM_EMAIL_NAME, "");
+    public Redirection signIn(HttpServletRequest request, String emailName, String password) {
         ValidateableEmail email = new ValidateableEmail(emailName);
         ValidateableName name = new ValidateableName(emailName);
-        ValidateablePassword password = new ValidateablePassword(context.formParam(FORM_PASSWORD, ""));
-        if ((email.isValid() || name.isValid()) && password.isValid()) {
-            signInOrSetError(context, email.isValid() ? email.value() : name.value(), hashing.hash(password.value()));
-        } else if (!password.isValid()) {
-            redirect(context, emailName, INVALID_PASSWORD_PARAM, true);
+        ValidateablePassword validateablePassword = new ValidateablePassword(password);
+        Redirection redirection;
+        if ((email.isValid() || name.isValid()) && validateablePassword.isValid()) {
+            redirection = signInOrSetError(request, email.isValid() ? email.value() : name.value(),
+                hashing.hash(password));
+        } else if (!validateablePassword.isValid()) {
+            redirection = redirect(emailName, INVALID_PASSWORD_PARAM, true);
         } else {
-            redirect(context, EMAIL_NAME_PARAM, emailName);
+            redirection = redirect(EMAIL_NAME_PARAM, emailName);
         }
+        return redirection;
     }
 
-    private void redirect(Context context, String key, Object param) {
-        context.redirect(new UrlQueryBuilder().put(key, param).build("/" + SIGN_IN));
+    private Redirection redirect(String key, Object param) {
+        return new Redirection(new UrlQueryBuilder().put(key, param).build("/" + SIGN_IN));
     }
 
-    private void redirect(Context context, String emailName, String key, Object param) {
+    private Redirection redirect(String emailName, String key, Object param) {
+        Redirection redirection;
         if (emailName.isEmpty()) {
-            redirect(context, key, param);
+            redirection = redirect(key, param);
         } else {
-            context.redirect(new UrlQueryBuilder().put(EMAIL_NAME_PARAM, emailName)
+            redirection = new Redirection(new UrlQueryBuilder().put(EMAIL_NAME_PARAM, emailName)
                 .put(key, param).build("/" + SIGN_IN));
         }
+        return redirection;
     }
 
-
-    private void signInOrSetError(Context context, String emailOrName, String passwordHash) {
+    private Redirection signInOrSetError(HttpServletRequest request, String emailOrName, String passwordHash) {
+        Redirection redirection;
         Optional<User> user = withEmailOrName(emailOrName);
         if (user.isPresent()) {
             User userVal = user.get();
             if (userVal.active && passwordHash.equals(userVal.password)) {
-                identity.create(userVal.id, context.req);
-                respondent.redirect(context);
+                identity.create(userVal.id, request);
+                //TODO proper redirect;
+                redirection = new Redirection("??");
             } else if (!userVal.active) {
-                redirect(context, emailOrName, INACTIVE_ACCOUNT_PARAM, true);
+                redirection = redirect(emailOrName, INACTIVE_ACCOUNT_PARAM, true);
             } else {
-                redirect(context, emailOrName, NOT_USER_PASSWORD_PARAM, true);
+                redirection = redirect(emailOrName, NOT_USER_PASSWORD_PARAM, true);
             }
         } else {
-            redirect(context, emailOrName, NON_EXISTENT_USER_PARAM, true);
+            redirection = redirect(emailOrName, NON_EXISTENT_USER_PARAM, true);
         }
+        return redirection;
     }
 
     private Optional<User> withEmailOrName(String emailOrName) {
@@ -149,8 +133,7 @@ public class SigningInRespondent implements Respondent {
         return user;
     }
 
-    //TODO refactor to follow POST/REDIRECT/GET
-    private void activate(Context context, String activation) {
+    private String activate(String activation) {
         List<User> inactive = users.allInactive();
         boolean activated = false;
         for (User u : inactive) {
@@ -162,21 +145,21 @@ public class SigningInRespondent implements Respondent {
             }
         }
         if (activated) {
-            context.html(views.withActivationCongratulationsView());
-        } else {
-            throw new ResponseException(ErrorCode.INVALID_ACTIVATION_LINK);
+            //TODO proper redirection;
+            return "";
         }
+        throw new ResponseException(ErrorCode.INVALID_ACTIVATION_LINK);
     }
 
     private String userHash(String email, String name, long id) {
         return hashing.hash(email, name, String.valueOf(id));
     }
 
-    public void redirectWithFarewell(Context context) {
-        redirect(context, FAREWELL_PARAM, true);
+    public Redirection redirectWithFarewell() {
+        return redirect(FAREWELL_PARAM, true);
     }
 
-    public void redirectWithNewPassword(Context context) {
-        redirect(context, NEW_PASSWORD_PARAM, true);
+    public Redirection redirectWithNewPassword() {
+        return redirect(NEW_PASSWORD_PARAM, true);
     }
 }

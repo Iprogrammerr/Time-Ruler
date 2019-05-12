@@ -10,9 +10,9 @@ import javax.servlet.http.HttpSession;
 public class SigningOutRespondent implements Respondent {
 
     private static final String SIGN_OUT = "sign-out";
-    private final SigningInRespondent respondent;
+    private final SigningInRespondentOld respondent;
 
-    public SigningOutRespondent(SigningInRespondent respondent) {
+    public SigningOutRespondent(SigningInRespondentOld respondent) {
         this.respondent = respondent;
     }
 

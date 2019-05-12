@@ -25,14 +25,14 @@ public class PasswordResetRespondent implements Respondent {
     private static final String HASH_PARAM = "hash";
     private static final String EMAIL_SENT_PARAM = "emailSent";
     private static final String PASSWORD_FORM = "password";
-    private final SigningInRespondent respondent;
+    private final SigningInRespondentOld respondent;
     private final Users users;
     private final UsersActualization actualization;
     private final Emails emails;
     private final Hashing hashing;
     private final PasswordResetViews views;
 
-    public PasswordResetRespondent(SigningInRespondent respondent, Users users, UsersActualization actualization,
+    public PasswordResetRespondent(SigningInRespondentOld respondent, Users users, UsersActualization actualization,
         Emails emails, Hashing hashing, PasswordResetViews views) {
         this.respondent = respondent;
         this.users = users;

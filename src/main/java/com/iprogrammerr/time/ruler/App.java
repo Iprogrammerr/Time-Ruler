@@ -33,7 +33,7 @@ import com.iprogrammerr.time.ruler.respondent.WelcomeRespondent;
 import com.iprogrammerr.time.ruler.respondent.activity.ActivitiesRespondent;
 import com.iprogrammerr.time.ruler.respondent.activity.ActivityRespondent;
 import com.iprogrammerr.time.ruler.respondent.authentication.PasswordResetRespondent;
-import com.iprogrammerr.time.ruler.respondent.authentication.SigningInRespondent;
+import com.iprogrammerr.time.ruler.respondent.authentication.SigningInRespondentOld;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningOutRespondent;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningUpRespondent;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanExecutionRespondent;
@@ -98,7 +98,7 @@ public class App {
         SigningInViews signingInViews = new SigningInViews(viewsTemplates, SigningUpRespondent.SIGN_UP,
             PasswordResetRespondent.PASSWORD_RESET);
         PasswordResetViews passwordResetViews = new PasswordResetViews(viewsTemplates);
-        SigningUpViews signingUpViews = new SigningUpViews(viewsTemplates, SigningInRespondent.SIGN_IN);
+        SigningUpViews signingUpViews = new SigningUpViews(viewsTemplates, SigningInRespondentOld.SIGN_IN);
         CalendarViews calendarViews = new CalendarViews(viewsTemplates);
         DayPlanExecutionViews dayPlanExecutionViews = new DayPlanExecutionViews(viewsTemplates, formatting);
         DayPlanViews dayPlanViews = new DayPlanViews(viewsTemplates, formatting);
@@ -138,7 +138,7 @@ public class App {
             serverClientDates);
         ActivitiesRespondent activitiesRespondent = new ActivitiesRespondent(identity, activitiesViews,
             activitiesSearch, serverClientDates);
-        SigningInRespondent signingInRespondent = new SigningInRespondent(dayPlanExecutionRespondent, signingInViews,
+        SigningInRespondentOld signingInRespondent = new SigningInRespondentOld(dayPlanExecutionRespondent, signingInViews,
             users, actualization, hashing, identity);
         PasswordResetRespondent passwordResetRespondent = new PasswordResetRespondent(signingInRespondent, users,
             actualization, emails, hashing, passwordResetViews);
