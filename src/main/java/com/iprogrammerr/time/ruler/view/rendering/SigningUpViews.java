@@ -43,13 +43,13 @@ public class SigningUpViews {
         return templates.rendered(formName, params);
     }
 
-    public String invalid(ValidateableEmail email, ValidateableName name, ValidateablePassword password) {
+    public String invalid(ValidateableEmail email, ValidateableName name, boolean invalidPassword) {
         Map<String, Object> params = new HashMap<>();
         params.put(INVALID_EMAIL_TEMPLATE, !email.isValid());
         params.put(EMAIL_TEMPLATE, email.value());
         params.put(INVALID_NAME_TEMPLATE, !name.isValid());
         params.put(NAME_TEMPLATE, name.value());
-        params.put(INVALID_PASSWORD, !password.isValid());
+        params.put(INVALID_PASSWORD, invalidPassword);
         return withSignInUrl(params);
     }
 

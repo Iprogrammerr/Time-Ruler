@@ -132,7 +132,7 @@ public class ProfileRespondent implements GroupedRespondent {
             redirectToInvalidPassword(context, oldPassword, false, newPassword);
         } else {
             actualization.updatePassword(user.id, hashing.hash(newPassword.value()));
-            respondent.newPasswordSignOut(context);
+            context.redirect(respondent.newPasswordSignOut(context.req).location);
         }
     }
 

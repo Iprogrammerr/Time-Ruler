@@ -1,4 +1,4 @@
-package com.iprogrammerr.time.ruler.route;
+package com.iprogrammerr.time.ruler.route.authentication;
 
 import com.iprogrammerr.time.ruler.model.FormKey;
 import com.iprogrammerr.time.ruler.model.QueryParamKey;
@@ -6,6 +6,7 @@ import com.iprogrammerr.time.ruler.model.RequestParams;
 import com.iprogrammerr.time.ruler.respondent.HtmlResponse;
 import com.iprogrammerr.time.ruler.respondent.Redirection;
 import com.iprogrammerr.time.ruler.respondent.authentication.PasswordResetRespondent;
+import com.iprogrammerr.time.ruler.route.Routes;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
@@ -29,14 +30,14 @@ public class PasswordResetRoutes implements Routes {
         RequestParams params = new RequestParams(context);
         HtmlResponse response = respondent.passwordResetPage(params.stringParam(QueryParamKey.EMAIL),
             params.booleanParam(QueryParamKey.EMAIL_SENT), params.booleanParam(QueryParamKey.INACTIVE_ACCOUNT));
-        context.html(response.body);
+        context.html(response.html);
     }
 
     private void showPasswordResetForm(Context context) {
         RequestParams params = new RequestParams(context);
         HtmlResponse response = respondent.passwordResetForm(params.stringParam(QueryParamKey.EMAIL),
             params.stringParam(QueryParamKey.HASH), passwordResetUrl(context));
-        context.html(response.body);
+        context.html(response.html);
     }
 
     private String passwordResetUrl(Context context) {

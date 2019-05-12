@@ -32,12 +32,16 @@ import com.iprogrammerr.time.ruler.respondent.ProfileRespondent;
 import com.iprogrammerr.time.ruler.respondent.WelcomeRespondent;
 import com.iprogrammerr.time.ruler.respondent.activity.ActivitiesRespondent;
 import com.iprogrammerr.time.ruler.respondent.activity.ActivityRespondent;
-import com.iprogrammerr.time.ruler.respondent.authentication.PasswordResetRespondentOld;
-import com.iprogrammerr.time.ruler.respondent.authentication.SigningInRespondentOld;
+import com.iprogrammerr.time.ruler.respondent.authentication.PasswordResetRespondent;
+import com.iprogrammerr.time.ruler.respondent.authentication.SigningInRespondent;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningOutRespondent;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningUpRespondent;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanExecutionRespondent;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanRespondent;
+import com.iprogrammerr.time.ruler.route.authentication.PasswordResetRoutes;
+import com.iprogrammerr.time.ruler.route.authentication.SigningInRoutes;
+import com.iprogrammerr.time.ruler.route.authentication.SigningOutRoutes;
+import com.iprogrammerr.time.ruler.route.authentication.SigningUpRoutes;
 import com.iprogrammerr.time.ruler.view.HtmlViewsTemplates;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import com.iprogrammerr.time.ruler.view.rendering.ActivitiesViews;
@@ -96,9 +100,9 @@ public class App {
         ViewsTemplates viewsTemplates = new HtmlViewsTemplates(engine);
 
         SigningInViews signingInViews = new SigningInViews(viewsTemplates, SigningUpRespondent.SIGN_UP,
-            PasswordResetRespondentOld.PASSWORD_RESET);
+            PasswordResetRespondent.PASSWORD_RESET);
         PasswordResetViews passwordResetViews = new PasswordResetViews(viewsTemplates);
-        SigningUpViews signingUpViews = new SigningUpViews(viewsTemplates, SigningInRespondentOld.SIGN_IN);
+        SigningUpViews signingUpViews = new SigningUpViews(viewsTemplates, SigningInRespondent.SIGN_IN);
         CalendarViews calendarViews = new CalendarViews(viewsTemplates);
         DayPlanExecutionViews dayPlanExecutionViews = new DayPlanExecutionViews(viewsTemplates, formatting);
         DayPlanViews dayPlanViews = new DayPlanViews(viewsTemplates, formatting);
@@ -138,9 +142,9 @@ public class App {
             serverClientDates);
         ActivitiesRespondent activitiesRespondent = new ActivitiesRespondent(identity, activitiesViews,
             activitiesSearch, serverClientDates);
-        SigningInRespondentOld signingInRespondent = new SigningInRespondentOld(dayPlanExecutionRespondent, signingInViews,
+        SigningInRespondent signingInRespondent = new SigningInRespondent(dayPlanExecutionRespondent, signingInViews,
             users, actualization, hashing, identity);
-        PasswordResetRespondentOld passwordResetRespondent = new PasswordResetRespondentOld(signingInRespondent, users,
+        PasswordResetRespondent passwordResetRespondent = new PasswordResetRespondent(signingInRespondent, users,
             actualization, emails, hashing, passwordResetViews);
         SigningUpRespondent signingUpRespondent = new SigningUpRespondent(signingUpViews, users, hashing, emails);
         SigningOutRespondent signingOutRespondent = new SigningOutRespondent(signingInRespondent);
@@ -157,11 +161,17 @@ public class App {
         dayPlanRespondent.init(userGroup, app);
         activityRespondent.init(userGroup, app);
         activitiesRespondent.init(userGroup, app);
-        signingInRespondent.init(app);
-        passwordResetRespondent.init(app);
-        signingUpRespondent.init(app);
-        signingOutRespondent.init(app);
         errorRespondent.init(app);
+
+        SigningUpRoutes signingUpRoutes = new SigningUpRoutes(signingUpRespondent);
+        SigningInRoutes signingInRoutes = new SigningInRoutes(signingInRespondent);
+        SigningOutRoutes signingOutRoutes = new SigningOutRoutes(signingOutRespondent);
+        PasswordResetRoutes passwordResetRoutes = new PasswordResetRoutes(passwordResetRespondent);
+
+        signingInRoutes.init(app);
+        passwordResetRoutes.init(app);
+        signingUpRoutes.init(app);
+        signingOutRoutes.init(app);
 
         //TODO Authentication respondent
         app.before(userGroup + "*", ctx -> {

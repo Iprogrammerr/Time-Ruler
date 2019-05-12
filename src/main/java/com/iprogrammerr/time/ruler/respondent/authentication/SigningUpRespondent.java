@@ -2,27 +2,20 @@ package com.iprogrammerr.time.ruler.respondent.authentication;
 
 import com.iprogrammerr.time.ruler.email.Emails;
 import com.iprogrammerr.time.ruler.model.Hashing;
+import com.iprogrammerr.time.ruler.model.QueryParamKey;
+import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.user.Users;
-import com.iprogrammerr.time.ruler.respondent.Respondent;
+import com.iprogrammerr.time.ruler.respondent.HtmlResponse;
+import com.iprogrammerr.time.ruler.respondent.Redirection;
 import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateablePassword;
 import com.iprogrammerr.time.ruler.view.rendering.SigningUpViews;
-import io.javalin.Context;
-import io.javalin.Javalin;
 
-import java.net.HttpURLConnection;
-
-//TODO modify all post requests to follow Post/Redirect/Get pattern
-public class SigningUpRespondent implements Respondent {
+public class SigningUpRespondent {
 
     public static final String SIGN_UP = "sign-up";
-    private static final String SIGN_UP_SUCCESS = "sign-up-success";
-    private static final String SIGN_IN = "sign-in";
-    private static final String FORM_EMAIL = "email";
-    private static final String FORM_NAME = "name";
-    private static final String FORM_PASSWORD = "password";
-    private static final String ACTIVATION = "activation";
+    public static final String SIGN_UP_SUCCESS = "sign-up-success";
     private final SigningUpViews views;
     private final Users users;
     private final Hashing hashing;
@@ -35,41 +28,69 @@ public class SigningUpRespondent implements Respondent {
         this.emails = emails;
     }
 
-    @Override
-    public void init(Javalin app) {
-        app.get(SIGN_UP, ctx -> ctx.html(views.valid()));
-        app.get(SIGN_UP_SUCCESS, ctx -> {
-            ctx.status(HttpURLConnection.HTTP_OK);
-            ctx.html(views.success());
-        });
-        app.post(SIGN_UP, this::signUp);
+    public HtmlResponse signUpPage() {
+        return new HtmlResponse(views.valid());
     }
 
-    public void signUp(Context context) {
-        ValidateableEmail email = new ValidateableEmail(context.formParam(FORM_EMAIL, ""));
-        ValidateableName name = new ValidateableName(context.formParam(FORM_NAME, ""));
-        ValidateablePassword password = new ValidateablePassword(context.formParam(FORM_PASSWORD, ""));
-        if (email.isValid() && name.isValid() && password.isValid()) {
-            createUserIf(context, email.value(), name.value(), password.value());
+    public HtmlResponse invalidSignUpPage(String email, String name, boolean emailTaken, boolean nameTaken,
+        boolean invalidPassword) {
+        String view;
+        if (emailTaken || nameTaken) {
+            view = views.taken(email, name, emailTaken, nameTaken);
         } else {
-            context.html(views.invalid(email, name, password));
+            view = views.invalid(new ValidateableEmail(email), new ValidateableName(name), invalidPassword);
         }
+        return new HtmlResponse(view);
     }
 
-    private void createUserIf(Context context, String email, String name, String password) {
+    public HtmlResponse signUpSuccessPage() {
+        return new HtmlResponse(views.success());
+    }
+
+    public Redirection signUp(String email, String name, String password) {
+        Redirection redirection;
+        ValidateableEmail validateableEmail = new ValidateableEmail(email);
+        ValidateableName validateableName = new ValidateableName(name);
+        ValidateablePassword validateablePassword = new ValidateablePassword(password);
+        if (validateableEmail.isValid() && validateableName.isValid() && validateablePassword.isValid()) {
+            redirection = createUserIf(email, name, password);
+        } else {
+            redirection = invalidRedirection(email, name, validateablePassword);
+        }
+        return redirection;
+    }
+
+    private Redirection invalidRedirection(String email, String name, ValidateablePassword password) {
+        String url = new UrlQueryBuilder().put(QueryParamKey.EMAIL, email).put(QueryParamKey.NAME, name)
+            .put(QueryParamKey.INVALID_PASSWORD, !password.isValid()).build(SIGN_UP);
+        return new Redirection(url);
+    }
+
+    private Redirection takenRedirection(String email, String name, boolean emailTaken, boolean nameTaken) {
+        String url = new UrlQueryBuilder().put(QueryParamKey.EMAIL, email).put(QueryParamKey.NAME, name)
+            .put(QueryParamKey.EMAIL_TAKEN, emailTaken).put(QueryParamKey.NAME_TAKEN, nameTaken).build(SIGN_UP);
+        return new Redirection(url);
+    }
+
+    private Redirection createUserIf(String email, String name, String password) {
         boolean emailTaken = users.withEmail(email).isPresent();
         boolean nameTaken = users.withName(name).isPresent();
+        Redirection redirection;
         if (emailTaken || nameTaken) {
-            context.html(views.taken(email, name, emailTaken, nameTaken));
+            redirection = takenRedirection(email, name, emailTaken, nameTaken);
         } else {
             createUser(email, name, password);
-            context.redirect(SIGN_UP_SUCCESS);
+            //TODO remove this page, redirect to sign in with proper message
+            redirection = new Redirection(SIGN_UP_SUCCESS);
         }
+        return redirection;
     }
 
     private void createUser(String email, String name, String password) {
         long id = users.create(name, email, hashing.hash(password));
-        emails.sendSignUpEmail(email, String.format("%s?%s=%s", SIGN_IN, ACTIVATION, userHash(email, name, id)));
+        emails.sendSignUpEmail(email, String.format("%s?%s=%s",
+            SigningInRespondent.SIGN_IN, QueryParamKey.ACTIVATION.value,
+            userHash(email, name, id)));
     }
 
     private String userHash(String email, String name, long id) {

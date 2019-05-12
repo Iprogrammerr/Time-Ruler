@@ -12,6 +12,7 @@ import com.iprogrammerr.time.ruler.model.user.UsersActualization;
 import com.iprogrammerr.time.ruler.respondent.HtmlResponse;
 import com.iprogrammerr.time.ruler.respondent.HtmlResponseRedirection;
 import com.iprogrammerr.time.ruler.respondent.Redirection;
+import com.iprogrammerr.time.ruler.respondent.day.DayPlanExecutionRespondent;
 import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateablePassword;
@@ -24,14 +25,16 @@ import java.util.Optional;
 public class SigningInRespondent {
 
     public static final String SIGN_IN = "sign-in";
+    private final DayPlanExecutionRespondent respondent;
     private final SigningInViews views;
     private final Users users;
     private final UsersActualization actualization;
     private final Hashing hashing;
     private final Identity<Long> identity;
 
-    public SigningInRespondent(SigningInViews views, Users users, UsersActualization actualization, Hashing hashing,
-        Identity<Long> identity) {
+    public SigningInRespondent(DayPlanExecutionRespondent respondent, SigningInViews views, Users users,
+        UsersActualization actualization, Hashing hashing, Identity<Long> identity) {
+        this.respondent = respondent;
         this.views = views;
         this.users = users;
         this.actualization = actualization;
@@ -67,25 +70,27 @@ public class SigningInRespondent {
         ValidateableName name = new ValidateableName(emailName);
         ValidateablePassword validateablePassword = new ValidateablePassword(password);
         Redirection redirection;
-        if ((email.isValid() || name.isValid()) && validateablePassword.isValid()) {
+        if (identity.isValid(request)) {
+            redirection = respondent.redirection();
+        } else if ((email.isValid() || name.isValid()) && validateablePassword.isValid()) {
             redirection = signInOrSetError(request, email.isValid() ? email.value() : name.value(),
                 hashing.hash(password));
         } else if (!validateablePassword.isValid()) {
-            redirection = redirect(emailName, QueryParamKey.INVALID_PASSWORD, true);
+            redirection = redirection(emailName, QueryParamKey.INVALID_PASSWORD, true);
         } else {
-            redirection = redirect(QueryParamKey.EMAIL_NAME, emailName);
+            redirection = redirection(QueryParamKey.EMAIL_NAME, emailName);
         }
         return redirection;
     }
 
-    private Redirection redirect(QueryParamKey key, Object param) {
+    private Redirection redirection(QueryParamKey key, Object param) {
         return new Redirection(new UrlQueryBuilder().put(key, param).build("/" + SIGN_IN));
     }
 
-    private Redirection redirect(String emailName, QueryParamKey key, Object param) {
+    private Redirection redirection(String emailName, QueryParamKey key, Object param) {
         Redirection redirection;
         if (emailName.isEmpty()) {
-            redirection = redirect(key, param);
+            redirection = redirection(key, param);
         } else {
             redirection = new Redirection(new UrlQueryBuilder().put(QueryParamKey.EMAIL_NAME, emailName)
                 .put(key, param).build("/" + SIGN_IN));
@@ -100,15 +105,14 @@ public class SigningInRespondent {
             User userVal = user.get();
             if (userVal.active && passwordHash.equals(userVal.password)) {
                 identity.create(userVal.id, request);
-                //TODO proper redirect;
-                redirection = new Redirection("??");
+                redirection = respondent.redirection();
             } else if (!userVal.active) {
-                redirection = redirect(emailOrName, QueryParamKey.INACTIVE_ACCOUNT, true);
+                redirection = redirection(emailOrName, QueryParamKey.INACTIVE_ACCOUNT, true);
             } else {
-                redirection = redirect(emailOrName, QueryParamKey.NOT_USER_PASSWORD, true);
+                redirection = redirection(emailOrName, QueryParamKey.NOT_USER_PASSWORD, true);
             }
         } else {
-            redirection = redirect(emailOrName, QueryParamKey.NON_EXISTENT_USER, true);
+            redirection = redirection(emailOrName, QueryParamKey.NON_EXISTENT_USER, true);
         }
         return redirection;
     }
@@ -146,10 +150,10 @@ public class SigningInRespondent {
     }
 
     public Redirection redirectWithFarewell() {
-        return redirect(QueryParamKey.FAREWELL, true);
+        return redirection(QueryParamKey.FAREWELL, true);
     }
 
     public Redirection redirectWithNewPassword() {
-        return redirect(QueryParamKey.NEW_PASSWORD, true);
+        return redirection(QueryParamKey.NEW_PASSWORD, true);
     }
 }

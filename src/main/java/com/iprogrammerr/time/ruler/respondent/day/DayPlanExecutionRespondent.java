@@ -9,6 +9,7 @@ import com.iprogrammerr.time.ruler.model.date.LimitedDate;
 import com.iprogrammerr.time.ruler.model.date.ServerClientDates;
 import com.iprogrammerr.time.ruler.model.date.SmartDate;
 import com.iprogrammerr.time.ruler.respondent.GroupedRespondent;
+import com.iprogrammerr.time.ruler.respondent.Redirection;
 import com.iprogrammerr.time.ruler.view.rendering.DayPlanExecutionViews;
 import io.javalin.Context;
 import io.javalin.Javalin;
@@ -67,6 +68,10 @@ public class DayPlanExecutionRespondent implements GroupedRespondent {
 
     public void redirect(Context context) {
         context.redirect(todayRedirect);
+    }
+
+    public Redirection redirection() {
+        return new Redirection(todayRedirect);
     }
 
     public void redirect(Context context, Instant date) {

@@ -1,47 +1,40 @@
 package com.iprogrammerr.time.ruler.respondent.authentication;
 
-import com.iprogrammerr.time.ruler.respondent.Respondent;
-import io.javalin.Context;
-import io.javalin.Javalin;
+import com.iprogrammerr.time.ruler.respondent.Redirection;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-public class SigningOutRespondent implements Respondent {
+public class SigningOutRespondent {
 
-    private static final String SIGN_OUT = "sign-out";
-    private final SigningInRespondentOld respondent;
+    public static final String SIGN_OUT = "sign-out";
+    private final SigningInRespondent respondent;
 
-    public SigningOutRespondent(SigningInRespondentOld respondent) {
+    public SigningOutRespondent(SigningInRespondent respondent) {
         this.respondent = respondent;
     }
 
-    @Override
-    public void init(Javalin app) {
-        app.get(SIGN_OUT, this::signOut);
+    public Redirection signOut(HttpServletRequest request) {
+        clearData(request);
+        return respondent.redirectWithFarewell();
     }
 
-    private void signOut(Context context) {
-        clearData(context);
-        respondent.redirectWithFarewell(context);
-    }
-
-    private void clearData(Context context) {
-        HttpSession session = context.req.getSession(false);
+    private void clearData(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();
         }
-        Cookie[] cookies = context.req.getCookies();
+        Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie c : cookies) {
                 c.setMaxAge(0);
-                context.cookie(c);
             }
         }
     }
 
-    public void newPasswordSignOut(Context context) {
-        clearData(context);
-        respondent.redirectWithNewPassword(context);
+    public Redirection newPasswordSignOut(HttpServletRequest request) {
+        clearData(request);
+        return respondent.redirectWithNewPassword();
     }
 }

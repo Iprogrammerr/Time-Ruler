@@ -1,4 +1,4 @@
-package com.iprogrammerr.time.ruler.route;
+package com.iprogrammerr.time.ruler.route.authentication;
 
 import com.iprogrammerr.time.ruler.model.FormKey;
 import com.iprogrammerr.time.ruler.model.QueryParamKey;
@@ -6,6 +6,7 @@ import com.iprogrammerr.time.ruler.model.RequestParams;
 import com.iprogrammerr.time.ruler.respondent.HtmlResponseRedirection;
 import com.iprogrammerr.time.ruler.respondent.Redirection;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningInRespondent;
+import com.iprogrammerr.time.ruler.route.Routes;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
@@ -37,7 +38,7 @@ public class SigningInRoutes implements Routes {
         HtmlResponseRedirection response = respondent.signInPage(activation, emailName, farewell, newPassword,
             nonExistentUser, inactiveAccount, notUserPassword, invalidPassword);
         if (response.redirection.isEmpty()) {
-            context.html(response.response.body);
+            context.html(response.response.html);
         } else {
             context.redirect(response.redirection);
         }
