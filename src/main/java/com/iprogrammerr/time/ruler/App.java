@@ -38,6 +38,7 @@ import com.iprogrammerr.time.ruler.respondent.authentication.SigningOutResponden
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningUpRespondent;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanExecutionRespondent;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanRespondent;
+import com.iprogrammerr.time.ruler.route.CalendarRoutes;
 import com.iprogrammerr.time.ruler.route.activity.ActivitiesRoutes;
 import com.iprogrammerr.time.ruler.route.activity.ActivityRoutes;
 import com.iprogrammerr.time.ruler.route.authentication.PasswordResetRoutes;
@@ -135,12 +136,12 @@ public class App {
         Identity<Long> identity = new SessionIdentity();
 
         WelcomeRespondent welcomeRespondent = new WelcomeRespondent(viewsTemplates);
-        CalendarRespondent calendarRespondent = new CalendarRespondent(identity, calendarViews, dates,
-            serverClientDates);
         DayPlanExecutionRespondent dayPlanExecutionRespondent = new DayPlanExecutionRespondent(identity,
             dayPlanExecutionViews, activitiesSearch, limitedDate, dateParsing, serverClientDates);
         DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, dayPlanViews, activitiesSearch,
             limitedDate, dateParsing, serverClientDates);
+        CalendarRespondent calendarRespondent = new CalendarRespondent(identity, calendarViews, dates,
+            serverClientDates);
         ActivityRespondent activityRespondent = new ActivityRespondent(identity, activityViews,
             dayPlanExecutionRespondent, dayPlanRespondent, activities, activitiesSearch, descriptions, limitedDate,
             serverClientDates);
@@ -159,7 +160,6 @@ public class App {
         String userGroup = "user/";
 
         welcomeRespondent.init(app);
-        calendarRespondent.init(userGroup, app);
         profileRespondent.init(userGroup, app);
         errorRespondent.init(app);
 
@@ -168,22 +168,22 @@ public class App {
         SigningOutRoutes signingOutRoutes = new SigningOutRoutes(signingOutRespondent);
         PasswordResetRoutes passwordResetRoutes = new PasswordResetRoutes(passwordResetRespondent);
 
-        ActivityRoutes activityRoutes = new ActivityRoutes(activityRespondent);
-        ActivitiesRoutes activitiesRoutes = new ActivitiesRoutes(activitiesRespondent);
-
         DayPlanExecutionRoutes dayPlanExecutionRoutes = new DayPlanExecutionRoutes(dayPlanExecutionRespondent);
         DayPlanRoutes dayPlanRoutes = new DayPlanRoutes(dayPlanRespondent);
+        CalendarRoutes calendarRoutes = new CalendarRoutes(calendarRespondent);
+        ActivityRoutes activityRoutes = new ActivityRoutes(activityRespondent);
+        ActivitiesRoutes activitiesRoutes = new ActivitiesRoutes(activitiesRespondent);
 
         signingInRoutes.init(app);
         passwordResetRoutes.init(app);
         signingUpRoutes.init(app);
         signingOutRoutes.init(app);
 
-        activityRoutes.init(userGroup, app);
-        activitiesRoutes.init(userGroup, app);
-
+        calendarRoutes.init(userGroup, app);
         dayPlanExecutionRoutes.init(userGroup, app);
         dayPlanRoutes.init(userGroup, app);
+        activityRoutes.init(userGroup, app);
+        activitiesRoutes.init(userGroup, app);
 
         //TODO Authentication respondent
         app.before(userGroup + "*", ctx -> {

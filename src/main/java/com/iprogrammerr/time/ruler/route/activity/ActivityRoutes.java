@@ -1,6 +1,6 @@
 package com.iprogrammerr.time.ruler.route.activity;
 
-import com.iprogrammerr.time.ruler.model.QueryParamKey;
+import com.iprogrammerr.time.ruler.model.QueryParams;
 import com.iprogrammerr.time.ruler.model.RequestParams;
 import com.iprogrammerr.time.ruler.model.form.ActivityForm;
 import com.iprogrammerr.time.ruler.respondent.HtmlResponse;
@@ -33,15 +33,15 @@ public class ActivityRoutes implements GroupedRoutes {
 
     private void showActivity(Context context) {
         RequestParams params = new RequestParams(context);
-        String name = params.stringParam(QueryParamKey.NAME);
-        String startTime = params.stringParam(QueryParamKey.START);
-        String endTime = params.stringParam(QueryParamKey.END);
-        String description = params.stringParam(QueryParamKey.DESCRIPTION);
-        boolean plan = params.booleanParam(QueryParamKey.PLAN);
+        String name = params.stringParam(QueryParams.NAME);
+        String startTime = params.stringParam(QueryParams.START);
+        String endTime = params.stringParam(QueryParams.END);
+        String description = params.stringParam(QueryParams.DESCRIPTION);
+        boolean plan = params.booleanParam(QueryParams.PLAN);
         HtmlResponse response;
         if (name.isEmpty() && startTime.isEmpty() && endTime.isEmpty()) {
-            response = respondent.activityPage(context.req, params.longParam(QueryParamKey.TEMPLATE, EMPTY_ID),
-                params.longParam(QueryParamKey.ID, EMPTY_ID), plan);
+            response = respondent.activityPage(context.req, params.longParam(QueryParams.TEMPLATE, EMPTY_ID),
+                params.longParam(QueryParams.ID, EMPTY_ID), plan);
         } else {
             response = respondent.invalidActivityPage(name, startTime, endTime, description, plan);
         }
@@ -49,7 +49,7 @@ public class ActivityRoutes implements GroupedRoutes {
     }
 
     private void createActivity(Context context) {
-        String date = context.queryParam(QueryParamKey.DATE.value, "");
+        String date = context.queryParam(QueryParams.DATE, "");
         context.redirect(respondent.createActivity(context.req, date,
             ActivityForm.parsed(context.formParamMap())).location);
     }

@@ -1,7 +1,7 @@
 package com.iprogrammerr.time.ruler.respondent.activity;
 
 import com.iprogrammerr.time.ruler.model.Identity;
-import com.iprogrammerr.time.ruler.model.QueryParamKey;
+import com.iprogrammerr.time.ruler.model.QueryParams;
 import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.activity.ActivitiesSearch;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
@@ -66,10 +66,10 @@ public class ActivitiesRespondent {
         List<Page> pages = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             int page = i + 1;
-            UrlQueryBuilder queryBuilder = new UrlQueryBuilder().put(QueryParamKey.PLAN, plan)
-                .put(QueryParamKey.PAGE, page);
+            UrlQueryBuilder queryBuilder = new UrlQueryBuilder().put(QueryParams.PLAN, plan)
+                .put(QueryParams.PAGE, page);
             if (pattern.length() > 0) {
-                queryBuilder.put(QueryParamKey.PATTERN, pattern);
+                queryBuilder.put(QueryParams.PATTERN, pattern);
             }
             currentParams.forEach((k, v) -> v.forEach(s -> queryBuilder.put(k, s)));
             pages.add(new Page(queryBuilder.build(ACTIVITIES), i + 1));

@@ -18,9 +18,9 @@ public class RequestParams {
         this(context.queryParamMap());
     }
 
-    public boolean booleanParam(QueryParamKey key, boolean defaultValue) {
+    public boolean booleanParam(String key, boolean defaultValue) {
         boolean value;
-        List<String> values = params.get(key.value);
+        List<String> values = params.get(key);
         if (noValues(values)) {
             value = defaultValue;
         } else {
@@ -33,13 +33,13 @@ public class RequestParams {
         return values == null || values.isEmpty();
     }
 
-    public boolean booleanParam(QueryParamKey key) {
+    public boolean booleanParam(String key) {
         return booleanParam(key, false);
     }
 
-    public long longParam(QueryParamKey key, long defaultValue) {
+    public long longParam(String key, long defaultValue) {
         long value;
-        List<String> values = params.get(key.value);
+        List<String> values = params.get(key);
         if (noValues(values)) {
             value = defaultValue;
         } else {
@@ -52,13 +52,13 @@ public class RequestParams {
         return value;
     }
 
-    public int intParam(QueryParamKey key, int defaultValue) {
+    public int intParam(String key, int defaultValue) {
         return (int) longParam(key, defaultValue);
     }
 
-    public String stringParam(QueryParamKey key, String defaultValue) {
+    public String stringParam(String key, String defaultValue) {
         String value;
-        List<String> values = params.get(key.value);
+        List<String> values = params.get(key);
         if (noValues(values)) {
             value = defaultValue;
         } else {
@@ -67,7 +67,7 @@ public class RequestParams {
         return value;
     }
 
-    public String stringParam(QueryParamKey key) {
+    public String stringParam(String key) {
         return stringParam(key, "");
     }
 }

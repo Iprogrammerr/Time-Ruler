@@ -2,7 +2,7 @@ package com.iprogrammerr.time.ruler.respondent.authentication;
 
 import com.iprogrammerr.time.ruler.email.Emails;
 import com.iprogrammerr.time.ruler.model.Hashing;
-import com.iprogrammerr.time.ruler.model.QueryParamKey;
+import com.iprogrammerr.time.ruler.model.QueryParams;
 import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.error.ErrorCode;
 import com.iprogrammerr.time.ruler.model.error.ResponseException;
@@ -75,8 +75,8 @@ public class PasswordResetRespondent {
     }
 
     private String passwordResetLink(User user) {
-        return new UrlQueryBuilder().put(QueryParamKey.EMAIL, user.email)
-            .put(QueryParamKey.HASH, passwordResetHash(user))
+        return new UrlQueryBuilder().put(QueryParams.EMAIL, user.email)
+            .put(QueryParams.HASH, passwordResetHash(user))
             .build(PASSWORD_RESET_FORM);
     }
 
@@ -86,8 +86,8 @@ public class PasswordResetRespondent {
     }
 
     private Redirection passwordResetRedirection(String email, boolean emailSent, boolean inactiveAccount) {
-        return new Redirection(new UrlQueryBuilder().put(QueryParamKey.EMAIL, email)
-            .put(QueryParamKey.EMAIL_SENT, emailSent).put(QueryParamKey.INACTIVE_ACCOUNT, inactiveAccount)
+        return new Redirection(new UrlQueryBuilder().put(QueryParams.EMAIL, email)
+            .put(QueryParams.EMAIL_SENT, emailSent).put(QueryParams.INACTIVE_ACCOUNT, inactiveAccount)
             .build(PASSWORD_RESET));
     }
 
@@ -125,7 +125,7 @@ public class PasswordResetRespondent {
     }
 
     private Redirection passwordResetFormRedirection(String passwordResetUrl) {
-        return new Redirection(new UrlQueryBuilder().put(QueryParamKey.INVALID_PASSWORD, true)
+        return new Redirection(new UrlQueryBuilder().put(QueryParams.INVALID_PASSWORD, true)
             .build(passwordResetUrl));
     }
 }

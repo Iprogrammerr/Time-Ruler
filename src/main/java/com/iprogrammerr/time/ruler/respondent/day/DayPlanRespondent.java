@@ -1,7 +1,7 @@
 package com.iprogrammerr.time.ruler.respondent.day;
 
 import com.iprogrammerr.time.ruler.model.Identity;
-import com.iprogrammerr.time.ruler.model.QueryParamKey;
+import com.iprogrammerr.time.ruler.model.QueryParams;
 import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.activity.ActivitiesSearch;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
@@ -49,7 +49,7 @@ public class DayPlanRespondent {
     }
 
     public Redirection redirection(Instant date) {
-        return new Redirection(new UrlQueryBuilder().put(QueryParamKey.DATE, parsing.write(date))
+        return new Redirection(new UrlQueryBuilder().put(QueryParams.DATE, parsing.write(date))
             .build("/" + prefix + DAY_PLAN));
     }
 

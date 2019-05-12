@@ -6,53 +6,38 @@ import com.iprogrammerr.time.ruler.model.date.ServerClientDates;
 import com.iprogrammerr.time.ruler.model.date.SmartDate;
 import com.iprogrammerr.time.ruler.model.date.YearMonth;
 import com.iprogrammerr.time.ruler.view.rendering.CalendarViews;
-import io.javalin.Context;
-import io.javalin.Javalin;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 
-public class CalendarRespondent implements GroupedRespondent {
+//TODO simplify year month
+public class CalendarRespondent {
 
+    public static final String PLAN = "plan";
+    public static final String HISTORY = "history";
     private static final int MAX_YEAR_OFFSET_VALUE = 100;
-    private static final String PLAN = "plan";
-    private static final String HISTORY = "history";
     private final Identity<Long> identity;
     private final CalendarViews views;
     private final Dates dates;
     private final ServerClientDates serverClientDates;
 
-    public CalendarRespondent(Identity<Long> identity, CalendarViews views, Dates dates, ServerClientDates serverClientDates) {
+    public CalendarRespondent(Identity<Long> identity, CalendarViews views, Dates dates,
+        ServerClientDates serverClientDates) {
         this.identity = identity;
         this.views = views;
         this.dates = dates;
         this.serverClientDates = serverClientDates;
     }
 
-    @Override
-    public void init(String group, Javalin app) {
-        app.get(group + PLAN, this::showPlan);
-        app.get(group + HISTORY, this::showHistory);
-    }
-
-    private void showPlan(Context context) {
-        renderToFutureCalendar(context);
-    }
-
-    //TODO date offset
-    private void showHistory(Context context) {
-        long firstDate = dates.userFirstActivity(identity.value(context.req));
-        Instant date = firstDate == 0 ? Instant.now(Clock.systemUTC()) : Instant.ofEpochSecond(firstDate);
-        renderToPastCalendar(context, ZonedDateTime.ofInstant(date, ZoneOffset.UTC));
-    }
-
-    private void renderToFutureCalendar(Context context) {
+    public HtmlResponse planPage(HttpServletRequest request, Map<String, List<String>> queryParams) {
         ZonedDateTime currentDate = ZonedDateTime.now(Clock.systemUTC());
         int currentYear = currentDate.getYear();
-        YearMonth yearMonth = new YearMonth(context.queryParamMap(), currentYear + MAX_YEAR_OFFSET_VALUE);
+        YearMonth yearMonth = new YearMonth(queryParams, currentDate.getYear() + MAX_YEAR_OFFSET_VALUE);
         int requestedYear = yearMonth.year(currentYear);
         if (requestedYear < currentYear) {
             requestedYear = currentYear;
@@ -62,10 +47,10 @@ public class CalendarRespondent implements GroupedRespondent {
         if (requestedDate.isAfter(currentDate)) {
             requestedDate = requestedDate.withDayOfMonth(1);
         }
-        List<Long> days = daysForCalendar(identity.value(context.req), requestedDate, false);
+        List<Long> days = daysForCalendar(identity.value(request), requestedDate, false);
         String view = views.view(true, requestedDate.isAfter(currentDate), currentYear < yearMonth.maxYear,
             requestedDate, days, false);
-        context.html(view);
+        return new HtmlResponse(view);
     }
 
     //TODO offset
@@ -81,12 +66,20 @@ public class CalendarRespondent implements GroupedRespondent {
         return daysForCalendar;
     }
 
-    private void renderToPastCalendar(Context context, ZonedDateTime firstDate) {
+    //TODO date offset
+    public HtmlResponse historyPage(HttpServletRequest request, Map<String, List<String>> queryParams) {
+        long firstDate = dates.userFirstActivity(identity.value(request));
+        Instant date = firstDate == 0 ? Instant.now(Clock.systemUTC()) : Instant.ofEpochSecond(firstDate);
+        return toPastCalendarPage(request, queryParams, ZonedDateTime.ofInstant(date, ZoneOffset.UTC));
+    }
+
+    private HtmlResponse toPastCalendarPage(HttpServletRequest request, Map<String, List<String>> queryParams,
+        ZonedDateTime firstDate) {
         ZonedDateTime currentDate = ZonedDateTime.now(Clock.systemUTC());
         int currentYear = currentDate.getYear();
         int currentMonth = currentDate.getMonthValue();
-        YearMonth yearMonth = new YearMonth(context.queryParamMap(), currentYear);
         int minYear = firstDate.getYear();
+        YearMonth yearMonth = new YearMonth(queryParams, currentDate.getYear() + MAX_YEAR_OFFSET_VALUE);
         int requestedYear = yearMonth.year(currentYear);
         if (requestedYear < minYear) {
             requestedYear = currentYear;
@@ -98,12 +91,12 @@ public class CalendarRespondent implements GroupedRespondent {
         } else if (requestedDate.isBefore(currentDate)) {
             requestedDate = requestedDate.withDayOfMonth(requestedDate.toLocalDate().lengthOfMonth());
         }
-        List<Long> days = daysForCalendar(identity.value(context.req), requestedDate, true);
+        List<Long> days = daysForCalendar(identity.value(request), requestedDate, true);
         String view = views.view(
             false,
             requestedDate.isAfter(firstDate) && firstDate.getMonthValue() < requestedDate.getMonthValue(),
             requestedDate.isBefore(currentDate), requestedDate, days, true
         );
-        context.html(view);
+        return new HtmlResponse(view);
     }
 }

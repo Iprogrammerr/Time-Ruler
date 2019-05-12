@@ -1,6 +1,6 @@
 package com.iprogrammerr.time.ruler.route.day;
 
-import com.iprogrammerr.time.ruler.model.QueryParamKey;
+import com.iprogrammerr.time.ruler.model.QueryParams;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanRespondent;
 import com.iprogrammerr.time.ruler.route.GroupedRoutes;
 import io.javalin.Context;
@@ -22,7 +22,7 @@ public class DayPlanRoutes implements GroupedRoutes {
     }
 
     private void showDayPlan(Context context) {
-        String date = context.queryParam(QueryParamKey.DATE.value, "");
+        String date = context.queryParam(QueryParams.DATE, "");
         context.html(respondent.dayPlanPage(context.req, date).html);
         context.header(Header.CACHE_CONTROL, CACHE_VALUE);
     }

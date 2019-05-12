@@ -2,7 +2,7 @@ package com.iprogrammerr.time.ruler.respondent.authentication;
 
 import com.iprogrammerr.time.ruler.email.Emails;
 import com.iprogrammerr.time.ruler.model.Hashing;
-import com.iprogrammerr.time.ruler.model.QueryParamKey;
+import com.iprogrammerr.time.ruler.model.QueryParams;
 import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.user.Users;
 import com.iprogrammerr.time.ruler.respondent.HtmlResponse;
@@ -61,14 +61,14 @@ public class SigningUpRespondent {
     }
 
     private Redirection invalidRedirection(String email, String name, ValidateablePassword password) {
-        String url = new UrlQueryBuilder().put(QueryParamKey.EMAIL, email).put(QueryParamKey.NAME, name)
-            .put(QueryParamKey.INVALID_PASSWORD, !password.isValid()).build(SIGN_UP);
+        String url = new UrlQueryBuilder().put(QueryParams.EMAIL, email).put(QueryParams.NAME, name)
+            .put(QueryParams.INVALID_PASSWORD, !password.isValid()).build(SIGN_UP);
         return new Redirection(url);
     }
 
     private Redirection takenRedirection(String email, String name, boolean emailTaken, boolean nameTaken) {
-        String url = new UrlQueryBuilder().put(QueryParamKey.EMAIL, email).put(QueryParamKey.NAME, name)
-            .put(QueryParamKey.EMAIL_TAKEN, emailTaken).put(QueryParamKey.NAME_TAKEN, nameTaken).build(SIGN_UP);
+        String url = new UrlQueryBuilder().put(QueryParams.EMAIL, email).put(QueryParams.NAME, name)
+            .put(QueryParams.EMAIL_TAKEN, emailTaken).put(QueryParams.NAME_TAKEN, nameTaken).build(SIGN_UP);
         return new Redirection(url);
     }
 
@@ -89,7 +89,7 @@ public class SigningUpRespondent {
     private void createUser(String email, String name, String password) {
         long id = users.create(name, email, hashing.hash(password));
         emails.sendSignUpEmail(email, String.format("%s?%s=%s",
-            SigningInRespondent.SIGN_IN, QueryParamKey.ACTIVATION.value,
+            SigningInRespondent.SIGN_IN, QueryParams.ACTIVATION,
             userHash(email, name, id)));
     }
 

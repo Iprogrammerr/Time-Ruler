@@ -1,7 +1,7 @@
 package com.iprogrammerr.time.ruler.route.authentication;
 
-import com.iprogrammerr.time.ruler.model.FormKey;
-import com.iprogrammerr.time.ruler.model.QueryParamKey;
+import com.iprogrammerr.time.ruler.model.FormParams;
+import com.iprogrammerr.time.ruler.model.QueryParams;
 import com.iprogrammerr.time.ruler.model.RequestParams;
 import com.iprogrammerr.time.ruler.respondent.HtmlResponse;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningUpRespondent;
@@ -31,22 +31,22 @@ public class SigningUpRoutes implements Routes {
 
     private void showSignUp(Context context) {
         RequestParams params = new RequestParams(context);
-        String email = params.stringParam(QueryParamKey.EMAIL);
-        String name = params.stringParam(QueryParamKey.NAME);
+        String email = params.stringParam(QueryParams.EMAIL);
+        String name = params.stringParam(QueryParams.NAME);
         HtmlResponse response;
         if (email.isEmpty() && name.isEmpty()) {
             response = respondent.signUpPage();
         } else {
-            response = respondent.invalidSignUpPage(email, name, params.booleanParam(QueryParamKey.EMAIL_TAKEN),
-                params.booleanParam(QueryParamKey.NAME_TAKEN), params.booleanParam(QueryParamKey.INVALID_PASSWORD));
+            response = respondent.invalidSignUpPage(email, name, params.booleanParam(QueryParams.EMAIL_TAKEN),
+                params.booleanParam(QueryParams.NAME_TAKEN), params.booleanParam(QueryParams.INVALID_PASSWORD));
         }
         context.html(response.html);
     }
 
     private void signUp(Context context) {
-        String email = context.formParam(FormKey.EMAIL.value);
-        String name = context.formParam(FormKey.NAME.value);
-        String password = context.formParam(FormKey.PASSWORD.value);
+        String email = context.formParam(FormParams.EMAIL);
+        String name = context.formParam(FormParams.NAME);
+        String password = context.formParam(FormParams.PASSWORD);
         context.redirect(respondent.signUp(email, name, password).location);
     }
 }

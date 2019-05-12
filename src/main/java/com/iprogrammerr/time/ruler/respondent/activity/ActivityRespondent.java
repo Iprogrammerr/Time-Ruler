@@ -1,7 +1,7 @@
 package com.iprogrammerr.time.ruler.respondent.activity;
 
 import com.iprogrammerr.time.ruler.model.Identity;
-import com.iprogrammerr.time.ruler.model.QueryParamKey;
+import com.iprogrammerr.time.ruler.model.QueryParams;
 import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.ActivitiesSearch;
@@ -115,13 +115,13 @@ public class ActivityRespondent {
 
     private Redirection errorsRedirection(String date, String name, String startTime, String endTime,
         boolean plan) {
-        return new Redirection(errorsQuery(name, startTime, endTime).put(QueryParamKey.PLAN, plan)
-            .put(QueryParamKey.DATE, date).build(redirectionBase()));
+        return new Redirection(errorsQuery(name, startTime, endTime).put(QueryParams.PLAN, plan)
+            .put(QueryParams.DATE, date).build(redirectionBase()));
 
     }
 
     private Redirection errorsRedirection(long id, String name, String startTime, String endTime) {
-        return new Redirection(errorsQuery(name, startTime, endTime).put(QueryParamKey.ID, id)
+        return new Redirection(errorsQuery(name, startTime, endTime).put(QueryParams.ID, id)
             .build(redirectionBase()));
     }
 
@@ -130,8 +130,8 @@ public class ActivityRespondent {
     }
 
     private UrlQueryBuilder errorsQuery(String name, String startTime, String endTime) {
-        return new UrlQueryBuilder().put(QueryParamKey.NAME, name).put(QueryParamKey.START, startTime)
-            .put(QueryParamKey.END, endTime);
+        return new UrlQueryBuilder().put(QueryParams.NAME, name).put(QueryParams.START, startTime)
+            .put(QueryParams.END, endTime);
     }
 
     private Activity activity(HttpServletRequest request, Instant date, ValidateableName name,

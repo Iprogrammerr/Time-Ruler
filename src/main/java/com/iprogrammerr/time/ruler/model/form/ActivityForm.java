@@ -1,6 +1,6 @@
 package com.iprogrammerr.time.ruler.model.form;
 
-import com.iprogrammerr.time.ruler.model.FormKey;
+import com.iprogrammerr.time.ruler.model.FormParams;
 import com.iprogrammerr.time.ruler.model.TypedMap;
 
 import java.util.List;
@@ -28,8 +28,8 @@ public class ActivityForm {
 
     public static ActivityForm parsed(Map<String, List<String>> form) {
         TypedMap map = new TypedMap(form);
-        return new ActivityForm(map.stringValue(FormKey.NAME.value), map.stringValue(FormKey.START_TIME.value),
-            map.stringValue(FormKey.END_TIME.value), map.stringValue(FormKey.DESCRIPTION.value),
-            map.stringValue(FormKey.DONE.value));
+        return new ActivityForm(map.stringValue(FormParams.NAME), map.stringValue(FormParams.START_TIME),
+            map.stringValue(FormParams.END_TIME), map.stringValue(FormParams.DESCRIPTION),
+            map.stringValue(FormParams.DONE));
     }
 }

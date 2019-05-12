@@ -2,7 +2,7 @@ package com.iprogrammerr.time.ruler.respondent.authentication;
 
 import com.iprogrammerr.time.ruler.model.Hashing;
 import com.iprogrammerr.time.ruler.model.Identity;
-import com.iprogrammerr.time.ruler.model.QueryParamKey;
+import com.iprogrammerr.time.ruler.model.QueryParams;
 import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.error.ErrorCode;
 import com.iprogrammerr.time.ruler.model.error.ResponseException;
@@ -76,23 +76,23 @@ public class SigningInRespondent {
             redirection = signInOrSetError(request, email.isValid() ? email.value() : name.value(),
                 hashing.hash(password));
         } else if (!validateablePassword.isValid()) {
-            redirection = redirection(emailName, QueryParamKey.INVALID_PASSWORD, true);
+            redirection = redirection(emailName, QueryParams.INVALID_PASSWORD, true);
         } else {
-            redirection = redirection(QueryParamKey.EMAIL_NAME, emailName);
+            redirection = redirection(QueryParams.EMAIL_NAME, emailName);
         }
         return redirection;
     }
 
-    private Redirection redirection(QueryParamKey key, Object param) {
+    private Redirection redirection(String key, Object param) {
         return new Redirection(new UrlQueryBuilder().put(key, param).build("/" + SIGN_IN));
     }
 
-    private Redirection redirection(String emailName, QueryParamKey key, Object param) {
+    private Redirection redirection(String emailName, String key, Object param) {
         Redirection redirection;
         if (emailName.isEmpty()) {
             redirection = redirection(key, param);
         } else {
-            redirection = new Redirection(new UrlQueryBuilder().put(QueryParamKey.EMAIL_NAME, emailName)
+            redirection = new Redirection(new UrlQueryBuilder().put(QueryParams.EMAIL_NAME, emailName)
                 .put(key, param).build("/" + SIGN_IN));
         }
         return redirection;
@@ -107,12 +107,12 @@ public class SigningInRespondent {
                 identity.create(userVal.id, request);
                 redirection = respondent.redirection();
             } else if (!userVal.active) {
-                redirection = redirection(emailOrName, QueryParamKey.INACTIVE_ACCOUNT, true);
+                redirection = redirection(emailOrName, QueryParams.INACTIVE_ACCOUNT, true);
             } else {
-                redirection = redirection(emailOrName, QueryParamKey.NOT_USER_PASSWORD, true);
+                redirection = redirection(emailOrName, QueryParams.NOT_USER_PASSWORD, true);
             }
         } else {
-            redirection = redirection(emailOrName, QueryParamKey.NON_EXISTENT_USER, true);
+            redirection = redirection(emailOrName, QueryParams.NON_EXISTENT_USER, true);
         }
         return redirection;
     }
@@ -150,10 +150,10 @@ public class SigningInRespondent {
     }
 
     public Redirection redirectWithFarewell() {
-        return redirection(QueryParamKey.FAREWELL, true);
+        return redirection(QueryParams.FAREWELL, true);
     }
 
     public Redirection redirectWithNewPassword() {
-        return redirection(QueryParamKey.NEW_PASSWORD, true);
+        return redirection(QueryParams.NEW_PASSWORD, true);
     }
 }
