@@ -1,7 +1,7 @@
 package com.iprogrammerr.time.ruler.respondent.activity;
 
 import com.iprogrammerr.time.ruler.model.Identity;
-import com.iprogrammerr.time.ruler.model.QueryParams;
+import com.iprogrammerr.time.ruler.model.param.QueryParams;
 import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.activity.ActivitiesSearch;
 import com.iprogrammerr.time.ruler.model.activity.Activity;

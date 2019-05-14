@@ -40,6 +40,7 @@ import com.iprogrammerr.time.ruler.respondent.day.DayPlanExecutionRespondent;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanRespondent;
 import com.iprogrammerr.time.ruler.route.CalendarRoutes;
 import com.iprogrammerr.time.ruler.route.ErrorRoutes;
+import com.iprogrammerr.time.ruler.route.ProfileRoutes;
 import com.iprogrammerr.time.ruler.route.WelcomeRoutes;
 import com.iprogrammerr.time.ruler.route.activity.ActivitiesRoutes;
 import com.iprogrammerr.time.ruler.route.activity.ActivityRoutes;
@@ -91,7 +92,8 @@ public class App {
         DateFormat dateTimeFormat = new SimpleDateFormat("dd.MM.yyyy, HH:mm");
         dateTimeFormat.setTimeZone(dateFormat.getTimeZone());
 
-        DateTimeFormatting formatting = new DateTimeFormatting(dateFormat, timeFormat, dateTimeFormat);
+        DateTimeFormatting formatting = new DateTimeFormatting(dateFormat, timeFormat,
+            dateTimeFormat);
         DateParsing dateParsing = new DateParsing();
         LimitedDate limitedDate = new LimitedDate(dateParsing);
         ServerClientDates serverClientDates = new ServerClientDates();
@@ -106,12 +108,15 @@ public class App {
         engine.setMessageResolver(messages);
         ViewsTemplates viewsTemplates = new HtmlViewsTemplates(engine);
 
-        SigningInViews signingInViews = new SigningInViews(viewsTemplates, SigningUpRespondent.SIGN_UP,
+        SigningInViews signingInViews = new SigningInViews(viewsTemplates,
+            SigningUpRespondent.SIGN_UP,
             PasswordResetRespondent.PASSWORD_RESET);
         PasswordResetViews passwordResetViews = new PasswordResetViews(viewsTemplates);
-        SigningUpViews signingUpViews = new SigningUpViews(viewsTemplates, SigningInRespondent.SIGN_IN);
+        SigningUpViews signingUpViews = new SigningUpViews(viewsTemplates,
+            SigningInRespondent.SIGN_IN);
         CalendarViews calendarViews = new CalendarViews(viewsTemplates);
-        DayPlanExecutionViews dayPlanExecutionViews = new DayPlanExecutionViews(viewsTemplates, formatting);
+        DayPlanExecutionViews dayPlanExecutionViews = new DayPlanExecutionViews(viewsTemplates,
+            formatting);
         DayPlanViews dayPlanViews = new DayPlanViews(viewsTemplates, formatting);
         ActivityViews activityViews = new ActivityViews(viewsTemplates, formatting);
         ActivitiesViews activitiesViews = new ActivitiesViews(viewsTemplates, formatting);
@@ -137,31 +142,28 @@ public class App {
         Hashing hashing = new Hashing();
         Identity<Long> identity = new SessionIdentity();
 
+        String userGroup = "user/";
         WelcomeRespondent welcomeRespondent = new WelcomeRespondent(viewsTemplates);
         DayPlanExecutionRespondent dayPlanExecutionRespondent = new DayPlanExecutionRespondent(identity,
             dayPlanExecutionViews, activitiesSearch, limitedDate, dateParsing, serverClientDates);
-        DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, dayPlanViews, activitiesSearch,
-            limitedDate, dateParsing, serverClientDates);
+        DayPlanRespondent dayPlanRespondent = new DayPlanRespondent(identity, dayPlanViews,
+            activitiesSearch, limitedDate, dateParsing, serverClientDates);
         CalendarRespondent calendarRespondent = new CalendarRespondent(identity, calendarViews, dates,
             serverClientDates);
         ActivityRespondent activityRespondent = new ActivityRespondent(identity, activityViews,
-            dayPlanExecutionRespondent, dayPlanRespondent, activities, activitiesSearch, descriptions, limitedDate,
-            serverClientDates);
+            dayPlanExecutionRespondent, dayPlanRespondent, activities, activitiesSearch, descriptions,
+            limitedDate, serverClientDates);
         ActivitiesRespondent activitiesRespondent = new ActivitiesRespondent(identity, activitiesViews,
             activitiesSearch, serverClientDates);
-        SigningInRespondent signingInRespondent = new SigningInRespondent(dayPlanExecutionRespondent, signingInViews,
-            users, actualization, hashing, identity);
-        PasswordResetRespondent passwordResetRespondent = new PasswordResetRespondent(signingInRespondent, users,
-            actualization, emails, hashing, passwordResetViews);
+        SigningInRespondent signingInRespondent = new SigningInRespondent(dayPlanExecutionRespondent,
+            signingInViews, users, actualization, hashing, identity, userGroup);
+        PasswordResetRespondent passwordResetRespondent = new PasswordResetRespondent(signingInRespondent,
+            users, actualization, emails, hashing, passwordResetViews);
         SigningUpRespondent signingUpRespondent = new SigningUpRespondent(signingUpViews, users, hashing, emails);
         SigningOutRespondent signingOutRespondent = new SigningOutRespondent(signingInRespondent);
         ProfileRespondent profileRespondent = new ProfileRespondent(signingOutRespondent, identity, users,
             actualization, hashing, profileViews);
         ErrorRespondent errorRespondent = new ErrorRespondent(errorViews);
-
-        String userGroup = "user/";
-
-        profileRespondent.init(userGroup, app);
 
         WelcomeRoutes welcomeRoutes = new WelcomeRoutes(welcomeRespondent);
 
@@ -170,11 +172,13 @@ public class App {
         SigningOutRoutes signingOutRoutes = new SigningOutRoutes(signingOutRespondent);
         PasswordResetRoutes passwordResetRoutes = new PasswordResetRoutes(passwordResetRespondent);
 
-        DayPlanExecutionRoutes dayPlanExecutionRoutes = new DayPlanExecutionRoutes(dayPlanExecutionRespondent);
+        DayPlanExecutionRoutes dayPlanExecutionRoutes = new DayPlanExecutionRoutes(
+            dayPlanExecutionRespondent);
         DayPlanRoutes dayPlanRoutes = new DayPlanRoutes(dayPlanRespondent);
         CalendarRoutes calendarRoutes = new CalendarRoutes(calendarRespondent);
         ActivityRoutes activityRoutes = new ActivityRoutes(activityRespondent);
         ActivitiesRoutes activitiesRoutes = new ActivitiesRoutes(activitiesRespondent);
+        ProfileRoutes profileRoutes = new ProfileRoutes(profileRespondent);
 
         ErrorRoutes errorRoutes = new ErrorRoutes(errorRespondent);
 
@@ -190,6 +194,7 @@ public class App {
         dayPlanRoutes.init(userGroup, app);
         activityRoutes.init(userGroup, app);
         activitiesRoutes.init(userGroup, app);
+        profileRoutes.init(userGroup, app);
 
         errorRoutes.init(app);
 

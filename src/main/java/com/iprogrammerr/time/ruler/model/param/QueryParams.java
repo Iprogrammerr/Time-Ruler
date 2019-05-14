@@ -1,4 +1,4 @@
-package com.iprogrammerr.time.ruler.model;
+package com.iprogrammerr.time.ruler.model.param;
 
 public class QueryParams {
 
@@ -25,4 +25,9 @@ public class QueryParams {
     public static final String END = "end";
     public static final String DESCRIPTION = "description";
     public static final String ID = "id";
+    public static final String EMAIL_CHANGED = "emailChanged";
+    public static final String NAME_CHANGED = "nameChanged";
+    public static final String INVALID_NAME = "invalidName";
+    public static final String INVALID_OLD_PASSWORD = "invalidOldPassword";
+    public static final String INVALID_NEW_PASSWORD = "invalidNewPassword";
 }

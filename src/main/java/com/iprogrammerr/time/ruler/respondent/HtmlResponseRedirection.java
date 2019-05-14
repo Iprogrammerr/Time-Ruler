@@ -1,5 +1,6 @@
 package com.iprogrammerr.time.ruler.respondent;
 
+//TODO refactor to make this class redundant
 public class HtmlResponseRedirection {
 
     public final HtmlResponse response;

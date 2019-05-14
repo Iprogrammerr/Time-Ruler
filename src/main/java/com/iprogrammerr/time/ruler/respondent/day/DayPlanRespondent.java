@@ -1,13 +1,13 @@
 package com.iprogrammerr.time.ruler.respondent.day;
 
 import com.iprogrammerr.time.ruler.model.Identity;
-import com.iprogrammerr.time.ruler.model.QueryParams;
 import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.activity.ActivitiesSearch;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
 import com.iprogrammerr.time.ruler.model.date.DateParsing;
 import com.iprogrammerr.time.ruler.model.date.LimitedDate;
 import com.iprogrammerr.time.ruler.model.date.ServerClientDates;
+import com.iprogrammerr.time.ruler.model.param.QueryParams;
 import com.iprogrammerr.time.ruler.respondent.HtmlResponse;
 import com.iprogrammerr.time.ruler.respondent.Redirection;
 import com.iprogrammerr.time.ruler.view.rendering.DayPlanViews;
@@ -25,7 +25,6 @@ public class DayPlanRespondent {
     private final LimitedDate limitedDate;
     private final DateParsing parsing;
     private final ServerClientDates serverClientDates;
-    private String prefix;
 
     public DayPlanRespondent(Identity<Long> identity, DayPlanViews views, ActivitiesSearch activities,
         LimitedDate limitedDate,
@@ -36,7 +35,6 @@ public class DayPlanRespondent {
         this.limitedDate = limitedDate;
         this.parsing = parsing;
         this.serverClientDates = serverClientDates;
-        this.prefix = "";
     }
 
     //TODO offset?
@@ -50,10 +48,6 @@ public class DayPlanRespondent {
 
     public Redirection redirection(Instant date) {
         return new Redirection(new UrlQueryBuilder().put(QueryParams.DATE, parsing.write(date))
-            .build("/" + prefix + DAY_PLAN));
-    }
-
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
+            .build(DAY_PLAN));
     }
 }

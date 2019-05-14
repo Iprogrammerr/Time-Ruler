@@ -1,8 +1,8 @@
 package com.iprogrammerr.time.ruler.route.activity;
 
-import com.iprogrammerr.time.ruler.model.QueryParams;
 import com.iprogrammerr.time.ruler.model.RequestParams;
 import com.iprogrammerr.time.ruler.model.form.ActivityForm;
+import com.iprogrammerr.time.ruler.model.param.QueryParams;
 import com.iprogrammerr.time.ruler.respondent.HtmlResponse;
 import com.iprogrammerr.time.ruler.respondent.activity.ActivityRespondent;
 import com.iprogrammerr.time.ruler.route.GroupedRoutes;
@@ -13,14 +13,16 @@ public class ActivityRoutes implements GroupedRoutes {
 
     private static final long EMPTY_ID = -1;
     private final ActivityRespondent respondent;
+    private String prefix;
 
     public ActivityRoutes(ActivityRespondent respondent) {
         this.respondent = respondent;
+        this.prefix = "";
     }
 
     @Override
     public void init(String group, Javalin app) {
-        respondent.setPrefix(group);
+        prefix = group;
         String withGroupActivity = group + ActivityRespondent.ACTIVITY;
         String withGroupActivityId = group + ActivityRespondent.ACTIVITY_WITH_ID;
         app.get(withGroupActivity, this::showActivity);
@@ -40,7 +42,8 @@ public class ActivityRoutes implements GroupedRoutes {
         boolean plan = params.booleanParam(QueryParams.PLAN);
         HtmlResponse response;
         if (name.isEmpty() && startTime.isEmpty() && endTime.isEmpty()) {
-            response = respondent.activityPage(context.req, params.longParam(QueryParams.TEMPLATE, EMPTY_ID),
+            response = respondent.activityPage(context.req,
+                params.longParam(QueryParams.TEMPLATE, EMPTY_ID),
                 params.longParam(QueryParams.ID, EMPTY_ID), plan);
         } else {
             response = respondent.invalidActivityPage(name, startTime, endTime, description, plan);
@@ -51,21 +54,23 @@ public class ActivityRoutes implements GroupedRoutes {
     private void createActivity(Context context) {
         String date = context.queryParam(QueryParams.DATE, "");
         context.redirect(respondent.createActivity(context.req, date,
-            ActivityForm.parsed(context.formParamMap())).location);
+            ActivityForm.parsed(context.formParamMap())).prefixed(prefix));
     }
 
     private void updateActivity(Context context) {
         long id = context.pathParam(ActivityRespondent.ID, Long.class).get();
         ActivityForm form = ActivityForm.parsed(context.formParamMap());
-        context.redirect(respondent.updateActivity(context.req, id, form).location);
+        context.redirect(respondent.updateActivity(context.req, id, form).prefixed(prefix));
     }
 
     private void setActivityDone(Context context, boolean done) {
-        respondent.setActivityDone(context.req, context.pathParam(ActivityRespondent.ID, Long.class).get(),
+        respondent.setActivityDone(context.req,
+            context.pathParam(ActivityRespondent.ID, Long.class).get(),
             done);
     }
 
     private void deleteActivity(Context context) {
-        respondent.deleteActivity(context.req, context.pathParam(ActivityRespondent.ID, Long.class).get());
+        respondent.deleteActivity(context.req,
+            context.pathParam(ActivityRespondent.ID, Long.class).get());
     }
 }

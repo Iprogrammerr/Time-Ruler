@@ -1,7 +1,6 @@
 package com.iprogrammerr.time.ruler.respondent.day;
 
 import com.iprogrammerr.time.ruler.model.Identity;
-import com.iprogrammerr.time.ruler.model.QueryParams;
 import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.activity.ActivitiesSearch;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
@@ -9,6 +8,7 @@ import com.iprogrammerr.time.ruler.model.date.DateParsing;
 import com.iprogrammerr.time.ruler.model.date.LimitedDate;
 import com.iprogrammerr.time.ruler.model.date.ServerClientDates;
 import com.iprogrammerr.time.ruler.model.date.SmartDate;
+import com.iprogrammerr.time.ruler.model.param.QueryParams;
 import com.iprogrammerr.time.ruler.respondent.HtmlResponse;
 import com.iprogrammerr.time.ruler.respondent.Redirection;
 import com.iprogrammerr.time.ruler.view.rendering.DayPlanExecutionViews;
@@ -27,7 +27,6 @@ public class DayPlanExecutionRespondent {
     private final LimitedDate limitedDate;
     private final DateParsing parsing;
     private final ServerClientDates serverClientDates;
-    private String prefix;
 
     public DayPlanExecutionRespondent(Identity<Long> identity, DayPlanExecutionViews views,
         ActivitiesSearch activities, LimitedDate limitedDate, DateParsing parsing,
@@ -38,7 +37,6 @@ public class DayPlanExecutionRespondent {
         this.limitedDate = limitedDate;
         this.parsing = parsing;
         this.serverClientDates = serverClientDates;
-        this.prefix = "";
     }
 
     public HtmlResponse planExecutionPage(HttpServletRequest request, String date) {
@@ -52,15 +50,15 @@ public class DayPlanExecutionRespondent {
     }
 
     public Redirection redirection() {
-        return new Redirection(prefix + TODAY);
+        return new Redirection(TODAY);
+    }
+
+    public Redirection signedInRedirection(String prefix) {
+        return new Redirection(prefix, TODAY);
     }
 
     public Redirection redirection(Instant date) {
         return new Redirection(new UrlQueryBuilder().put(QueryParams.DATE, parsing.write(date))
-            .build(prefix + DAY_PLAN_EXECUTION));
-    }
-
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
+            .build(DAY_PLAN_EXECUTION));
     }
 }

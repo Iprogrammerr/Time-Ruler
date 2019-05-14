@@ -1,6 +1,6 @@
 package com.iprogrammerr.time.ruler.route.activity;
 
-import com.iprogrammerr.time.ruler.model.QueryParams;
+import com.iprogrammerr.time.ruler.model.param.QueryParams;
 import com.iprogrammerr.time.ruler.model.RequestParams;
 import com.iprogrammerr.time.ruler.respondent.HtmlResponse;
 import com.iprogrammerr.time.ruler.respondent.activity.ActivitiesRespondent;

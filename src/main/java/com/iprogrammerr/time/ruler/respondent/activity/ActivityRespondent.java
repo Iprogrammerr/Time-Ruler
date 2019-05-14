@@ -1,7 +1,6 @@
 package com.iprogrammerr.time.ruler.respondent.activity;
 
 import com.iprogrammerr.time.ruler.model.Identity;
-import com.iprogrammerr.time.ruler.model.QueryParams;
 import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.activity.Activities;
 import com.iprogrammerr.time.ruler.model.activity.ActivitiesSearch;
@@ -15,6 +14,7 @@ import com.iprogrammerr.time.ruler.model.description.Descriptions;
 import com.iprogrammerr.time.ruler.model.error.ErrorCode;
 import com.iprogrammerr.time.ruler.model.error.ResponseException;
 import com.iprogrammerr.time.ruler.model.form.ActivityForm;
+import com.iprogrammerr.time.ruler.model.param.QueryParams;
 import com.iprogrammerr.time.ruler.respondent.HtmlResponse;
 import com.iprogrammerr.time.ruler.respondent.Redirection;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanExecutionRespondent;
@@ -44,7 +44,6 @@ public class ActivityRespondent {
     private final Descriptions descriptions;
     private final LimitedDate limitedDate;
     private final ServerClientDates serverClientDates;
-    private String prefix;
 
     public ActivityRespondent(Identity<Long> identity, ActivityViews views,
         DayPlanExecutionRespondent dayPlanExecutionRespondent, DayPlanRespondent dayPlanRespondent,
@@ -59,7 +58,6 @@ public class ActivityRespondent {
         this.descriptions = descriptions;
         this.limitedDate = limitedDate;
         this.serverClientDates = serverClientDates;
-        this.prefix = "";
     }
 
     public HtmlResponse activityPage(HttpServletRequest request, long templateId, long id,
@@ -116,17 +114,13 @@ public class ActivityRespondent {
     private Redirection errorsRedirection(String date, String name, String startTime, String endTime,
         boolean plan) {
         return new Redirection(errorsQuery(name, startTime, endTime).put(QueryParams.PLAN, plan)
-            .put(QueryParams.DATE, date).build(redirectionBase()));
+            .put(QueryParams.DATE, date).build(ACTIVITY));
 
     }
 
     private Redirection errorsRedirection(long id, String name, String startTime, String endTime) {
         return new Redirection(errorsQuery(name, startTime, endTime).put(QueryParams.ID, id)
-            .build(redirectionBase()));
-    }
-
-    private String redirectionBase() {
-        return "/" + prefix + ACTIVITY;
+            .build(ACTIVITY));
     }
 
     private UrlQueryBuilder errorsQuery(String name, String startTime, String endTime) {
@@ -209,9 +203,5 @@ public class ActivityRespondent {
         } else {
             throw new ResponseException(ErrorCode.ACTIVITY_NOT_OWNED);
         }
-    }
-
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
     }
 }

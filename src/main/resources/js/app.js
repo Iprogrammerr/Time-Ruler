@@ -8,30 +8,31 @@ import { Cookies } from "./http/cookies.js";
 import { Errors } from "./validation/errors.js";
 
 const host = `${document.location.origin}/`;
-const userRoutePrefix = "user/";
+const userPrefix = "user/";
 
 export const routes = {
     signIn: "sign-in",
     signUp: "sign-up",
     signOut: "sign-out",
-    today: `${userRoutePrefix}today`,
-    plan: `${userRoutePrefix}plan`,
-    history: `${userRoutePrefix}history`,
-    profile: `${userRoutePrefix}profile`,
-    activity: `${userRoutePrefix}activity`,
-    activities: `${userRoutePrefix}activities`,
-    dayPlanExecution: `${userRoutePrefix}day-plan-execution`,
-    dayPlan: `${userRoutePrefix}plan/day`
+    today: `${userPrefix}today`,
+    plan: `${userPrefix}plan`,
+    history: `${userPrefix}history`,
+    profile: `${userPrefix}profile`,
+    activity: `${userPrefix}activity`,
+    activities: `${userPrefix}activities`,
+    dayPlanExecution: `${userPrefix}day-plan-execution`,
+    dayPlan: `${userPrefix}plan/day`
 };
 
+const hostWithUser = `${host}${userPrefix}`;
 export const endpoints = {
     signIn: `${host}sign-in`,
     passwordReset: `${host}password-reset`,
     signUp: `${host}sign-up`,
     signOut: `${host}sign-out`,
-    profileEmail: `${host}profile/email`,
-    profileName: `${host}profile/name`,
-    profilePassword: `${host}profile/password`
+    profileEmail: `${hostWithUser}profile/email`,
+    profileName: `${hostWithUser}profile/name`,
+    profilePassword: `${hostWithUser}profile/password`
 };
 
 export const paramsKeys = {

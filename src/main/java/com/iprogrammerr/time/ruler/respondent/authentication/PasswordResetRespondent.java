@@ -2,7 +2,7 @@ package com.iprogrammerr.time.ruler.respondent.authentication;
 
 import com.iprogrammerr.time.ruler.email.Emails;
 import com.iprogrammerr.time.ruler.model.Hashing;
-import com.iprogrammerr.time.ruler.model.QueryParams;
+import com.iprogrammerr.time.ruler.model.param.QueryParams;
 import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.error.ErrorCode;
 import com.iprogrammerr.time.ruler.model.error.ResponseException;

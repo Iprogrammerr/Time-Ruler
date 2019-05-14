@@ -1,4 +1,4 @@
-package com.iprogrammerr.time.ruler.model;
+package com.iprogrammerr.time.ruler.model.form;
 
 public class FormParams {
 

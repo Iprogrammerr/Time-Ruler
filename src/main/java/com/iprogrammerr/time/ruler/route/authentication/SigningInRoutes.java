@@ -1,7 +1,7 @@
 package com.iprogrammerr.time.ruler.route.authentication;
 
-import com.iprogrammerr.time.ruler.model.FormParams;
-import com.iprogrammerr.time.ruler.model.QueryParams;
+import com.iprogrammerr.time.ruler.model.form.FormParams;
+import com.iprogrammerr.time.ruler.model.param.QueryParams;
 import com.iprogrammerr.time.ruler.model.RequestParams;
 import com.iprogrammerr.time.ruler.respondent.HtmlResponseRedirection;
 import com.iprogrammerr.time.ruler.respondent.Redirection;

@@ -2,10 +2,10 @@ package com.iprogrammerr.time.ruler.respondent.authentication;
 
 import com.iprogrammerr.time.ruler.model.Hashing;
 import com.iprogrammerr.time.ruler.model.Identity;
-import com.iprogrammerr.time.ruler.model.QueryParams;
 import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import com.iprogrammerr.time.ruler.model.error.ErrorCode;
 import com.iprogrammerr.time.ruler.model.error.ResponseException;
+import com.iprogrammerr.time.ruler.model.param.QueryParams;
 import com.iprogrammerr.time.ruler.model.user.User;
 import com.iprogrammerr.time.ruler.model.user.Users;
 import com.iprogrammerr.time.ruler.model.user.UsersActualization;
@@ -31,15 +31,23 @@ public class SigningInRespondent {
     private final UsersActualization actualization;
     private final Hashing hashing;
     private final Identity<Long> identity;
+    private final String signedInPrefix;
 
-    public SigningInRespondent(DayPlanExecutionRespondent respondent, SigningInViews views, Users users,
-        UsersActualization actualization, Hashing hashing, Identity<Long> identity) {
+    public SigningInRespondent(DayPlanExecutionRespondent respondent, SigningInViews views,
+        Users users, UsersActualization actualization, Hashing hashing, Identity<Long> identity,
+        String signedInPrefix) {
         this.respondent = respondent;
         this.views = views;
         this.users = users;
         this.actualization = actualization;
         this.hashing = hashing;
         this.identity = identity;
+        this.signedInPrefix = signedInPrefix;
+    }
+
+    public SigningInRespondent(DayPlanExecutionRespondent respondent, SigningInViews views,
+        Users users, UsersActualization actualization, Hashing hashing, Identity<Long> identity) {
+        this(respondent, views, users, actualization, hashing, identity, "");
     }
 
     public HtmlResponseRedirection signInPage(String activation, String emailName, boolean farewell,
@@ -55,7 +63,8 @@ public class SigningInRespondent {
             } else if (emailName.isEmpty()) {
                 view = views.validView();
             } else {
-                view = views.invalidView(emailName, nonExistentUser, inactiveAccount, notUserPassword, invalidPassword);
+                view = views.invalidView(emailName, nonExistentUser, inactiveAccount,
+                    notUserPassword, invalidPassword);
             }
             response = new HtmlResponseRedirection(view);
         } else {
@@ -70,9 +79,7 @@ public class SigningInRespondent {
         ValidateableName name = new ValidateableName(emailName);
         ValidateablePassword validateablePassword = new ValidateablePassword(password);
         Redirection redirection;
-        if (identity.isValid(request)) {
-            redirection = respondent.redirection();
-        } else if ((email.isValid() || name.isValid()) && validateablePassword.isValid()) {
+        if ((email.isValid() || name.isValid()) && validateablePassword.isValid()) {
             redirection = signInOrSetError(request, email.isValid() ? email.value() : name.value(),
                 hashing.hash(password));
         } else if (!validateablePassword.isValid()) {
@@ -84,7 +91,7 @@ public class SigningInRespondent {
     }
 
     private Redirection redirection(String key, Object param) {
-        return new Redirection(new UrlQueryBuilder().put(key, param).build("/" + SIGN_IN));
+        return new Redirection(new UrlQueryBuilder().put(key, param).build(SIGN_IN));
     }
 
     private Redirection redirection(String emailName, String key, Object param) {
@@ -92,8 +99,9 @@ public class SigningInRespondent {
         if (emailName.isEmpty()) {
             redirection = redirection(key, param);
         } else {
-            redirection = new Redirection(new UrlQueryBuilder().put(QueryParams.EMAIL_NAME, emailName)
-                .put(key, param).build("/" + SIGN_IN));
+            redirection = new Redirection(
+                new UrlQueryBuilder().put(QueryParams.EMAIL_NAME, emailName)
+                    .put(key, param).build(SIGN_IN));
         }
         return redirection;
     }
@@ -105,7 +113,7 @@ public class SigningInRespondent {
             User userVal = user.get();
             if (userVal.active && passwordHash.equals(userVal.password)) {
                 identity.create(userVal.id, request);
-                redirection = respondent.redirection();
+                redirection = respondent.signedInRedirection(signedInPrefix);
             } else if (!userVal.active) {
                 redirection = redirection(emailOrName, QueryParams.INACTIVE_ACCOUNT, true);
             } else {
