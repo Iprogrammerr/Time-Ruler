@@ -39,6 +39,8 @@ import com.iprogrammerr.time.ruler.respondent.authentication.SigningUpRespondent
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanExecutionRespondent;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanRespondent;
 import com.iprogrammerr.time.ruler.route.CalendarRoutes;
+import com.iprogrammerr.time.ruler.route.ErrorRoutes;
+import com.iprogrammerr.time.ruler.route.WelcomeRoutes;
 import com.iprogrammerr.time.ruler.route.activity.ActivitiesRoutes;
 import com.iprogrammerr.time.ruler.route.activity.ActivityRoutes;
 import com.iprogrammerr.time.ruler.route.authentication.PasswordResetRoutes;
@@ -159,9 +161,9 @@ public class App {
 
         String userGroup = "user/";
 
-        welcomeRespondent.init(app);
         profileRespondent.init(userGroup, app);
-        errorRespondent.init(app);
+
+        WelcomeRoutes welcomeRoutes = new WelcomeRoutes(welcomeRespondent);
 
         SigningUpRoutes signingUpRoutes = new SigningUpRoutes(signingUpRespondent);
         SigningInRoutes signingInRoutes = new SigningInRoutes(signingInRespondent);
@@ -174,6 +176,10 @@ public class App {
         ActivityRoutes activityRoutes = new ActivityRoutes(activityRespondent);
         ActivitiesRoutes activitiesRoutes = new ActivitiesRoutes(activitiesRespondent);
 
+        ErrorRoutes errorRoutes = new ErrorRoutes(errorRespondent);
+
+        welcomeRoutes.init(app);
+
         signingInRoutes.init(app);
         passwordResetRoutes.init(app);
         signingUpRoutes.init(app);
@@ -185,6 +191,8 @@ public class App {
         activityRoutes.init(userGroup, app);
         activitiesRoutes.init(userGroup, app);
 
+        errorRoutes.init(app);
+
         //TODO Authentication respondent
         app.before(userGroup + "*", ctx -> {
             if (!identity.isValid(ctx.req)) {
@@ -192,6 +200,5 @@ public class App {
             }
         });
         app.start(configuration.port());
-        app.createServlet();
     }
 }
