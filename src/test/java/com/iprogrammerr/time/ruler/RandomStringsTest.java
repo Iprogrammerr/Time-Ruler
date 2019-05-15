@@ -1,5 +1,6 @@
-package com.iprogrammerr.time.ruler.mock;
+package com.iprogrammerr.time.ruler;
 
+import com.iprogrammerr.time.ruler.tool.RandomStrings;
 import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;

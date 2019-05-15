@@ -1,12 +1,10 @@
-package com.iprogrammerr.time.ruler.model;
+package com.iprogrammerr.time.ruler.model.activity;
 
 import com.iprogrammerr.time.ruler.database.DatabaseSession;
 import com.iprogrammerr.time.ruler.database.QueryTemplates;
 import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
-import com.iprogrammerr.time.ruler.mock.RandomActivities;
-import com.iprogrammerr.time.ruler.mock.RandomUsers;
-import com.iprogrammerr.time.ruler.model.activity.Activity;
-import com.iprogrammerr.time.ruler.model.activity.DatabaseActivities;
+import com.iprogrammerr.time.ruler.tool.RandomActivities;
+import com.iprogrammerr.time.ruler.tool.RandomUsers;
 import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.user.User;
 import com.iprogrammerr.time.ruler.setup.TestDatabaseSetup;

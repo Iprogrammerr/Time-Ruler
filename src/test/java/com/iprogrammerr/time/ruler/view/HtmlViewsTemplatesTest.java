@@ -1,7 +1,7 @@
 package com.iprogrammerr.time.ruler.view;
 
 import com.iprogrammerr.time.ruler.matcher.ThrowsMatcher;
-import com.iprogrammerr.time.ruler.mock.RandomStrings;
+import com.iprogrammerr.time.ruler.tool.RandomStrings;
 import com.iprogrammerr.time.ruler.setup.TestTemplatesSetup;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;

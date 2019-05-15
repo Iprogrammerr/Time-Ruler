@@ -36,4 +36,21 @@ public class SigningInParams {
             params.booleanValue(QueryParams.INACTIVE_ACCOUNT), params.booleanValue(QueryParams.NOT_USER_PASSWORD),
             params.booleanValue(QueryParams.INVALID_PASSWORD));
     }
+
+    @Override
+    public boolean equals(Object object) {
+        boolean equal;
+        if (object == this) {
+            equal = true;
+        } else if (object != null && SigningInParams.class.isAssignableFrom(object.getClass())) {
+            SigningInParams other = (SigningInParams) object;
+            equal = emailName.equals(other.emailName) && activation == other.activation &&
+                farewell == other.farewell && newPassword == other.newPassword && nonExistentUser == other.nonExistentUser &&
+                inactiveAccount == other.inactiveAccount && notUserPassword == other.notUserPassword &&
+                invalidPassword == other.invalidPassword;
+        } else {
+            equal = false;
+        }
+        return equal;
+    }
 }

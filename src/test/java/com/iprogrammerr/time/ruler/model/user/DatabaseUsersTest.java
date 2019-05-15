@@ -1,12 +1,10 @@
-package com.iprogrammerr.time.ruler.model;
+package com.iprogrammerr.time.ruler.model.user;
 
 import com.iprogrammerr.time.ruler.database.QueryTemplates;
 import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
 import com.iprogrammerr.time.ruler.matcher.ThrowsMatcher;
-import com.iprogrammerr.time.ruler.mock.RandomStrings;
-import com.iprogrammerr.time.ruler.mock.RandomUsers;
-import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
-import com.iprogrammerr.time.ruler.model.user.User;
+import com.iprogrammerr.time.ruler.tool.RandomStrings;
+import com.iprogrammerr.time.ruler.tool.RandomUsers;
 import com.iprogrammerr.time.ruler.setup.TestDatabaseSetup;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;

@@ -1,4 +1,4 @@
-package com.iprogrammerr.time.ruler.mock;
+package com.iprogrammerr.time.ruler.tool;
 
 import java.util.Random;
 
@@ -10,6 +10,7 @@ public class RandomStrings {
     private static final int ALPHABETIC_UPPER_CASE_MIN = 65;
     private static final int ASCII_DIGIT_MIN = 48;
     private static final int ASCII_DIGIT_MAX = 57;
+    private static final int MAX_NAME_SIZE = 25;
     private static final char AT = '@';
     private static final char DOT = '.';
     private final Random random;
@@ -57,6 +58,10 @@ public class RandomStrings {
 
     public String alphanumeric() {
         return alphanumeric(1 + random.nextInt(MAX_RANDOM_SIZE));
+    }
+
+    public String name() {
+        return alphabetic(2 + random.nextInt(MAX_NAME_SIZE - 1));
     }
 
     public String email() {

@@ -4,8 +4,8 @@ import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.iprogrammerr.time.ruler.Configuration;
 import com.iprogrammerr.time.ruler.matcher.MimeMessageMatcher;
-import com.iprogrammerr.time.ruler.mock.RandomEmails;
-import com.iprogrammerr.time.ruler.mock.RandomStrings;
+import com.iprogrammerr.time.ruler.tool.RandomEmails;
+import com.iprogrammerr.time.ruler.tool.RandomStrings;
 import org.hamcrest.MatcherAssert;
 import org.junit.Rule;
 

@@ -1,7 +1,6 @@
-package com.iprogrammerr.time.ruler.model;
+package com.iprogrammerr.time.ruler.model.activity;
 
-import com.iprogrammerr.time.ruler.mock.RandomActivities;
-import com.iprogrammerr.time.ruler.model.activity.Activity;
+import com.iprogrammerr.time.ruler.tool.RandomActivities;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;

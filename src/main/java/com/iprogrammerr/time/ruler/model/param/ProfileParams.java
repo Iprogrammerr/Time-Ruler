@@ -38,4 +38,21 @@ public class ProfileParams {
             params.booleanValue(QueryParams.NOT_USER_PASSWORD), params.booleanValue(QueryParams.INVALID_OLD_PASSWORD),
             params.booleanValue(QueryParams.INVALID_NEW_PASSWORD));
     }
+
+    @Override
+    public boolean equals(Object object) {
+        boolean equal;
+        if (object == this) {
+            equal = true;
+        } else if (object != null && ProfileParams.class.isAssignableFrom(object.getClass())) {
+            ProfileParams other = (ProfileParams) object;
+            equal = name.equals(other.name) && email.equals(other.email) && emailChanged == other.emailChanged &&
+                emailTaken == other.emailTaken && nameChanged == other.nameChanged && nameTaken == other.nameTaken &&
+                notUserPassword == other.notUserPassword && invalidOldPassword == other.invalidOldPassword &&
+                invalidNewPassword == other.invalidNewPassword;
+        } else {
+            equal = false;
+        }
+        return equal;
+    }
 }

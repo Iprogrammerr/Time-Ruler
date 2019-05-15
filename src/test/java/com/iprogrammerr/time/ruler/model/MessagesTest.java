@@ -1,6 +1,6 @@
 package com.iprogrammerr.time.ruler.model;
 
-import com.iprogrammerr.time.ruler.mock.RandomStrings;
+import com.iprogrammerr.time.ruler.tool.RandomStrings;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;

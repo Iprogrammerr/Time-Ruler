@@ -31,4 +31,20 @@ public class ActivityForm {
             map.stringValue(FormParams.END_TIME), map.stringValue(FormParams.DESCRIPTION),
             map.stringValue(FormParams.DONE));
     }
+
+    @Override
+    public boolean equals(Object object) {
+        boolean equal;
+        if (object == this) {
+            equal = true;
+        } else if (object != null && ActivityForm.class.isAssignableFrom(object.getClass())) {
+            ActivityForm other = (ActivityForm) object;
+            equal = name.equals(other.name) && startTime.equals(other.startTime) &&
+                endTime.equals(other.endTime) && description.equals(other.description) &&
+                done == other.done;
+        } else {
+            equal = false;
+        }
+        return equal;
+    }
 }

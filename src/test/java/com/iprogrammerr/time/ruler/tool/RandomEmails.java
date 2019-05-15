@@ -1,4 +1,4 @@
-package com.iprogrammerr.time.ruler.mock;
+package com.iprogrammerr.time.ruler.tool;
 
 import com.iprogrammerr.time.ruler.email.Email;
 
