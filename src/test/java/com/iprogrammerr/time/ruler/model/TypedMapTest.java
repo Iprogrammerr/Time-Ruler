@@ -43,7 +43,7 @@ public class TypedMapTest {
         Map<String, List<String>> source = new HashMap<>();
         source.put(key, Collections.singletonList(String.valueOf(value)));
         TypedMap typedMap = new TypedMap(source);
-        MatcherAssert.assertThat("Does not return proper int value", typedMap.integerValue(key, value),
+        MatcherAssert.assertThat("Does not return proper int value", typedMap.intValue(key, value),
             Matchers.equalTo(value));
     }
 
@@ -53,7 +53,7 @@ public class TypedMapTest {
         String key = randomStrings.alphabetic();
         int defaultValue = new Random().nextInt();
         TypedMap typedMap = new TypedMap(new HashMap<>());
-        MatcherAssert.assertThat("Does not return default int value", typedMap.integerValue(key, defaultValue),
+        MatcherAssert.assertThat("Does not return default int value", typedMap.intValue(key, defaultValue),
             Matchers.equalTo(defaultValue));
     }
 

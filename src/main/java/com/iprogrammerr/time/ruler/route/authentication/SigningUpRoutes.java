@@ -1,9 +1,10 @@
 package com.iprogrammerr.time.ruler.route.authentication;
 
+import com.iprogrammerr.time.ruler.model.TypedMap;
 import com.iprogrammerr.time.ruler.model.form.FormParams;
 import com.iprogrammerr.time.ruler.model.param.QueryParams;
-import com.iprogrammerr.time.ruler.model.RequestParams;
 import com.iprogrammerr.time.ruler.respondent.HtmlResponse;
+import com.iprogrammerr.time.ruler.respondent.Redirection;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningUpRespondent;
 import com.iprogrammerr.time.ruler.route.Routes;
 import io.javalin.Context;
@@ -27,18 +28,19 @@ public class SigningUpRoutes implements Routes {
             ctx.html(respondent.signUpSuccessPage().html);
         });
         app.post(SigningUpRespondent.SIGN_UP, this::signUp);
+        app.get(SigningUpRespondent.ACTIVATION, this::activateAccount);
     }
 
     private void showSignUp(Context context) {
-        RequestParams params = new RequestParams(context);
-        String email = params.stringParam(QueryParams.EMAIL);
-        String name = params.stringParam(QueryParams.NAME);
+        TypedMap params = new TypedMap(context.queryParamMap());
+        String email = params.stringValue(QueryParams.EMAIL);
+        String name = params.stringValue(QueryParams.NAME);
         HtmlResponse response;
         if (email.isEmpty() && name.isEmpty()) {
             response = respondent.signUpPage();
         } else {
-            response = respondent.invalidSignUpPage(email, name, params.booleanParam(QueryParams.EMAIL_TAKEN),
-                params.booleanParam(QueryParams.NAME_TAKEN), params.booleanParam(QueryParams.INVALID_PASSWORD));
+            response = respondent.invalidSignUpPage(email, name, params.booleanValue(QueryParams.EMAIL_TAKEN),
+                params.booleanValue(QueryParams.NAME_TAKEN), params.booleanValue(QueryParams.INVALID_PASSWORD));
         }
         context.html(response.html);
     }
@@ -48,5 +50,10 @@ public class SigningUpRoutes implements Routes {
         String name = context.formParam(FormParams.NAME);
         String password = context.formParam(FormParams.PASSWORD);
         context.redirect(respondent.signUp(email, name, password).location);
+    }
+
+    private void activateAccount(Context context) {
+        Redirection redirection = respondent.activateAccount(context.queryParam(QueryParams.HASH, ""));
+        context.redirect(redirection.location);
     }
 }

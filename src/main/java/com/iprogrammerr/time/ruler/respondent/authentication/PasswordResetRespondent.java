@@ -114,7 +114,7 @@ public class PasswordResetRespondent {
         if (isPasswordResetRequestValid(validateableEmail, hash)) {
             if (new ValidateablePassword(password).isValid()) {
                 actualization.updatePassword(email, hashing.hash(password));
-                redirection = respondent.redirectWithNewPassword();
+                redirection = respondent.withNewPasswordRedirection();
             } else {
                 redirection = passwordResetFormRedirection(passwordResetFormUrl);
             }

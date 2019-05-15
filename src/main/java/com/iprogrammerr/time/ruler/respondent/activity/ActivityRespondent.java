@@ -60,8 +60,7 @@ public class ActivityRespondent {
         this.serverClientDates = serverClientDates;
     }
 
-    public HtmlResponse activityPage(HttpServletRequest request, long templateId, long id,
-        boolean plan) {
+    public HtmlResponse activityPage(HttpServletRequest request, long templateId, long id, boolean plan) {
         String view;
         if (templateId > 0 && activities.activity(templateId).isPresent()) {
             DescribedActivity activity = descriptions.describedActivity(templateId).withDone(!plan);

@@ -156,10 +156,11 @@ public class App {
         ActivitiesRespondent activitiesRespondent = new ActivitiesRespondent(identity, activitiesViews,
             activitiesSearch, serverClientDates);
         SigningInRespondent signingInRespondent = new SigningInRespondent(dayPlanExecutionRespondent,
-            signingInViews, users, actualization, hashing, identity, userGroup);
+            signingInViews, users, hashing, identity, userGroup);
         PasswordResetRespondent passwordResetRespondent = new PasswordResetRespondent(signingInRespondent,
             users, actualization, emails, hashing, passwordResetViews);
-        SigningUpRespondent signingUpRespondent = new SigningUpRespondent(signingUpViews, users, hashing, emails);
+        SigningUpRespondent signingUpRespondent = new SigningUpRespondent(signingInRespondent,
+            signingUpViews, users, actualization, hashing, emails);
         SigningOutRespondent signingOutRespondent = new SigningOutRespondent(signingInRespondent);
         ProfileRespondent profileRespondent = new ProfileRespondent(signingOutRespondent, identity, users,
             actualization, hashing, profileViews);

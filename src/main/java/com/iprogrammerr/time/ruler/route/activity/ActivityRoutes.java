@@ -1,6 +1,6 @@
 package com.iprogrammerr.time.ruler.route.activity;
 
-import com.iprogrammerr.time.ruler.model.RequestParams;
+import com.iprogrammerr.time.ruler.model.TypedMap;
 import com.iprogrammerr.time.ruler.model.form.ActivityForm;
 import com.iprogrammerr.time.ruler.model.param.QueryParams;
 import com.iprogrammerr.time.ruler.respondent.HtmlResponse;
@@ -34,17 +34,17 @@ public class ActivityRoutes implements GroupedRoutes {
     }
 
     private void showActivity(Context context) {
-        RequestParams params = new RequestParams(context);
-        String name = params.stringParam(QueryParams.NAME);
-        String startTime = params.stringParam(QueryParams.START);
-        String endTime = params.stringParam(QueryParams.END);
-        String description = params.stringParam(QueryParams.DESCRIPTION);
-        boolean plan = params.booleanParam(QueryParams.PLAN);
+        TypedMap params = new TypedMap(context.queryParamMap());
+        String name = params.stringValue(QueryParams.NAME);
+        String startTime = params.stringValue(QueryParams.START);
+        String endTime = params.stringValue(QueryParams.END);
+        String description = params.stringValue(QueryParams.DESCRIPTION);
+        boolean plan = params.booleanValue(QueryParams.PLAN);
         HtmlResponse response;
         if (name.isEmpty() && startTime.isEmpty() && endTime.isEmpty()) {
             response = respondent.activityPage(context.req,
-                params.longParam(QueryParams.TEMPLATE, EMPTY_ID),
-                params.longParam(QueryParams.ID, EMPTY_ID), plan);
+                params.longValue(QueryParams.TEMPLATE, EMPTY_ID),
+                params.longValue(QueryParams.ID, EMPTY_ID), plan);
         } else {
             response = respondent.invalidActivityPage(name, startTime, endTime, description, plan);
         }

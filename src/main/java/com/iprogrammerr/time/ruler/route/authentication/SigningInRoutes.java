@@ -1,9 +1,7 @@
 package com.iprogrammerr.time.ruler.route.authentication;
 
 import com.iprogrammerr.time.ruler.model.form.FormParams;
-import com.iprogrammerr.time.ruler.model.param.QueryParams;
-import com.iprogrammerr.time.ruler.model.RequestParams;
-import com.iprogrammerr.time.ruler.respondent.HtmlResponseRedirection;
+import com.iprogrammerr.time.ruler.model.param.SigningInParams;
 import com.iprogrammerr.time.ruler.respondent.Redirection;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningInRespondent;
 import com.iprogrammerr.time.ruler.route.Routes;
@@ -26,22 +24,8 @@ public class SigningInRoutes implements Routes {
     }
 
     private void renderSignIn(Context context) {
-        RequestParams params = new RequestParams(context);
-        String activation = params.stringParam(QueryParams.ACTIVATION);
-        boolean farewell = params.booleanParam(QueryParams.FAREWELL);
-        boolean newPassword = params.booleanParam(QueryParams.NEW_PASSWORD);
-        boolean nonExistentUser = params.booleanParam(QueryParams.NON_EXISTENT_USER);
-        boolean inactiveAccount = params.booleanParam(QueryParams.INACTIVE_ACCOUNT);
-        boolean notUserPassword = params.booleanParam(QueryParams.NOT_USER_PASSWORD);
-        boolean invalidPassword = params.booleanParam(QueryParams.INVALID_PASSWORD);
-        String emailName = params.stringParam(QueryParams.EMAIL_NAME);
-        HtmlResponseRedirection response = respondent.signInPage(activation, emailName, farewell, newPassword,
-            nonExistentUser, inactiveAccount, notUserPassword, invalidPassword);
-        if (response.redirection.isEmpty()) {
-            context.html(response.response.html);
-        } else {
-            context.redirect(response.redirection);
-        }
+        SigningInParams params = SigningInParams.fromQuery(context.queryParamMap());
+        context.html(respondent.signInPage(params).html);
     }
 
     private void signIn(Context context) {

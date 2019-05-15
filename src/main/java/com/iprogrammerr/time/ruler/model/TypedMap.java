@@ -1,11 +1,11 @@
 package com.iprogrammerr.time.ruler.model;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class TypedMap {
 
+    private static final String TRUE = Boolean.toString(true);
     private final Map<String, List<String>> source;
 
     public TypedMap(Map<String, List<String>> source) {
@@ -13,9 +13,9 @@ public class TypedMap {
     }
 
     public String stringValue(String key, String defaultValue) {
-        List<String> values = source.getOrDefault(key, Collections.singletonList(defaultValue));
+        List<String> values = source.get(key);
         String value;
-        if (values.isEmpty()) {
+        if (noValues(values)) {
             value = defaultValue;
         } else {
             value = values.get(0);
@@ -23,18 +23,22 @@ public class TypedMap {
         return value;
     }
 
+    private boolean noValues(List<String> values) {
+        return values == null || values.isEmpty();
+    }
+
     public String stringValue(String key) {
         return stringValue(key, "");
     }
 
-    public int integerValue(String key, int defaultValue) {
-        List<String> values = source.getOrDefault(key, Collections.singletonList(String.valueOf(defaultValue)));
-        int value;
+    public long longValue(String key, long defaultValue) {
+        List<String> values = source.get(key);
+        long value;
         try {
-            if (values.isEmpty()) {
+            if (noValues(values)) {
                 value = defaultValue;
             } else {
-                value = Integer.parseInt(values.get(0));
+                value = Long.parseLong(values.get(0));
             }
         } catch (Exception e) {
             value = defaultValue;
@@ -42,13 +46,17 @@ public class TypedMap {
         return value;
     }
 
+    public int intValue(String key, int defaultValue) {
+        return (int) longValue(key, defaultValue);
+    }
+
     public boolean booleanValue(String key, boolean defaultValue) {
         boolean value;
         List<String> values = source.get(key);
-        if (values == null || values.isEmpty()) {
+        if (noValues(values)) {
             value = defaultValue;
         } else {
-            value = values.get(0).toLowerCase().equals(Boolean.toString(true));
+            value = values.get(0).equalsIgnoreCase(TRUE);
         }
         return value;
     }

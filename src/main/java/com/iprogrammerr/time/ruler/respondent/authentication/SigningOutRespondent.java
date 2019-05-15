@@ -17,7 +17,7 @@ public class SigningOutRespondent {
 
     public Redirection signOut(HttpServletRequest request) {
         clearData(request);
-        return respondent.redirectWithFarewell();
+        return respondent.withFarewellRedirection();
     }
 
     private void clearData(HttpServletRequest request) {
@@ -35,6 +35,6 @@ public class SigningOutRespondent {
 
     public Redirection newPasswordSignOut(HttpServletRequest request) {
         clearData(request);
-        return respondent.redirectWithNewPassword();
+        return respondent.withNewPasswordRedirection();
     }
 }
