@@ -60,6 +60,10 @@ public class RandomStrings {
         return alphanumeric(1 + random.nextInt(MAX_RANDOM_SIZE));
     }
 
+    public String limitedAlphanumeric(int limit) {
+        return alphanumeric(1 + random.nextInt(limit));
+    }
+
     public String name() {
         return alphabetic(2 + random.nextInt(MAX_NAME_SIZE - 1));
     }

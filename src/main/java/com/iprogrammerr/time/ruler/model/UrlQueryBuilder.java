@@ -21,15 +21,17 @@ public class UrlQueryBuilder {
 
     public String build(String base) {
         StringBuilder builder = new StringBuilder(base);
-        builder.append(START);
-        boolean first = true;
-        for (Map.Entry<String, String> e : params.entrySet()) {
-            if (!first) {
-                builder.append(SEPARATOR);
-            } else {
-                first = false;
+        if (params.size() > 0) {
+            builder.append(START);
+            boolean first = true;
+            for (Map.Entry<String, String> e : params.entrySet()) {
+                if (!first) {
+                    builder.append(SEPARATOR);
+                } else {
+                    first = false;
+                }
+                builder.append(e.getKey()).append(KEY_VALUE_SEPARATOR).append(e.getValue());
             }
-            builder.append(e.getKey()).append(KEY_VALUE_SEPARATOR).append(e.getValue());
         }
         return builder.toString();
     }
