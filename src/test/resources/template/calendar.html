@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <title th:text="${plan}? #{planTitle} : #{historyTitle}"></title>
+    <link rel="stylesheet" type="text/css" href="/style.css" />
+    <style>
+        @media screen and (max-width: 720px) {
+
+            .weekdays li,
+            days li {
+                width: 13.1%;
+            }
+        }
+
+        @media screen and (max-width: 420px) {
+
+            .weekdays li,
+            .days li {
+                width: 12.5%;
+            }
+
+            .days li .active {
+                padding: 2px
+            }
+        }
+
+        @media screen and (max-width: 290px) {
+
+            .weekdays li,
+            .days li {
+                width: 12.2%;
+            }
+        }
+    </style>
+</head>
+
+<body class="marginless">
+    <div th:replace="fragments.html :: tab"></div>
+    <div class="calendar">
+        <div class="month">
+            <ul>
+                <li th:if="${prev}" class="prev">&#10094;</li>
+                <li th:if="${next}" class="next">&#10095;</li>
+                <li class="month-title">
+                    <div th:text="${month}"></div>
+                    <div th:text="${year}"></div>
+                </li>
+            </ul>
+        </div>
+        <ul class="weekdays">
+            <li th:text="#{mondayShortcut}"></li>
+            <li th:text="#{tuesdayShortcut}"></li>
+            <li th:text="#{wednesdayShortcut}"></li>
+            <li th:text="#{thursdayShortcut}"></li>
+            <li th:text="#{fridayShortcut}"></li>
+            <li th:text="#{saturdayShortcut}"></li>
+            <li th:text="#{sundayShortcut}"></li>
+        </ul>
+
+        <ul class="days">
+            <li th:each="d : ${days}">
+                <th:block th:switch="${d.state.name()}">
+                    <span th:case="'NOT_AVAILABLE'" class="not-available" th:text="${d.number}"></span>
+                    <span th:case="'CURRENT'" class="current" th:text="${d.number}"></span>
+                    <span th:case="'AVAILABLE'" class="available" th:text="${d.number}"></span>
+                    <span th:case="'PLANNED'" class="planned" th:text="${d.number}"></span>
+                </th:block>
+            </li>
+        </ul>
+    </div>
+</body>
+<script src="/calendar.js" type="module"></script>
+
+
+</html>

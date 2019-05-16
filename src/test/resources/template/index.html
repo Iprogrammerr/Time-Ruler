@@ -3,17 +3,18 @@
 <title th:text="#{appName}"></title>
 
 <head>
-    <meta formName="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 
-<html>
+<body>
     <div class="centered">
         <h1 th:text="#{invitation}"></h1>
         <button id="continue" th:text="#{continue}"></button>
         <button id="start" th:text="#{start}"></button>
     </div>
-</html>
+</body>
 <script src="start.js" type="module">
 </script>
 

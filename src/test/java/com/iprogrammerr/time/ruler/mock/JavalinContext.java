@@ -1,4 +1,4 @@
-package com.iprogrammerr.time.ruler.tool;
+package com.iprogrammerr.time.ruler.mock;
 
 import io.javalin.Context;
 import io.javalin.core.util.ContextUtil;

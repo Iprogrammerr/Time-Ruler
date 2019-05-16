@@ -1,4 +1,4 @@
-package com.iprogrammerr.time.ruler.tool;
+package com.iprogrammerr.time.ruler.matcher;
 
 import com.iprogrammerr.time.ruler.model.UrlQueryBuilder;
 import org.hamcrest.Description;

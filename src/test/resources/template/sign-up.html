@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <title th:text="#{signUp}"></title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <!--TODO is this a good idea?-->
+    <style>
+        input {
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 th:text="#{signUpIncentive}"></h1>
+    <form>
+        <p th:text="#{email}"></p>
+        <p id="invalidEmail" th:class="${invalidEmail} ? error : error-hidden" th:text="#{invalidEmail}"></p>
+        <p id="emailTaken" th:class="${emailTaken} ? error : error-hidden" th:text="#{usedEmail}"></p>
+        <input type="email" name="email" th:value="${email}"></input>
+        <p th:text="#{name}"></p>
+        <p id="invalidName" th:class="${invalidName} ? error : error-hidden" th:text="#{invalidName}"></p>
+        <p id="nameTaken" th:class="${nameTaken} ? error : error-hidden" th:text="#{usedName}"></p>
+        <input type="text" name="name" th:value="${name}"></input>
+        <p th:text="#{password}"></p>
+        <p id="invalidPassword" th:class="${invalidPassword} ? error : error-hidden" th:text="#{invalidPassword}"></p>
+        <input type="password" name="password"></input>
+        <p th:text="#{repeatPassword}"></p>
+        <p id="passwordsMismatch" class="error-hidden" th:text="#{passwordsMismatch}"></p>
+        <input type="password" name="repassword"></input>
+        </br>
+        <input id="signUp" type="submit" th:value="#{signUp}"></input>
+    </form>
+    <div>
+        <span th:text="#{signInQuestionIncentive}"></span>
+        <a th:href="${signInUrl}" th:text="#{signIn}"></a>
+    </div> 
+</body>
+
+<script src="sign-up.js" type="module"></script>
+
+</html>

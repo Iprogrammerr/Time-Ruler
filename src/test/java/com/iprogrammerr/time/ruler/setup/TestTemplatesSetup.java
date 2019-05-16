@@ -21,7 +21,7 @@ public class TestTemplatesSetup {
     }
 
     public TemplateEngine engine() {
-        File root = new File(TestTemplatesSetup.class.getResource("/").getPath());
+        File root = new File(TestTemplatesSetup.class.getResource("/template").getPath());
         TemplateEngine engine = new TemplateEngine();
         FileTemplateResolver resolver = new FileTemplateResolver();
         resolver.setPrefix(root + File.separator);

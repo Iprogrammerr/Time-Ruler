@@ -1,7 +1,7 @@
 package com.iprogrammerr.time.ruler.model;
 
 import com.iprogrammerr.time.ruler.tool.RandomStrings;
-import com.iprogrammerr.time.ruler.tool.UrlQueryBuilderThatBuildsProperQuery;
+import com.iprogrammerr.time.ruler.matcher.UrlQueryBuilderThatBuildsProperQuery;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <title th:text="${history}? #{historyDayTitle} : #{todayTitle}"></title>
+    <link rel="stylesheet" type="text/css" href="/style.css" />
+    <style>
+        .yesterday:hover {
+            font-size: 1.5em;
+            transition: 1s;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body class="marginless" th:attr="data-confirmation=#{confirmation}, data-done-confirmation=#{doneConfirmation},
+    data-not-done-confirmation=#{notDoneConfirmation}">
+    <div th:replace="fragments.html :: tab"></div>
+    <div th:replace="fragments.html :: confirmation"></div>
+    <div class="centered-h">
+        <h1 th:text=${date}></h1>
+        <p th:class="!${activities.isEmpty()} ? hidden" th:text="#{emptyPlanMessage}"></p>
+        <ul class="activities">
+            <li th:each="a : ${activities}" th:data-id="${a.id}">
+                <div th:utext="|${a.start} - ${a.end}|"></div>
+                <div th:text="${a.name}"></div>
+                <span th:class="${a.done}? visible : hidden" th:utext="|#{done} #{checkedIcon}"></span>
+                <span th:class="${a.done}? hidden : visible" th:utext="|#{done} #{uncheckedIcon}"></span>
+                <span class="close">&times;</span>
+            </li>
+        </ul>
+        <button id="add" th:text="#{addActivity}"></button>
+        <p class="yesterday" th:if="!${history}" th:text="#{yesterdayQuestion}"></p>
+    </div>
+</body>
+<script src="/day-plan-execution.js" type="module"></script>
+
+</html>

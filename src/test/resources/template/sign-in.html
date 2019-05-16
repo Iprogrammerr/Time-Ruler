@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <title th:text="#{signIn}"></title>
+    <link rel="stylesheet" text="text/css" href="style.css" />
+    <!--TODO is this a good idea?-->
+    <style>
+        input {
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="centered-with-padding">
+        <form>
+            <h1 th:if="${activation}" th:text="#{activationCongratulations}"></h1>
+            <h1 th:if="${passwordChange}" th:text="#{useNewPassword}"></h1>
+            <h1 th:if="${signOut}" th:text="#{signOutFarewell}"></h1>
+            <p th:text="#{emailName}"></p>
+            <p th:class="${invalidEmailName} ? error : error-hidden" id="emailNameError" th:text="#{invalidEmailName}">
+            </p>
+            <p th:class="${nonExistentUser} ? error : error-hidden" id="nonExistentUser" th:text="#{nonExistentUser}">
+            </p>
+            <p th:class="${inactiveAccount} ? error: error-hidden" id="inactiveAccount" th:text="#{inactiveAccount}">
+            </p>
+            <input type="text" name="emailName" th:value="${emailName}"></input>
+            <p th:text="#{password}"></p>
+            <p th:class="${invalidPassword} ? error: error-hidden" id="passwordError" th:text="#{invalidPassword}">
+            </p>
+            <p th:class="${notUserPassword} ? error: error-hidden" id="notUserPassword" th:text="#{notUserPassword}">
+            </p>
+            <input type="password" name="password" th:value="${password}"></input>
+            </br>
+            <input id="signIn" type="submit" th:value="#{signIn}"></input>
+        </form>
+        <div>
+            <span th:text="#{signUpQuestionIncentive}"></span>
+            <a th:href="${signUpUrl}" th:text="#{signUp}"></a>
+            </br>
+            <a th:href="${passwordResetUrl}" th:text=#{forgottenPassword}></a>
+        </div>
+    </div>
+</body>
+<script src="sign-in.js" type="module"></script>
+
+</html>

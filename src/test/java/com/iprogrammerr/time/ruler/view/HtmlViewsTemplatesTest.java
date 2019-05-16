@@ -1,8 +1,8 @@
 package com.iprogrammerr.time.ruler.view;
 
 import com.iprogrammerr.time.ruler.matcher.ThrowsMatcher;
-import com.iprogrammerr.time.ruler.tool.RandomStrings;
 import com.iprogrammerr.time.ruler.setup.TestTemplatesSetup;
+import com.iprogrammerr.time.ruler.tool.RandomStrings;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -15,9 +15,9 @@ import java.util.Map;
 public class HtmlViewsTemplatesTest {
 
     private static final int TEMPLATE_TITLE_SIZE = 10;
-    private static final String TEMPLATE_TITLE = "title";
-    private static final String TEMPLATE_TEXT = "text";
-    private static final String TEMPLATE = "template";
+    private static final String TEMPLATE_TITLE = "appName";
+    private static final String TEMPLATE_TEXT = "invitation";
+    private static final String TEMPLATE = "index";
     private final TestTemplatesSetup setup = new TestTemplatesSetup();
 
     @Test

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <title th:text="#{profileTitle}"></title>
+    <link rel="stylesheet" type="text/css" href="/style.css" />
+</head>
+
+<body class="marginless">
+    <div th:replace="fragments.html :: tab"></div>
+    <div class="centered-h">
+        <form id="emailForm">
+            <h1 th:text="#{email}"></h1>
+            <p id="emailChanged" th:class="!${emailChanged} ? hidden" th:text="#{emailChanged}"></p>
+            <p id="invalidEmail" th:class="${invalidEmail} ? error : error-hidden" th:text="#{invalidEmail}"></p>
+            <p id="usedEmail" th:class="${usedEmail} ? error : error-hidden" th:text="#{usedEmail}"></p>
+            <input type="email" name="email" th:value="${email}"></input>
+            <input id="saveEmail" type="submit" th:value="#{save}" class="main"></input>
+        </form>
+        <form id="nameForm">
+            <h1 th:text="#{name}"></h1>
+            <p id="nameChanged" th:class="!${nameChanged} ? hidden" th:text="#{nameChanged}"></p>
+            <p id="invalidName" th:class="${invalidName} ? error : error-hidden" th:text="#{invalidName}"></p>
+            <p id="usedName" th:class="${usedName} ? error : error-hidden" th:text="#{usedName}"></p>
+            <input type="text" name="name" th:value="${name}"></input>
+            <input id="saveName" type="submit" th:value="#{save}" class="main"></input>
+        </form>
+        <button id="changePassword" class="main" th:text="#{changePassword}"></button>
+        <form id="passwordForm" th:class="!${showPasswords} ? hidden">
+            <p th:text="#{oldPassword}"></p>
+            <p id="invalidOldPassword" th:class="${invalidOldPassword} ? error : error-hidden"
+                th:text="#{invalidPassword}"></p>
+            <p id="notUserPassword" th:class="${notUserPassword} ? error: error-hidden" th:text="#{notUserPassword}">
+            </p>
+            <input type="password" name="oldPassword"></input>
+            <p th:text="#{newPassword}"></p>
+            <p id="invalidNewPassword" th:class="${invalidNewPassword} ? error : error-hidden"
+                th:text="#{invalidPassword}"></p>
+            <input type="password" name="newPassword"></input>
+            </br>
+            <input id="savePassword" type="submit" th:value="#{save}" class="main"></input>
+        </form>
+        </br>
+        <button id="logout" class="main" th:text="#{logout}"></button>
+    </div>
+</body>
+<script src="/profile.js" type="module"></script>
+
+</html>

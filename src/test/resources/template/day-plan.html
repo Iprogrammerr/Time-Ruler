@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <title th:text="#{dayPlanTitle}"></title>
+    <link rel="stylesheet" type="text/css" href="/style.css" />
+</head>
+
+<body class="marginless">
+    <div th:replace="fragments.html :: tab"></div>
+    <div th:replace="fragments.html :: confirmation"></div>
+    <div class="centered-h">
+        <h1 th:text=${date}></h1>
+        <p th:class="!${activities.isEmpty()} ? hidden" th:text="#{emptyPlanMessage}"></p>
+        <ul class="activities">
+            <li th:each="a : ${activities}" th:data-id="${a.id}">
+                <div th:utext="|${a.start} - ${a.end}|"></div>
+                <div th:text="${a.name}"></div>
+                <span class="close">&times;</span>
+            </li>
+        </ul>
+        <button id="add" th:text="#{addActivity}"></button>
+    </div>
+</body>
+<script src="/day-plan.js" type="module"></script>
+
+</html>
