@@ -2,6 +2,19 @@
     box-sizing: border-box;
 }
 
+:root {
+    --primary-dark: #5f6c87;
+    --primary: #aabadd;
+    --primary-light: #d5def2;
+    --dark-gray: #2b2a2a;
+    --gray: #666;
+    --accent-light: #77dae5;
+    --accent-dark: #00e5ff;
+    --fields-radius: 5px;
+    --buttons-radius: 5px;
+    --padding-little: 1px;
+}
+
 html {
     width: 100%;
     height: 100%;
@@ -54,7 +67,7 @@ p.error-hidden {
 .tab {
     overflow: hidden;
     top: 0;
-    background-color: #f1f1f1;
+    background-color: var(--primary-light);
     position: sticky;
     z-index: 1;
 }
@@ -86,29 +99,43 @@ p.error-hidden {
     display: block;
 }
 
-input {
+input[type=text], input[type=email], input[type=password] {
     padding: 8px;
     outline: none;
-    border: 0.5px solid #2b2a2a;
+    border-radius: var(--fields-radius);
+    background-color: var(--primary-light);
+    border: var(--padding-little) solid var(--primary-dark);
 }
 
 input:hover, input:focus {
     background-color: #f1f1f1;
-    border: 1px solid black;
-    box-shadow: 1px 1px rgba(0, 0, 0, 0.25);
+    border: var(--padding-little) solid black;
+    box-shadow: var(--padding-little) var(--padding-little) rgba(0, 0, 0, 0.25);
 }
 
 .tab button:hover {
-    background-color: #ddd;
+    color: white;
+    background-color: var(--primary-dark);
 }
 
 .tab button:active, button.active {
-    background-color: #ccc;
+    background-color: var(--primary);
 }
 
 button.main, input[type=submit].main {
+    outline: none;
+    color: white;
+    background-color: var(--primary-dark);
     padding: 8px;
     margin: 8px;
+    border: var(--padding-little) solid var(--padding-little);
+    border-radius: var(--buttons-radius);
+}
+
+button.main:hover, input[type=submit].main:hover {
+    color: black;
+    background-color: var(--primary-light);
+    border: var(--padding-little) solid var(--primary-dark);
 }
 
 ul {
@@ -122,7 +149,8 @@ ul {
 .month {
     padding: 50px 25px;
     width: 100%;
-    background: #307cf4;
+    background: var(--primary);
+    color: white;
     text-align: center;
 }
 
@@ -153,13 +181,13 @@ li.month-title {
 .weekdays {
     margin: 0;
     padding: 10px 0;
-    background-color: #ddd;
+    background-color: var(--primary-light);
 }
 
 .weekdays li {
     display: inline-block;
     width: 13.6%;
-    color: #666;
+    color: black;
     font-size: 1.5em;
     text-align: center;
 }
@@ -177,17 +205,16 @@ li.month-title {
     text-align: center;
     margin-bottom: 5px;
     font-size: 1.5em;
-    color: #777;
 }
 
 .days li span.current {
     padding: 5px;
-    color: #307cf4;
+    color: var(--accent-dark);
     text-decoration: underline;
 }
 
 .days li span.available {
-    color: #666;
+    color: var(--gray);
 }
 
 .days li span.not-available {
@@ -197,7 +224,7 @@ li.month-title {
 
 .days li span.planned {
     padding: 5px;
-    color: red;
+    color: var(--accent-light);
     text-decoration: underline;
 }
 
@@ -261,4 +288,12 @@ ul.activities li:hover {
 
 .confirmation-hidden {
     display: none;
+}
+
+a {
+    color: var(--primary);   
+}
+
+a:hover {
+    color: var(--primary-dark);
 }
