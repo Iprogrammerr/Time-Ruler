@@ -11,8 +11,10 @@
     --gray: #666;
     --accent-light: #77dae5;
     --accent-dark: #00e5ff;
-    --error: #ef0909;
+    --error: red;
     --not-available: #dee5ef;
+    --background-start: white;
+    --background-end: #e3e5ea;
     --font-dark: black;
     --font-light: white;
     --font: "Comic Sans MS", cursive, sans-serif;
@@ -45,6 +47,18 @@ html {
 
 body {   
     margin: var(--padding-medium);
+    background-image: linear-gradient(to right, var(--background-start), var(--background-end));
+}
+
+body.clouded {
+    background-image: url("clouds.jpeg");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+h1 {
+    font-size: 2em;
+    font-style: italic;
 }
 
 .centered-h {
@@ -74,7 +88,7 @@ p, p.error {
 }
 
 p.error, p.error-hidden {
-    color: var(--error-color);
+    color: var(--error);
 }
 
 p.error-hidden {
@@ -149,10 +163,11 @@ button, input[type=submit] {
     outline: none;
     color: var(--font-light);
     background-color: var(--primary-dark);
-    padding: var(--padding-small);
-    margin: var(--padding-small);
+    padding: var(--padding-small) var(--padding-large);
+    margin: var(--padding-small) 0;
     border: var(--padding-little) solid var(--padding-little);
     border-radius: var(--buttons-radius);
+    font-size: var(--font-medium);
 }
 
 button:hover, input[type=submit]:hover {
@@ -295,5 +310,5 @@ a {
 }
 
 a:hover {
-    color: var(--primary-dark);
+    color: var(--accent-dark);
 }

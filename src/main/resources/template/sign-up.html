@@ -6,15 +6,9 @@
     <meta charset="UTF-8">
     <title th:text="#{signUp}"></title>
     <link rel="stylesheet" type="text/css" href="style.css" />
-    <!--TODO is this a good idea?-->
-    <style>
-        input {
-            margin-bottom: 4px;
-        }
-    </style>
 </head>
 
-<body>
+<body class="clouded">
     <h1 th:text="#{signUpIncentive}"></h1>
     <form>
         <p th:text="#{email}"></p>
@@ -31,7 +25,7 @@
         <p th:text="#{repeatPassword}"></p>
         <p id="passwordsMismatch" class="error-hidden" th:text="#{passwordsMismatch}"></p>
         <input type="password" name="repassword"></input>
-        </br>
+        <div></div>
         <input id="signUp" type="submit" th:value="#{signUp}"></input>
     </form>
     <div>

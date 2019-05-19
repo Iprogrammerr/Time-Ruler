@@ -10,13 +10,21 @@
         button {
             width: 25%;
         }
+
+        @media screen and (max-width: 500px) {
+
+            button {
+                width: 50%;
+            }
+        }
     </style>
 </head>
 
-<body>
+<body class="clouded">
     <div class="centered">
         <h1 th:text="#{invitation}"></h1>
         <button id="continue" th:text="#{continue}"></button>
+        <div></div>
         <button id="start" th:text="#{start}"></button>
     </div>
 </body>

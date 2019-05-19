@@ -83,6 +83,7 @@ public class App {
 
         Javalin app = Javalin.create()
             .enableStaticFiles(root.getPath() + File.separator + "css", Location.EXTERNAL)
+            .enableStaticFiles(root.getPath() + File.separator + "image", Location.EXTERNAL)
             .enableStaticFiles(root.getPath() + File.separator + "js", Location.EXTERNAL);
 
         DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
