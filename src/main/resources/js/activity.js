@@ -5,6 +5,7 @@ const activityId = urlParams.getOrDefault(paramsKeys.id, 0);
 const date = activityId > 0 ? {} : dateTimeParams.dateFromUrl().asIsoDateString();
 const plan = urlParams.getOrDefault(paramsKeys.plan, "false");
 const form = document.querySelector("form");
+const description = document.querySelector("textarea");
 const saveActivity = document.getElementById("save");
 
 tabsNavigation.setup(document.querySelector("div"), true);
@@ -17,6 +18,11 @@ document.getElementById("recent").onclick = () => {
         params.set(paramsKeys.date, date);
     }
     router.forwardWithParams(routes.activities, params);
+};
+description.oninput = () => {
+    if (description.clientHeight != description.scrollHeight) {
+        description.style.height = `${description.scrollHeight}px`;
+    }
 };
 saveActivity.onclick = () => {
     if (isFormValid()) {
@@ -35,3 +41,4 @@ saveActivity.onclick = () => {
 function isFormValid() {
     return true;
 };
+

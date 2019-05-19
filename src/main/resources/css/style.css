@@ -141,7 +141,7 @@ p.error-hidden {
     display: block;
 }
 
-input:not([type="input"]) {
+input:not([type="input"]), textarea {
     padding: var(--padding-small);
     outline: none;
     border-radius: var(--fields-radius);
@@ -149,7 +149,14 @@ input:not([type="input"]) {
     border: var(--padding-little) solid var(--primary-dark);
 }
 
-input:hover, input:focus {
+textarea {
+    height: 5em;
+    width: 30em;
+    overflow: hidden;
+    resize: none;
+}
+
+input:hover, input:focus, textarea:hover {
     background-color: var(--input-background);
     border: var(--padding-little) solid var(--input-border);
     box-shadow: var(--padding-little) var(--padding-little) rgba(0, 0, 0, 0.25);
@@ -165,7 +172,7 @@ button, input[type=submit] {
     background-color: var(--primary-dark);
     padding: var(--padding-small) var(--padding-large);
     margin: var(--padding-small) 0;
-    border: var(--padding-little) solid var(--padding-little);
+    border: var(--padding-little) solid var(--primary);
     border-radius: var(--buttons-radius);
     font-size: var(--font-medium);
 }
@@ -222,7 +229,6 @@ ul {
     cursor: pointer;
     font-size: var(--font-medium);
 }
-
 
 .day span.current {
     color: var(--accent-dark);
