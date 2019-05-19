@@ -13,8 +13,9 @@ setupMonthsNavigation();
 setupDaysNavigation();
 
 function stateFromActive(activeIndex) {
-    let name, mainRoute, detailRoute;
-    //TODO proper routes
+    let name;
+    let mainRoute;
+    let detailRoute;
     if (activeIndex == 1) {
         name = STATE.PLAN;
         mainRoute = routes.plan;
@@ -34,26 +35,25 @@ function stateFromActive(activeIndex) {
 function setupMonthsNavigation() {
     let date = new SmartDate();
     date.setYearMonth(yearMonth.year, yearMonth.month);
-    let prev = document.getElementsByClassName("prev");
-    if (prev.length > 0) {
+    let pointers = document.getElementsByClassName("month-pointer");
+    if (pointers.length > 0) {
         date.subtractMonth(1);
         let newYearMonth = date.asYearMonth();
         date.addMonth(1);
-        prev[0].onclick = () => router.replaceWithParams(state.mainRoute,
+        pointers[0].onclick = () => router.replaceWithParams(state.mainRoute,
             dateTimeParams.yearMonthAsParams(newYearMonth.year, newYearMonth.month));
     }
-    let next = document.getElementsByClassName("next");
-    if (next.length > 0) {
+    if (pointers.length > 1) {
         date.addMonth(1);
         let newYearMonth = date.asYearMonth();
-        next[0].onclick = () => router.replaceWithParams(state.mainRoute,
+        pointers[1].onclick = () => router.replaceWithParams(state.mainRoute,
             dateTimeParams.yearMonthAsParams(newYearMonth.year, newYearMonth.month));
     }
 };
 
 function setupDaysNavigation() {
     let notAvailableClass = "not-available";
-    let days = document.getElementsByClassName("days")[0].children;
+    let days = document.getElementsByClassName("day");
     let date = new SmartDate();
     for (let i = 0; i < days.length; i++) {
         let className = days[i].children[0].className;
