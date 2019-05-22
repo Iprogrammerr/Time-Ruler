@@ -64,20 +64,22 @@ public class ActivityRespondent {
         String view;
         if (templateId > 0 && activities.activity(templateId).isPresent()) {
             DescribedActivity activity = descriptions.describedActivity(templateId).withDone(!plan);
-            view = views.filled(activity, date -> serverClientDates.clientDate(request, date));
+            view = views.filled(activity, date -> serverClientDates.utcClientDate(request, date));
         } else if (id > 0 && activities.activity(id).isPresent()) {
             view = views.filled(descriptions.describedActivity(id),
-                date -> serverClientDates.clientDate(request, date));
+                date -> serverClientDates.utcClientDate(request, date));
         } else {
-            view = views.empty(serverClientDates.clientDate(request), plan);
+            view = views.empty(serverClientDates.utcClientDate(request), plan);
         }
         return new HtmlResponse(view);
     }
 
-    public HtmlResponse invalidActivityPage(String name, String startTime, String endTime, String description,
-        boolean plan) {
-        return new HtmlResponse(views.withErrors(plan, new ValidateableName(name),
-            new ValidateableTime(startTime), new ValidateableTime(endTime), description));
+    //TODO simplify
+    public HtmlResponse invalidActivityPage(HttpServletRequest request, String name, String startTime, String endTime,
+        String description, boolean plan) {
+        return new HtmlResponse(views.withErrors(serverClientDates.utcClientDate(request), plan,
+            new ValidateableName(name), new ValidateableTime(startTime), new ValidateableTime(endTime),
+            description));
     }
 
     public Redirection createActivity(HttpServletRequest request, String date, ActivityForm form) {

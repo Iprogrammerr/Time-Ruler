@@ -32,6 +32,7 @@
     --font-medium-large: 1.5em;
     --font-medium: 1em;
     --font-small: 0.8em;
+    --time-options-max-height: 50vh;
 }
 
 html {
@@ -177,7 +178,7 @@ button, input[type=submit] {
     font-size: var(--font-medium);
 }
 
-button:hover, input[type=submit]:hover {
+button:hover, button:focus, input[type=submit]:hover, input[type=submit]:focus {
     color: var(--font-dark);
     background-color: var(--primary-light);
     border: var(--padding-little) solid var(--primary-dark);
@@ -317,4 +318,35 @@ a {
 
 a:hover {
     color: var(--accent-dark);
+}
+
+.time-frame {
+    position: relative;
+    display: inline-block;
+}
+
+.time-button {
+    margin: 0;
+}
+
+.time-options {
+	width: 100%;
+	text-align: center;
+	display: none;
+	position: absolute;
+    background-color: var(--primary);
+    color: var(--font-dark);
+	cursor: pointer;
+	overflow-y: auto;
+	max-height: var(--time-options-max-height);
+    z-index: 1;
+}
+
+.time-options-visible {
+    display: block;
+}
+
+.time-options div:hover {
+    background-color: var(--primary-dark);
+    color: var(--font-light);
 }

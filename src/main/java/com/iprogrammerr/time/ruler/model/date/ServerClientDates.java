@@ -4,6 +4,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 public class ServerClientDates {
 
@@ -40,11 +42,27 @@ public class ServerClientDates {
         return serverDate.minusSeconds(clientUtcOffset(request));
     }
 
+    public ZonedDateTime utcClientDate(HttpServletRequest request, Instant serverDate) {
+        return inUtc(clientDate(request, serverDate));
+    }
+
+    private ZonedDateTime inUtc(Instant instant) {
+        return ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
+    }
+
     public Instant clientDate(HttpServletRequest request, long serverSeconds) {
         return clientDate(request, Instant.ofEpochSecond(serverSeconds));
     }
 
+    public ZonedDateTime utcClientDate(HttpServletRequest request, long serverSeconds) {
+        return inUtc(clientDate(request, serverSeconds));
+    }
+
     public Instant clientDate(HttpServletRequest request) {
         return clientDate(request, Instant.now(Clock.systemUTC()));
+    }
+
+    public ZonedDateTime utcClientDate(HttpServletRequest request) {
+        return inUtc(clientDate(request));
     }
 }

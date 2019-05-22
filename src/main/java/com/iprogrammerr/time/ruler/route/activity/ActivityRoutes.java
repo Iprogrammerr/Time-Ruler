@@ -42,11 +42,10 @@ public class ActivityRoutes implements GroupedRoutes {
         boolean plan = params.booleanValue(QueryParams.PLAN);
         HtmlResponse response;
         if (name.isEmpty() && startTime.isEmpty() && endTime.isEmpty()) {
-            response = respondent.activityPage(context.req,
-                params.longValue(QueryParams.TEMPLATE, EMPTY_ID),
+            response = respondent.activityPage(context.req, params.longValue(QueryParams.TEMPLATE, EMPTY_ID),
                 params.longValue(QueryParams.ID, EMPTY_ID), plan);
         } else {
-            response = respondent.invalidActivityPage(name, startTime, endTime, description, plan);
+            response = respondent.invalidActivityPage(context.req, name, startTime, endTime, description, plan);
         }
         context.html(response.html);
     }
@@ -64,13 +63,11 @@ public class ActivityRoutes implements GroupedRoutes {
     }
 
     private void setActivityDone(Context context, boolean done) {
-        respondent.setActivityDone(context.req,
-            context.pathParam(ActivityRespondent.ID, Long.class).get(),
+        respondent.setActivityDone(context.req, context.pathParam(ActivityRespondent.ID, Long.class).get(),
             done);
     }
 
     private void deleteActivity(Context context) {
-        respondent.deleteActivity(context.req,
-            context.pathParam(ActivityRespondent.ID, Long.class).get());
+        respondent.deleteActivity(context.req, context.pathParam(ActivityRespondent.ID, Long.class).get());
     }
 }
