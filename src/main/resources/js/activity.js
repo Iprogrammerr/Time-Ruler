@@ -31,8 +31,26 @@ document.getElementById("recent").onclick = () => {
     }
     router.forwardWithParams(routes.activities, params);
 };
+
 startTimePicker.setup();
 endTimePicker.setup();
+startTimePicker.setChangeListener(() => {
+    if (isStartTimeGreater()) {
+        endTimePicker.setTime(startTimePicker.hour(), startTimePicker.minute());
+    }
+});
+
+function isStartTimeGreater() {
+    return (endTimePicker.hour() < startTimePicker.hour()) ||
+        (endTimePicker.hour() == startTimePicker.hour() && endTimePicker.minute() < startTimePicker.minute());
+}
+
+endTimePicker.setChangeListener(() => {
+    if (isStartTimeGreater()) {
+        startTimePicker.setTime(endTimePicker.hour(), endTimePicker.minute());
+    }
+});
+
 description.oninput = () => {
     if (description.clientHeight != description.scrollHeight) {
         description.style.height = `${description.scrollHeight}px`;
