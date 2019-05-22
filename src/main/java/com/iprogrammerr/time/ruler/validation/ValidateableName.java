@@ -14,7 +14,7 @@ public class ValidateableName implements Validateable<String> {
             if (valid) {
                 for (char c : name.toCharArray()) {
                     if (!Character.isLetter(c)) {
-                        valid = (allowSpaces && Character.isSpaceChar(c));
+                        valid = allowSpaces && Character.isSpaceChar(c);
                         if (!valid) {
                             break;
                         }

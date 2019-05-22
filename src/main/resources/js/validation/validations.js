@@ -6,13 +6,16 @@ export function Validations(minEmailNameLength = 3, minNameLength = 3, minPasswo
     const _minNameLength = minNameLength;
     const _minPasswordLength = minPasswordLength;
 
-    this.isNameValid = (name) => {
-        let valid = name.length >= _minNameLength;
+    this.isNameValid = (name, allowSpaces = false) => {
+        let trimmed = name.trim();
+        let valid = trimmed.length >= _minNameLength;
         if (valid) {
-            for (let n of name) {
-                if (!isLetter(n)) {
-                    valid = false;
-                    break;
+            for (let c of trimmed) {
+                if (!isLetter(c)) {
+                    valid = (allowSpaces && c == ' ');
+                    if (!valid) {
+                        break;
+                    }
                 }
             }
         }

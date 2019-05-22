@@ -43,7 +43,7 @@ startTimePicker.setChangeListener(() => {
 function isStartTimeGreater() {
     return (endTimePicker.hour() < startTimePicker.hour()) ||
         (endTimePicker.hour() == startTimePicker.hour() && endTimePicker.minute() < startTimePicker.minute());
-}
+};
 
 endTimePicker.setChangeListener(() => {
     if (isStartTimeGreater()) {
@@ -72,7 +72,7 @@ saveActivity.onclick = () => {
 
 function isFormValid() {
     errors.clear(nameError);
-    let nameValid = validations.isNameValid(inputs.name.value);
+    let nameValid = validations.isNameValid(inputs.name.value, true);
     if (!nameValid) {
         errors.set(nameError);
     }
@@ -82,5 +82,5 @@ function isFormValid() {
 function setFormTimes() {
     inputs.startTime.value = `${startTimePicker.hour()}:${startTimePicker.minute()}`;
     inputs.endTime.value = `${endTimePicker.hour()}:${endTimePicker.minute()}`;
-}
+};
 

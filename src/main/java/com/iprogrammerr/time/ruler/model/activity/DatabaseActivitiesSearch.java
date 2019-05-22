@@ -6,6 +6,9 @@ import com.iprogrammerr.time.ruler.model.date.SmartDate;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO fix midnight UTC differences issues.
+// Activities created at the beginning of the day are shown on a bad day
+// depending on client UTC offset. Same holds true for calendar
 public class DatabaseActivitiesSearch implements ActivitiesSearch {
 
     private final DatabaseSession session;
