@@ -1,7 +1,6 @@
 package com.iprogrammerr.time.ruler.model.activity;
 
 import com.iprogrammerr.time.ruler.database.DatabaseSession;
-import com.iprogrammerr.time.ruler.model.date.SmartDate;
 
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -35,8 +34,6 @@ public class DatabaseDates implements Dates {
             .append("WHERE start_date >= ? AND start_date <= ? ")
             .append("ORDER by start_date ASC")
             .toString();
-        long startOfTheDay = new SmartDate(start).dayBeginning();
-        long endOfTheDay = new SmartDate(end).dayEnd();
         return session.select(r -> {
             List<Long> days = new ArrayList<>();
             int i = 0;
@@ -56,7 +53,6 @@ public class DatabaseDates implements Dates {
                 }
             }
             return days;
-        }, query, startOfTheDay, endOfTheDay);
+        }, query, start, end);
     }
-
 }

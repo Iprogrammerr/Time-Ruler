@@ -7,6 +7,7 @@ import com.iprogrammerr.time.ruler.model.activity.Activity;
 import com.iprogrammerr.time.ruler.model.date.DateParsing;
 import com.iprogrammerr.time.ruler.model.date.LimitedDate;
 import com.iprogrammerr.time.ruler.model.date.ServerClientDates;
+import com.iprogrammerr.time.ruler.model.date.SmartDate;
 import com.iprogrammerr.time.ruler.model.param.QueryParams;
 import com.iprogrammerr.time.ruler.respondent.HtmlResponse;
 import com.iprogrammerr.time.ruler.respondent.Redirection;
@@ -37,11 +38,10 @@ public class DayPlanRespondent {
         this.serverClientDates = serverClientDates;
     }
 
-    //TODO offset?
     public HtmlResponse dayPlanPage(HttpServletRequest request, String date) {
         Instant requestedDate = limitedDate.fromString(date);
-        List<Activity> dayActivities = activities.ofUserDatePlanned(identity.value(request),
-            requestedDate.getEpochSecond());
+        List<Activity> dayActivities = activities.userDayPlannedActivities(identity.value(request),
+            new SmartDate(requestedDate).dayBeginningWithOffset(serverClientDates.clientUtcOffset(request)));
         return new HtmlResponse(views.view(requestedDate, d -> serverClientDates.clientDate(request, d),
             dayActivities));
     }

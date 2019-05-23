@@ -4,11 +4,11 @@ import java.util.List;
 
 public interface ActivitiesSearch {
 
-    List<Activity> ofUserDate(long id, long date);
+    List<Activity> userDayActivities(long id, long dayStart);
 
-    List<Activity> ofUserDatePlanned(long id, long date);
+    List<Activity> userDayPlannedActivities(long id, long dayStart);
 
-    List<Activity> ofUserDateDone(long id, long date);
+    List<Activity> userDayDoneActivities(long id, long dayStart);
 
     List<Activity> userActivities(long id, int offset, int limit, boolean ascending);
 

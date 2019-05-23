@@ -14,6 +14,7 @@ export function TabsNavigation(router, activeClassName = "active") {
         for (let i = 0; i < tabs.length; i++) {
             if (tabs[i].className === _activeClassName) {
                 _activeIndex = i;
+                break;
             }
         }
         if (_activeIndex != 0 || allActive) {

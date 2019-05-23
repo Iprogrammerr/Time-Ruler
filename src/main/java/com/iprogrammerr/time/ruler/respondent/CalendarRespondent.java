@@ -15,7 +15,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
-//TODO simplify year month
+//TODO simplify year month, fix calendar dates
 public class CalendarRespondent {
 
     public static final String PLAN = "plan";
@@ -47,23 +47,26 @@ public class CalendarRespondent {
         if (requestedDate.isAfter(currentDate)) {
             requestedDate = requestedDate.withDayOfMonth(1);
         }
-        List<Long> days = daysForCalendar(identity.value(request), requestedDate, false);
+        List<Long> days = daysForCalendar(identity.value(request), requestedDate, false,
+            serverClientDates.clientUtcOffset(request));
         String view = views.view(true, requestedDate.isAfter(currentDate), currentYear < yearMonth.maxYear,
             requestedDate, days, false);
         return new HtmlResponse(view);
     }
 
-    //TODO offset
-    private List<Long> daysForCalendar(long userId, ZonedDateTime requestedDate, boolean fromPast) {
-        List<Long> daysForCalendar;
+    private List<Long> daysForCalendar(long userId, ZonedDateTime requestedDate, boolean fromPast,
+        int clientUtcOffset) {
+        long start;
+        long end;
         if (fromPast) {
-            daysForCalendar = dates.userPlannedDays(userId, requestedDate.withDayOfMonth(1).toEpochSecond(),
-                requestedDate.toEpochSecond());
+            start = new SmartDate(requestedDate.withDayOfMonth(1)).dayBeginningWithOffset(clientUtcOffset);
+            end = new SmartDate(requestedDate).dayEndWithOffset(clientUtcOffset);
         } else {
-            daysForCalendar = dates.userPlannedDays(userId, requestedDate.toEpochSecond(),
-                requestedDate.withDayOfMonth(requestedDate.toLocalDate().lengthOfMonth()).toEpochSecond());
+            start = new SmartDate(requestedDate).dayBeginningWithOffset(clientUtcOffset);
+            end = new SmartDate(requestedDate.withDayOfMonth(requestedDate.toLocalDate().lengthOfMonth()))
+                .dayEndWithOffset(clientUtcOffset);
         }
-        return daysForCalendar;
+        return dates.userPlannedDays(userId, start, end);
     }
 
     //TODO date offset
@@ -91,7 +94,8 @@ public class CalendarRespondent {
         } else if (requestedDate.isBefore(currentDate)) {
             requestedDate = requestedDate.withDayOfMonth(requestedDate.toLocalDate().lengthOfMonth());
         }
-        List<Long> days = daysForCalendar(identity.value(request), requestedDate, true);
+        List<Long> days = daysForCalendar(identity.value(request), requestedDate, true,
+            serverClientDates.clientUtcOffset(request));
         String view = views.view(
             false,
             requestedDate.isAfter(firstDate) && firstDate.getMonthValue() < requestedDate.getMonthValue(),

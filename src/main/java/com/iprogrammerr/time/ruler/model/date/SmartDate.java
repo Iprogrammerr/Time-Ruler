@@ -51,11 +51,19 @@ public class SmartDate {
     }
 
     public long dayBeginning() {
-        return ofTime(0, 0, 0);
+        return dayBeginningWithOffset(0);
+    }
+
+    public long dayBeginningWithOffset(int offset) {
+        return ofTime(0, 0, 0) + offset;
     }
 
     public long dayEnd() {
-        return ofTime(23, 59, 59);
+        return dayEndWithOffset(0);
+    }
+
+    public long dayEndWithOffset(int offset) {
+        return ofTime(23, 59, 59) + offset;
     }
 
     public Instant withTime(Instant time) {

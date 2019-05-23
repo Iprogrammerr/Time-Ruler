@@ -90,8 +90,10 @@ public class ActivityRespondent {
         if (name.isValid() && start.isValid() && end.isValid()) {
             Instant validatedDate = limitedDate.fromString(date);
             Activity activity = activity(request, validatedDate, name, start, end, form.done);
-            createActivity(activity, form.description,
-                activitiesSearch.ofUserDate(identity.value(request), validatedDate.getEpochSecond()));
+            long dayStart = new SmartDate(validatedDate)
+                .dayBeginningWithOffset(serverClientDates.clientUtcOffset(request));
+            createActivity(activity, form.description, activitiesSearch.userDayActivities(identity.value(request),
+                dayStart));
             redirection = dayRedirection(request, validatedDate, activity.done);
         } else {
             redirection = errorsRedirection(date, form.name, form.startTime, form.endTime, !form.done);
@@ -129,7 +131,7 @@ public class ActivityRespondent {
             .put(QueryParams.END, endTime);
     }
 
-    private Activity activity(HttpServletRequest request, Instant date, ValidateableName name,
+    private Activity activity(HttpServletRequest request, Instant clientDate, ValidateableName name,
         ValidateableTime start, ValidateableTime end, boolean done) {
         Instant startTime = start.value();
         Instant endTime = end.value();
@@ -137,7 +139,7 @@ public class ActivityRespondent {
             throw new ResponseException(ErrorCode.GREATER_START_TIME);
         }
         long userId = identity.value(request);
-        SmartDate smartDate = new SmartDate(date.getEpochSecond());
+        SmartDate smartDate = new SmartDate(clientDate);
         long startDate = serverClientDates.serverDate(request, smartDate.withTime(startTime)).getEpochSecond();
         long endDate = serverClientDates.serverDate(request, smartDate.withTime(endTime)).getEpochSecond();
         return new Activity(userId, name.value(), startDate, endDate, done);
@@ -155,22 +157,26 @@ public class ActivityRespondent {
         }
     }
 
-    //TODO does activity belong to user?
     public Redirection updateActivity(HttpServletRequest request, long id, ActivityForm form) {
         Optional<Activity> activity = activities.activity(id);
         if (!activity.isPresent()) {
             throw new ResponseException(ErrorCode.ACTIVITY_NON_EXISTENT_ID);
+        }
+        if (activity.get().userId != identity.value(request)) {
+            throw new ResponseException(ErrorCode.ACTIVITY_NOT_OWNED);
         }
         Redirection redirection;
         ValidateableName name = new ValidateableName(form.name, true);
         ValidateableTime start = new ValidateableTime(form.startTime);
         ValidateableTime end = new ValidateableTime(form.endTime);
         if (name.isValid() && start.isValid() && end.isValid()) {
-            Instant date = Instant.ofEpochSecond(activity.get().startDate);
+            Instant date = serverClientDates.clientDate(request, Instant.ofEpochSecond(activity.get().startDate));
             Activity toUpdateActivity = activity(request, date, name, start, end,
                 activity.get().done).withId(id);
+            long dayStart = new SmartDate(serverClientDates.clientDate(request, toUpdateActivity.startDate))
+                .dayBeginningWithOffset(serverClientDates.clientUtcOffset(request));
             updateActivity(toUpdateActivity, form.description,
-                activitiesSearch.ofUserDate(identity.value(request), date.getEpochSecond()));
+                activitiesSearch.userDayActivities(identity.value(request), dayStart));
             redirection = dayRedirection(request, date, toUpdateActivity.done);
         } else {
             redirection = errorsRedirection(id, form.name, form.startTime, form.endTime);

@@ -25,7 +25,7 @@ setupListNavigation();
 function setupTabsNavigation() {
     tabsNavigation.setYearMonth(yearMonthDay.year, yearMonthDay.month);
     let today = new SmartDate().asYearMonthDay();
-    let allTabsActive = today.year != yearMonthDay.year && today.month != yearMonthDay.month &&
+    let allTabsActive = today.year != yearMonthDay.year || today.month != yearMonthDay.month ||
         today.day != yearMonthDay.day;
     tabsNavigation.setup(document.querySelector("div"), allTabsActive);
 };

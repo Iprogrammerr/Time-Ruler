@@ -1,16 +1,13 @@
 package com.iprogrammerr.time.ruler.model.activity;
 
 import com.iprogrammerr.time.ruler.database.DatabaseSession;
-import com.iprogrammerr.time.ruler.model.date.SmartDate;
 
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO fix midnight UTC differences issues.
-// Activities created at the beginning of the day are shown on a bad day
-// depending on client UTC offset. Same holds true for calendar
 public class DatabaseActivitiesSearch implements ActivitiesSearch {
 
+    private static final long DAY_SECONDS = 24 * 3600;
     private final DatabaseSession session;
 
     public DatabaseActivitiesSearch(DatabaseSession session) {
@@ -18,12 +15,11 @@ public class DatabaseActivitiesSearch implements ActivitiesSearch {
     }
 
     @Override
-    public List<Activity> ofUserDate(long id, long date) {
-        return ofUserDate(id, date, ActivitiesFilter.ALL);
+    public List<Activity> userDayActivities(long id, long dayStart) {
+        return userDayActivities(id, dayStart, ActivitiesFilter.ALL);
     }
 
-    private List<Activity> ofUserDate(long id, long date, ActivitiesFilter filter) {
-        SmartDate smartDate = new SmartDate(date);
+    private List<Activity> userDayActivities(long id, long dayStart, ActivitiesFilter filter) {
         StringBuilder queryBuilder = new StringBuilder("SELECT * FROM activity WHERE ")
             .append("user_id = ? AND start_date >= ? AND start_date <= ?");
         if (filter != ActivitiesFilter.ALL) {
@@ -36,17 +32,17 @@ public class DatabaseActivitiesSearch implements ActivitiesSearch {
                 activities.add(new Activity(r));
             }
             return activities;
-        }, queryBuilder.toString(), id, smartDate.dayBeginning(), smartDate.dayEnd());
+        }, queryBuilder.toString(), id, dayStart, dayStart + DAY_SECONDS);
     }
 
     @Override
-    public List<Activity> ofUserDatePlanned(long id, long date) {
-        return ofUserDate(id, date, ActivitiesFilter.PLANNED);
+    public List<Activity> userDayPlannedActivities(long id, long dayStart) {
+        return userDayActivities(id, dayStart, ActivitiesFilter.PLANNED);
     }
 
     @Override
-    public List<Activity> ofUserDateDone(long id, long date) {
-        return ofUserDate(id, date, ActivitiesFilter.DONE);
+    public List<Activity> userDayDoneActivities(long id, long dayStart) {
+        return userDayActivities(id, dayStart, ActivitiesFilter.DONE);
     }
 
     @Override

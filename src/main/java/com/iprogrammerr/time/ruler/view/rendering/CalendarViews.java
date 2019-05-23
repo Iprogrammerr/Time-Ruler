@@ -43,7 +43,6 @@ public class CalendarViews {
         params.put(ActiveTab.KEY, plan ? ActiveTab.PLAN : ActiveTab.HISTORY);
         params.put(PREV_TEMPLATE, hasPrevious);
         params.put(NEXT_TEMPLATE, hasNext);
-        //TODO locale form month?
         params.put(MONTH_TEMPLATE, date.getMonth().getDisplayName(TextStyle.FULL, Locale.US));
         params.put(YEAR_TEMPLATE, date.getYear());
         params.put(DAYS_TEMPLATE, calendarDays(days, date, fromPast));

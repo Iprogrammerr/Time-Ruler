@@ -3,12 +3,12 @@ package com.iprogrammerr.time.ruler.model.activity;
 import com.iprogrammerr.time.ruler.database.DatabaseSession;
 import com.iprogrammerr.time.ruler.database.QueryTemplates;
 import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
-import com.iprogrammerr.time.ruler.tool.RandomActivities;
-import com.iprogrammerr.time.ruler.tool.RandomStrings;
-import com.iprogrammerr.time.ruler.tool.RandomUsers;
 import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.user.User;
 import com.iprogrammerr.time.ruler.setup.TestDatabaseSetup;
+import com.iprogrammerr.time.ruler.tool.RandomActivities;
+import com.iprogrammerr.time.ruler.tool.RandomStrings;
+import com.iprogrammerr.time.ruler.tool.RandomUsers;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -44,8 +44,9 @@ public class DatabaseActivitiesSearchTest {
     }
 
     @Test
-    public void returnsEmptyListOfUserDate() {
-        MatcherAssert.assertThat("Is not empty", activitiesSearch.ofUserDate(fakeOrRealUserId(), 1), Matchers.empty());
+    public void returnsEmptyUserDayActivities() {
+        MatcherAssert.assertThat("Is not empty", activitiesSearch.userDayActivities(fakeOrRealUserId(),
+            1), Matchers.empty());
     }
 
     private long fakeOrRealUserId() {
@@ -59,19 +60,19 @@ public class DatabaseActivitiesSearchTest {
     }
 
     @Test
-    public void returnsEmptyListOfUserDatePlanned() {
-        MatcherAssert.assertThat("Is not empty", activitiesSearch.ofUserDatePlanned(fakeOrRealUserId(), 1),
+    public void returnsEmptyUserDayPlannedActivities() {
+        MatcherAssert.assertThat("Is not empty", activitiesSearch.userDayPlannedActivities(fakeOrRealUserId(), 1),
             Matchers.empty());
     }
 
     @Test
-    public void returnsEmptyListOfUserDateDone() {
-        MatcherAssert.assertThat("Is not empty", activitiesSearch.ofUserDateDone(fakeOrRealUserId(), 1),
+    public void returnsEmptyUserDayDoneActivities() {
+        MatcherAssert.assertThat("Is not empty", activitiesSearch.userDayDoneActivities(fakeOrRealUserId(), 1),
             Matchers.empty());
     }
 
     @Test
-    public void returnsListOfUserDate() {
+    public void returnsUserDayActivities() {
         RandomUsers randomUsers = new RandomUsers();
         RandomActivities randomActivities = new RandomActivities();
         User user = randomUsers.user();
@@ -84,7 +85,7 @@ public class DatabaseActivitiesSearchTest {
         first = first.withId(activities.create(first));
         second = second.withId(activities.create(second));
 
-        MatcherAssert.assertThat("Does not return proper activities", activitiesSearch.ofUserDate(userId, date),
+        MatcherAssert.assertThat("Does not return proper activities", activitiesSearch.userDayActivities(userId, date),
             Matchers.contains(first, second)
         );
     }
@@ -96,11 +97,11 @@ public class DatabaseActivitiesSearchTest {
     }
 
     @Test
-    public void returnsListOfUserDatePlanned() {
-        returnsListOfUserDate(true);
+    public void returnsUserDayPlannedActivities() {
+        returnsUserDayActivities(true);
     }
 
-    private void returnsListOfUserDate(boolean planned) {
+    private void returnsUserDayActivities(boolean planned) {
         RandomUsers randomUsers = new RandomUsers();
         RandomActivities randomActivities = new RandomActivities();
         User user = randomUsers.user();
@@ -116,21 +117,21 @@ public class DatabaseActivitiesSearchTest {
         List<Activity> userActivities;
         if (planned) {
             message = "Does not return planned activities";
-            userActivities = activitiesSearch.ofUserDatePlanned(userId, date);
+            userActivities = activitiesSearch.userDayPlannedActivities(userId, date);
         } else {
             message = "Does not return done activities";
-            userActivities = activitiesSearch.ofUserDateDone(userId, date);
+            userActivities = activitiesSearch.userDayDoneActivities(userId, date);
         }
         MatcherAssert.assertThat(message, userActivities, Matchers.contains(first));
     }
 
     @Test
-    public void returnsListOfUserDateDone() {
-        returnsListOfUserDate(false);
+    public void returnsUserDayDoneActivities() {
+        returnsUserDayActivities(false);
     }
 
     @Test
-    public void returnsLimitedWithOffset() {
+    public void returnsLimitedWithOffsetActivities() {
         Random random = new Random();
         User user = new RandomUsers(random).user();
         long userId = users.create(user.name, user.email, user.password);
@@ -156,7 +157,7 @@ public class DatabaseActivitiesSearchTest {
     }
 
     @Test
-    public void returnsEmpty() {
+    public void returnsEmptyActivities() {
         Random random = new Random();
         User user = new RandomUsers(random).user();
         long userId = users.create(user.name, user.email, user.password);
@@ -202,7 +203,7 @@ public class DatabaseActivitiesSearchTest {
     }
 
     @Test
-    public void returnsLimitedWithOffsetOfPattern() {
+    public void returnsLimitedWithOffsetOfPatternActivities() {
         Random random = new Random();
         User user = new RandomUsers(random).user();
         long userId = users.create(user.name, user.email, user.password);
@@ -235,7 +236,7 @@ public class DatabaseActivitiesSearchTest {
     }
 
     @Test
-    public void returnsEmptyOfPattern() {
+    public void returnsEmptyOfPatternActivities() {
         Random random = new Random();
         User user = new RandomUsers(random).user();
         long userId = users.create(user.name, user.email, user.password);
