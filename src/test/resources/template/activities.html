@@ -59,7 +59,7 @@
             th:text="${pattern.isEmpty()}? #{emptyUserActivities} : #{emptyUserActivitiesResults}"></p>
         <ul class="activities">
             <li th:each="a : ${activities}" th:data-id="${a.id}">
-                <div th:text="${a.firstDate}"></div>
+                <div th:text="${a.date}"></div>
                 <div th:text="${a.name}"></div>
             </li>
         </ul>

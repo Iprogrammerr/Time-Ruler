@@ -110,8 +110,7 @@ public class ProfileRespondent {
     }
 
     private Redirection emailChangedRedirection() {
-        return new Redirection(
-            new UrlQueryBuilder().put(QueryParams.EMAIL_CHANGED, true).build(PROFILE));
+        return new Redirection(new UrlQueryBuilder().put(QueryParams.EMAIL_CHANGED, true).build(PROFILE));
     }
 
     private Redirection invalidEmailRedirection(String email, boolean emailTaken) {
