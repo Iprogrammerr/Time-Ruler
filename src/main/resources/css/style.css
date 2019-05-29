@@ -4,14 +4,17 @@
 }
 
 :root {
+    --primary-darkest: #353b49;
     --primary-dark: #5f6c87;
     --primary: #aabadd;
     --primary-light: #d5def2;
     --dark-gray: #2b2a2a;
     --gray: #666;
+    --light-gray: #eee;
     --accent-light: #77dae5;
     --accent-dark: #00e5ff;
     --error: red;
+    --faded-black: rgba(0, 0, 0, 0.25);
     --not-available: #dee5ef;
     --background-start: white;
     --background-end: #e3e5ea;
@@ -21,6 +24,7 @@
     --fields-radius: 5px;
     --buttons-radius: 5px;
     --padding-little: 1px;
+    --padding-largest: 32px;
     --padding-large: 24px;
     --padding-medium: 16px;
     --padding-small: 8px;
@@ -30,6 +34,7 @@
     --input-border: black;
     --font-large: 2em;
     --font-medium-large: 1.5em;
+    --font-button: 1.25em;
     --font-medium: 1em;
     --font-small: 0.8em;
     --time-options-max-height: 50vh;
@@ -58,7 +63,7 @@ body.clouded {
 }
 
 h1 {
-    font-size: 2em;
+    font-size: var(--font-large);
     font-style: italic;
 }
 
@@ -160,7 +165,7 @@ textarea {
 input:hover, input:focus, textarea:hover {
     background-color: var(--input-background);
     border: var(--padding-little) solid var(--input-border);
-    box-shadow: var(--padding-little) var(--padding-little) rgba(0, 0, 0, 0.25);
+    box-shadow: var(--padding-little) var(--padding-little) var(--faded-black);
 }
 
 .tab button:active, button.active {
@@ -171,11 +176,11 @@ button, input[type=submit] {
     outline: none;
     color: var(--font-light);
     background-color: var(--primary-dark);
-    padding: var(--padding-small) var(--padding-large);
+    padding: var(--padding-small) var(--padding-largest);
     margin: var(--padding-small) 0;
     border: var(--padding-little) solid var(--primary);
     border-radius: var(--buttons-radius);
-    font-size: var(--font-medium);
+    font-size: var(--font-button);
 }
 
 button:hover, button:focus, input[type=submit]:hover, input[type=submit]:focus {
@@ -221,7 +226,7 @@ ul {
     padding: var(--padding-small) 0;
     background-color: var(--primary-light);
     color: var(--font-dark);
-    font-size: var(--font-medium-large);
+    font-size: var(--font-medium-);
 }
 
 .day {
@@ -258,32 +263,32 @@ ul.activities {
 }
 
 ul.activities li {
-    border: 1px solid #ddd;
-    background-color: #f6f6f6;
-    padding: 12px;
+    border: var(--padding-little) solid var(--primary-light);
+    background-color: var(--light-gray);
+    padding: var(--padding-small);
     text-decoration: none;
-    font-size: 1.5em;
-    color: black;
+    font-size: var(--font-medium-large);
+    color: var(--font-dark);
     display: block;
     position: relative;
 }
 
 ul.activities li:hover {
-    background-color: #eee;
+    background-color: var(--primary-light);
 }
 
 .close {
     cursor: pointer;
     position: absolute;
-    top: 50%;
-    right: 0%;
-    padding: 16px 16px;
+    top: 0;
+    right: 0;
+    font-size: var(--font-medium-large);
+    padding: var(--padding-medium);
     text-align: center;
-    transform: translate(0%, -50%);
 }
 
 .close:hover {
-    background: #bbb;
+  color: white;
 }
 
 @keyframes fadeIn {
@@ -297,15 +302,20 @@ ul.activities li:hover {
 }
 
 .confirmation, .confirmation-hidden {
-    background-color: black;
-    color: white;
+    background-color: var(--primary-darkest);
+    color: var(--font-light);
     text-align: center;
     position: fixed;
     width: 100%;
     z-index: 1;
-    padding: 8px;
+    padding: var(--padding-small);
     animation-duration: 1s;
     animation-fill-mode: forwards;
+}
+
+.confirmation span, .confirmation-hidden span {
+    font-size: var(--font-medium-large);
+    margin-right: var(--padding-large);
 }
 
 .confirmation-hidden {
