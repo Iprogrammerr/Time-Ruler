@@ -19,7 +19,7 @@ public class LimitedDateTest {
         LimitedDate limitedDate = new LimitedDate(new DateParsing(formatter));
         LocalDate now = LocalDate.now(Clock.systemUTC());
         String date = now.format(formatter);
-        MatcherAssert.assertThat("Does not return the same date", now.atStartOfDay().toInstant(ZoneOffset.UTC),
+        MatcherAssert.assertThat("Does not return the same firstDate", now.atStartOfDay().toInstant(ZoneOffset.UTC),
             Matchers.equalTo(limitedDate.fromString(date)));
     }
 
@@ -29,7 +29,7 @@ public class LimitedDateTest {
         LimitedDate limitedDate = new LimitedDate(new DateParsing(formatter));
         Instant now = Instant.now();
         String date = new RandomStrings().alphabetic();
-        MatcherAssert.assertThat("Does not return default date", now,
+        MatcherAssert.assertThat("Does not return default firstDate", now,
             Matchers.equalTo(limitedDate.fromString(date, now)));
     }
 }

@@ -4,23 +4,21 @@ import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.activity.Dates;
 import com.iprogrammerr.time.ruler.model.date.ServerClientDates;
 import com.iprogrammerr.time.ruler.model.date.SmartDate;
-import com.iprogrammerr.time.ruler.model.date.YearMonth;
+import com.iprogrammerr.time.ruler.model.date.ZonedDateTimeBuilder;
 import com.iprogrammerr.time.ruler.view.rendering.CalendarViews;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.Clock;
 import java.time.Instant;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
-//TODO simplify year month, fix calendar dates
 public class CalendarRespondent {
 
     public static final String PLAN = "plan";
     public static final String HISTORY = "history";
     private static final int MAX_YEAR_OFFSET_VALUE = 100;
+    private static final int FIRST_DAY = 1;
     private final Identity<Long> identity;
     private final CalendarViews views;
     private final Dates dates;
@@ -34,73 +32,71 @@ public class CalendarRespondent {
         this.serverClientDates = serverClientDates;
     }
 
-    public HtmlResponse planPage(HttpServletRequest request, Map<String, List<String>> queryParams) {
-        ZonedDateTime currentDate = ZonedDateTime.now(Clock.systemUTC());
-        int currentYear = currentDate.getYear();
-        YearMonth yearMonth = new YearMonth(queryParams, currentDate.getYear() + MAX_YEAR_OFFSET_VALUE);
-        int requestedYear = yearMonth.year(currentYear);
-        if (requestedYear < currentYear) {
-            requestedYear = currentYear;
+    public HtmlResponse planPage(HttpServletRequest request, int year, int month) {
+        ZonedDateTime currentDate = serverClientDates.utcClientDate(request);
+        int requestedYear = year;
+        if (requestedYear < currentDate.getYear()) {
+            requestedYear = currentDate.getYear();
         }
-        ZonedDateTime requestedDate = currentDate.withYear(requestedYear)
-            .withMonth(yearMonth.month(currentDate.getMonthValue()));
-        if (requestedDate.isAfter(currentDate)) {
-            requestedDate = requestedDate.withDayOfMonth(1);
+        ZonedDateTime requestedDate = new ZonedDateTimeBuilder().withYear(requestedYear)
+            .withMonth(month).withDay(currentDate.getDayOfMonth()).build();
+        if (requestedDate.getYear() == currentDate.getYear() &&
+            currentDate.getMonthValue() > requestedDate.getMonthValue()) {
+            requestedDate = requestedDate.withMonth(currentDate.getMonthValue());
         }
-        List<Long> days = daysForCalendar(identity.value(request), requestedDate, false,
+        List<Long> days = daysForCalendar(identity.value(request), requestedDate, atMonthEnd(requestedDate),
             serverClientDates.clientUtcOffset(request));
-        String view = views.view(true, requestedDate.isAfter(currentDate), currentYear < yearMonth.maxYear,
-            requestedDate, days, false);
-        return new HtmlResponse(view);
+        CalendarViews.Params viewParams = new CalendarViews.Params(true, requestedDate.isAfter(currentDate),
+            requestedDate.getYear() < currentDate.getYear() + MAX_YEAR_OFFSET_VALUE,
+            currentDate.toEpochSecond(), requestedDate, days
+        );
+        return new HtmlResponse(views.futureView(viewParams));
     }
 
-    private List<Long> daysForCalendar(long userId, ZonedDateTime requestedDate, boolean fromPast,
+    private ZonedDateTime atMonthEnd(ZonedDateTime date) {
+        return date.withDayOfMonth(date.toLocalDate().lengthOfMonth());
+    }
+
+    private List<Long> daysForCalendar(long userId, ZonedDateTime startDate, ZonedDateTime endDate,
         int clientUtcOffset) {
-        long start;
-        long end;
-        if (fromPast) {
-            start = new SmartDate(requestedDate.withDayOfMonth(1)).dayBeginningWithOffset(clientUtcOffset);
-            end = new SmartDate(requestedDate).dayEndWithOffset(clientUtcOffset);
-        } else {
-            start = new SmartDate(requestedDate).dayBeginningWithOffset(clientUtcOffset);
-            end = new SmartDate(requestedDate.withDayOfMonth(requestedDate.toLocalDate().lengthOfMonth()))
-                .dayEndWithOffset(clientUtcOffset);
-        }
-        return dates.userPlannedDays(userId, start, end);
+        long start = new SmartDate(startDate).dayBeginningWithOffset(clientUtcOffset);
+        long end = new SmartDate(endDate).dayEndWithOffset(clientUtcOffset);
+        List<Long> calendarDates = dates.userPlannedDays(userId, start, end);
+        return calendarDates.stream().map(d -> d + clientUtcOffset).collect(Collectors.toList());
     }
 
-    //TODO date offset
-    public HtmlResponse historyPage(HttpServletRequest request, Map<String, List<String>> queryParams) {
+    public HtmlResponse historyPage(HttpServletRequest request, int year, int month) {
         long firstDate = dates.userFirstActivity(identity.value(request));
-        Instant date = firstDate == 0 ? Instant.now(Clock.systemUTC()) : Instant.ofEpochSecond(firstDate);
-        return toPastCalendarPage(request, queryParams, ZonedDateTime.ofInstant(date, ZoneOffset.UTC));
+        Instant date = firstDate == 0 ? serverClientDates.clientDate(request) : Instant.ofEpochSecond(firstDate);
+        return toPastCalendarPage(request, year, month, serverClientDates.utcClientDate(request, date));
     }
 
-    private HtmlResponse toPastCalendarPage(HttpServletRequest request, Map<String, List<String>> queryParams,
+    //TODO fix limits!
+    private HtmlResponse toPastCalendarPage(HttpServletRequest request, int year, int month,
         ZonedDateTime firstDate) {
-        ZonedDateTime currentDate = ZonedDateTime.now(Clock.systemUTC());
-        int currentYear = currentDate.getYear();
-        int currentMonth = currentDate.getMonthValue();
+        ZonedDateTime currentDate = serverClientDates.utcClientDate(request);
         int minYear = firstDate.getYear();
-        YearMonth yearMonth = new YearMonth(queryParams, currentDate.getYear() + MAX_YEAR_OFFSET_VALUE);
-        int requestedYear = yearMonth.year(currentYear);
+        int requestedYear = year;
         if (requestedYear < minYear) {
-            requestedYear = currentYear;
+            requestedYear = currentDate.getYear();
         }
-        int requestedMonth = yearMonth.month(currentMonth);
-        ZonedDateTime requestedDate = new SmartDate(currentDate).ofYearMonth(requestedYear, requestedMonth);
+        ZonedDateTime requestedDate = new ZonedDateTimeBuilder().withYear(requestedYear)
+            .withMonth(month).withDay(FIRST_DAY).build();
         if (requestedDate.isBefore(firstDate)) {
             requestedDate = firstDate;
-        } else if (requestedDate.isBefore(currentDate)) {
-            requestedDate = requestedDate.withDayOfMonth(requestedDate.toLocalDate().lengthOfMonth());
+        } else if (requestedDate.isAfter(currentDate)) {
+            requestedDate = currentDate;
         }
-        List<Long> days = daysForCalendar(identity.value(request), requestedDate, true,
-            serverClientDates.clientUtcOffset(request));
-        String view = views.view(
-            false,
+        List<Long> days = daysForCalendar(identity.value(request), requestedDate,
+            atMonthEnd(requestedDate), serverClientDates.clientUtcOffset(request));
+        CalendarViews.Params params = new CalendarViews.Params(false,
             requestedDate.isAfter(firstDate) && firstDate.getMonthValue() < requestedDate.getMonthValue(),
-            requestedDate.isBefore(currentDate), requestedDate, days, true
-        );
-        return new HtmlResponse(view);
+            isAfterYearMonth(currentDate, requestedDate), currentDate.toEpochSecond(), requestedDate, days);
+        return new HtmlResponse(views.pastView(params));
+    }
+
+    private boolean isAfterYearMonth(ZonedDateTime first, ZonedDateTime second) {
+        return first.getYear() > second.getYear() || (first.getYear() == second.getYear() &&
+            first.getMonthValue() > second.getMonthValue());
     }
 }

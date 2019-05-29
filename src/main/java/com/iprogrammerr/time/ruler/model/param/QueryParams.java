@@ -20,6 +20,8 @@ public class QueryParams {
     public static final String PAGE = "page";
     public static final String PATTERN = "pattern";
     public static final String DATE = "date";
+    public static final String YEAR = "year";
+    public static final String MONTH = "month";
     public static final String TEMPLATE = "template";
     public static final String START = "start";
     public static final String END = "end";

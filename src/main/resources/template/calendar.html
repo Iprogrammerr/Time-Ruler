@@ -11,12 +11,16 @@
 <body class="marginless">
     <div th:replace="fragments.html :: tab"></div>
     <div class="calendar">
-        <div class="month-pointer" th:utext="${prev}? #{prevIcon}"></div>
+        <div class="month-pointer">
+            <span th:if="${prev}" id="prev" th:utext="#{prevIcon}"></span>
+        </div>
         <div class="month">
             <div th:text="${month}"></div>
             <div th:text="${year}"></div>
         </div>
-        <div class="month-pointer" th:utext="${next}? #{nextIcon}"></div>
+        <div class="month-pointer">
+            <span th:if="${next}" id="next" th:utext="#{nextIcon}"></span>
+        </div>
         <div class="weekday" th:text="#{mondayShortcut}"></div>
         <div class="weekday" th:text="#{tuesdayShortcut}"></div>
         <div class="weekday" th:text="#{wednesdayShortcut}"></div>

@@ -21,7 +21,7 @@ public class SmartDateTest {
         SmartDate date = new SmartDate(dateTime);
         dateTime = dateTime.withHour(hour).withMinute(minute).withSecond(second);
         MatcherAssert.assertThat(
-            "Does not return properly shifted date by time", dateTime.toEpochSecond(),
+            "Does not return properly shifted firstDate by time", dateTime.toEpochSecond(),
             Matchers.equalTo(date.ofTime(hour, minute, second))
         );
     }
@@ -57,7 +57,7 @@ public class SmartDateTest {
         int month = 1 + random.nextInt(12);
         dateTime = dateTime.withYear(year).withMonth(month);
         MatcherAssert.assertThat(
-            "Does not return properly shifted date", dateTime.toEpochSecond(),
+            "Does not return properly shifted firstDate", dateTime.toEpochSecond(),
             Matchers.equalTo(date.ofYearMonthSeconds(year, month))
         );
     }

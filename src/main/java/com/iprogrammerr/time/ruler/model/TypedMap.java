@@ -50,6 +50,10 @@ public class TypedMap {
         return (int) longValue(key, defaultValue);
     }
 
+    public int intValue(String key) {
+        return intValue(key, 0);
+    }
+
     public boolean booleanValue(String key, boolean defaultValue) {
         boolean value;
         List<String> values = source.get(key);

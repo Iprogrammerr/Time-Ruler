@@ -15,7 +15,7 @@ import java.util.function.Function;
 
 public class DayPlanExecutionViews {
 
-    private static final String DATE_TEMPLATE = "date";
+    private static final String DATE_TEMPLATE = "firstDate";
     private static final String HISTORY_TEMPLATE = "history";
     private static final String ACTIVITIES_TEMPLATE = "activities";
     private final ViewsTemplates templates;

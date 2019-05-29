@@ -1,13 +1,14 @@
 package com.iprogrammerr.time.ruler;
 
-import com.iprogrammerr.time.ruler.database.QueryTemplates;
+import com.iprogrammerr.time.ruler.model.date.ZonedDateTimeBuilder;
 import org.junit.Test;
+
+import java.time.ZonedDateTime;
 
 public class ExperimentalTest {
 
     @Test
     public void experimentalTest() {
-        QueryTemplates templates = new QueryTemplates();
-        System.out.println(templates.query("SELECT * FROM activity WHERE id = ? AND done = ?", 1, false));
+        ZonedDateTime dateTime = new ZonedDateTimeBuilder().build();
     }
 }

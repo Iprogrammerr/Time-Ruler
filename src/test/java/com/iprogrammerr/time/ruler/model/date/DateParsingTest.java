@@ -20,7 +20,7 @@ public class DateParsingTest {
         DateParsing dateParsing = new DateParsing(formatter);
         LocalDate now = LocalDate.now(Clock.systemUTC());
         String date = now.format(formatter);
-        MatcherAssert.assertThat("Does not return the same date", now.atStartOfDay().toInstant(ZoneOffset.UTC),
+        MatcherAssert.assertThat("Does not return the same firstDate", now.atStartOfDay().toInstant(ZoneOffset.UTC),
             Matchers.equalTo(dateParsing.read(date, Instant.now())));
 
     }
@@ -30,7 +30,7 @@ public class DateParsingTest {
         DateParsing dateParsing = new DateParsing();
         String date = new RandomStrings().alphabetic();
         Instant defaultDate = Instant.now();
-        MatcherAssert.assertThat("Does not return the same date", defaultDate,
+        MatcherAssert.assertThat("Does not return the same firstDate", defaultDate,
             Matchers.equalTo(dateParsing.read(date, defaultDate)));
     }
 
@@ -40,7 +40,7 @@ public class DateParsingTest {
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
         DateParsing dateParsing = new DateParsing(formatter);
         String expected = formatter.format(date);
-        MatcherAssert.assertThat("Writes incorrect date", expected,
+        MatcherAssert.assertThat("Writes incorrect firstDate", expected,
             Matchers.equalTo(dateParsing.write(date.toInstant())));
     }
 }

@@ -35,18 +35,19 @@ function stateFromActive(activeIndex) {
 function setupMonthsNavigation() {
     let date = new SmartDate();
     date.setYearMonth(yearMonth.year, yearMonth.month);
-    let pointers = document.getElementsByClassName("month-pointer");
-    if (pointers.length > 0) {
+    let prevPointer = document.getElementById("prev");
+    if (prevPointer != null) {
         date.subtractMonth(1);
         let newYearMonth = date.asYearMonth();
         date.addMonth(1);
-        pointers[0].onclick = () => router.replaceWithParams(state.mainRoute,
+        prevPointer.onclick = () => router.replaceWithParams(state.mainRoute,
             dateTimeParams.yearMonthAsParams(newYearMonth.year, newYearMonth.month));
     }
-    if (pointers.length > 1) {
+    let nextPointer = document.getElementById("next");
+    if (nextPointer != null) {
         date.addMonth(1);
         let newYearMonth = date.asYearMonth();
-        pointers[1].onclick = () => router.replaceWithParams(state.mainRoute,
+        nextPointer.onclick = () => router.replaceWithParams(state.mainRoute,
             dateTimeParams.yearMonthAsParams(newYearMonth.year, newYearMonth.month));
     }
 };
