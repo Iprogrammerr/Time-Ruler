@@ -67,12 +67,16 @@ h1 {
     font-style: italic;
 }
 
+p {
+    font-size: var(--font-medium);
+}
+
 .centered-h {
     text-align: center;
 }
 
 div.centered-h {
-    padding: 0 var(--padding-small) var(--padding-small) var(--padding-small);
+    padding: var(--padding-small) var(--padding-small) 0 var(--padding-small);
 }
 
 .centered, .centered-with-padding {
