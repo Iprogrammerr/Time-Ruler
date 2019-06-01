@@ -154,7 +154,7 @@ p.error-hidden {
 
     .tab button {
         font-size: var(--font-medium-large);
-    }
+    };
 }
 
 .hidden {
@@ -173,9 +173,9 @@ input:not([type="input"]), textarea {
     border: var(--padding-little) solid var(--primary-dark);
 }
 
-textarea {
+.input-description {
     height: 5em;
-    width: 30em;
+    width: 50%;
     overflow: hidden;
     resize: none;
 }
