@@ -42,6 +42,9 @@ public class DayPlanExecutionRespondent {
     public HtmlResponse planExecutionPage(HttpServletRequest request, String date) {
         Instant clientNow = serverClientDates.clientDate(request);
         Instant requestedDate = limitedDate.fromString(date, clientNow);
+        if (requestedDate.isAfter(clientNow)) {
+            requestedDate = clientNow;
+        }
         List<Activity> dayActivities = activities.userDayActivities(identity.value(request),
             new SmartDate(requestedDate).dayBeginningWithOffset(serverClientDates.clientUtcOffset(request)));
         boolean history = new SmartDate(clientNow).dayBeginning() > requestedDate.getEpochSecond();

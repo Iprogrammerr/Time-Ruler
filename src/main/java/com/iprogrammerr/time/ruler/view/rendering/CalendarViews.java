@@ -106,7 +106,7 @@ public class CalendarViews {
             state = DayState.PLANNED;
         } else if (isBetween(dayStart, dayEnd, currentDay)) {
             state = DayState.CURRENT;
-        } else if (dayEnd > firstDay) {
+        } else if (dayEnd > firstDay && dayEnd <= currentDay) {
             state = DayState.AVAILABLE;
         } else {
             state = DayState.NOT_AVAILABLE;

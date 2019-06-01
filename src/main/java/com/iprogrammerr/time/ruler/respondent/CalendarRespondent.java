@@ -71,7 +71,6 @@ public class CalendarRespondent {
         return toPastCalendarPage(request, year, month, serverClientDates.utcClientDate(request, date));
     }
 
-    //TODO fix limits!
     private HtmlResponse toPastCalendarPage(HttpServletRequest request, int year, int month,
         ZonedDateTime firstDate) {
         ZonedDateTime currentDate = serverClientDates.utcClientDate(request);
