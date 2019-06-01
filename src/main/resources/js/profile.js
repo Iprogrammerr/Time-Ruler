@@ -3,6 +3,9 @@ import { FormAction } from "./http/form-action.js";
 import { Confirmation } from "./component/confirmation.js";
 
 const HIDDEN_DISPLAY = "none";
+const TOUCH_EVENT = "touchstart";
+const NO_HOVER_CLASS = "no-hover";
+
 const emailForm = document.getElementById("emailForm");
 const emailChanged = document.getElementById("emailChanged");
 const invalidEmail = document.getElementById("invalidEmail");
@@ -15,6 +18,7 @@ const invalidName = document.getElementById("invalidName");
 const usedName = document.getElementById("usedName");
 const saveName = document.getElementById("saveName");
 
+const changePassword = document.getElementById("changePassword");
 const passwordForm = document.getElementById("passwordForm");
 const invalidOldPassword = document.getElementById("invalidOldPassword");
 const notUserPassword = document.getElementById("notUserPassword");
@@ -35,10 +39,19 @@ const inputs = {
 const previousEmail = inputs.email.value;
 const previousName = inputs.name.value;
 
+const removeHover = () => {
+    saveEmail.className = NO_HOVER_CLASS;
+    saveName.className = NO_HOVER_CLASS;
+    changePassword.className = NO_HOVER_CLASS;
+    savePassword.className = NO_HOVER_CLASS;
+    window.removeEventListener(TOUCH_EVENT, removeHover);
+};
+
 tabsNavigation.setup(document.querySelector("div"));
 window.addEventListener("submit", e => e.preventDefault());
 
 saveEmail.onclick = () => {
+    saveEmail.blur();
     let email = inputs.email.value;
     if (email === previousEmail) {
         return;
@@ -62,6 +75,7 @@ function clearMessages() {
 };
 
 saveName.onclick = () => {
+    saveName.blur();
     let name = inputs.name.value;
     if (name === previousName) {
         return;
@@ -80,6 +94,7 @@ saveName.onclick = () => {
 };
 
 savePassword.onclick = () => {
+    savePassword.blur();
     clearMessages();
     errors.clearAll(invalidOldPassword, notUserPassword, invalidNewPassword);
     let oldValid = validations.isPasswordValid(inputs.oldPassword.value);
@@ -100,7 +115,8 @@ savePassword.onclick = () => {
     }
 };
 
-document.getElementById("changePassword").onclick = () => {
+changePassword.onclick = () => {
+    changePassword.blur();
     if (showPasswordForm) {
         passwordForm.style.display = "block";
     } else {
@@ -110,3 +126,5 @@ document.getElementById("changePassword").onclick = () => {
 };
 
 document.getElementById("logout").onclick = () => router.forward(routes.signOut);
+
+window.addEventListener(TOUCH_EVENT, removeHover);

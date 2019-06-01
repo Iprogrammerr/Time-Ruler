@@ -9,12 +9,16 @@
 </head>
 
 <!--TODO style it-->
+
 <body class="gradient">
-    <h1 th:text="#{errorTitle}"></h1>
-    <p th:text="${error}"></p>
-    <button id="back" th:text="#{back}"></button>
+    <div class="centered-with-padding">
+        <h1 th:text="#{errorTitle}"></h1>
+        <p th:text="${error}"></p>
+        <button id="back" th:text="#{back}"></button>
+    </div>
 </body>
 <script>
-document.getElementById("back").onclick = () => history.back();
+    document.getElementById("back").onclick = () => history.back();
 </script>
+
 </html>

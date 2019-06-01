@@ -206,6 +206,7 @@ public class App {
                 ctx.redirect("/");
             }
         });
+
         app.start(configuration.port());
     }
 }

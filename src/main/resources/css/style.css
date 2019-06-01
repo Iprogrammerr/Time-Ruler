@@ -13,7 +13,7 @@
     --accent-light: #77dae5;
     --accent-dark: #00e5ff;
     --error: red;
-    --confirmation-background: rgba(53,59,73, 0.8);
+    --confirmation-background: rgba(53,59,73, 0.9);
     --faded-black: rgba(0, 0, 0, 0.5);
     --not-available: #dee5ef;
     --background-start: white;
@@ -144,7 +144,7 @@ p.error-hidden {
     border-radius: 0;
 }
 
-.tab button:hover {
+.tab button:hover, .tab button:focus {
     color: var(--font-light);
     background-color: var(--primary-dark);
     border: none;
@@ -191,7 +191,7 @@ input:hover, input:focus, textarea:hover {
     background-color: var(--primary);
 }
 
-button, input[type=submit] {
+button, input[type=submit], button.no-hover:hover, input[type=submit].no-hover:hover  {
     outline: none;
     color: var(--font-light);
     background-color: var(--primary-dark);
@@ -202,7 +202,9 @@ button, input[type=submit] {
     font-size: var(--font-medium-small);
 }
 
-button:hover, button:focus, input[type=submit]:hover, input[type=submit]:focus {
+ button:hover, button:focus, button:active, button.no-hover:focus, button.no-hover:active,
+ input[type=submit]:hover, input[type=submit]:focus, input[type=submit]:active,
+ input[type=submit].no-hover:focus, input[type=submit].no-hover:active {
     color: var(--font-dark);
     background-color: var(--primary-light);
     border: var(--padding-little) solid var(--primary-dark);

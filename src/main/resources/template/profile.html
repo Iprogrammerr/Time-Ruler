@@ -18,7 +18,7 @@
             <p id="invalidEmail" th:class="${invalidEmail} ? error : error-hidden" th:text="#{invalidEmail}"></p>
             <p id="usedEmail" th:class="${usedEmail} ? error : error-hidden" th:text="#{usedEmail}"></p>
             <input type="email" name="email" th:value="${email}"></input>
-            <input id="saveEmail" type="submit" th:value="#{save}" class="main"></input>
+            <input id="saveEmail" type="submit" th:value="#{save}"></input>
         </form>
         <form id="nameForm">
             <h1 th:text="#{name}"></h1>
@@ -26,7 +26,7 @@
             <p id="invalidName" th:class="${invalidName} ? error : error-hidden" th:text="#{invalidName}"></p>
             <p id="usedName" th:class="${usedName} ? error : error-hidden" th:text="#{usedName}"></p>
             <input type="text" name="name" th:value="${name}"></input>
-            <input id="saveName" type="submit" th:value="#{save}" class="main"></input>
+            <input id="saveName" type="submit" th:value="#{save}"></input>
         </form>
         <button id="changePassword" th:text="#{changePassword}"></button>
         <form id="passwordForm" th:class="!${showPasswords} ? hidden">
@@ -41,7 +41,7 @@
                 th:text="#{invalidPassword}"></p>
             <input type="password" name="newPassword"></input>
             <div></div>
-            <input id="savePassword" type="submit" th:value="#{save}" class="main"></input>
+            <input id="savePassword" type="submit" th:value="#{save}"></input>
         </form>
         </br>
         <button id="logout" th:text="#{logout}"></button>
