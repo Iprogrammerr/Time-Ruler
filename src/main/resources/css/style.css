@@ -4,7 +4,6 @@
 }
 
 :root {
-    --primary-darkest: #353b49;
     --primary-dark: #5f6c87;
     --primary: #aabadd;
     --primary-light: #d5def2;
@@ -14,6 +13,7 @@
     --accent-light: #77dae5;
     --accent-dark: #00e5ff;
     --error: red;
+    --confirmation-background: rgba(53,59,73, 0.8);
     --faded-black: rgba(0, 0, 0, 0.5);
     --not-available: #dee5ef;
     --background-start: white;
@@ -202,7 +202,7 @@ button, input[type=submit] {
     font-size: var(--font-button);
 }
 
-button:hover, button:focus, input[type=submit]:hover, input[type=submit]:focus {
+button:hover, input[type=submit]:hover {
     color: var(--font-dark);
     background-color: var(--primary-light);
     border: var(--padding-little) solid var(--primary-dark);
@@ -326,7 +326,7 @@ ul.activities li:hover {
 }
 
 .confirmation, .confirmation-hidden {
-    background-color: var(--primary-darkest);
+    background-color: var(--confirmation-background);
     color: var(--font-light);
     text-align: center;
     position: fixed;

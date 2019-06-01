@@ -1,5 +1,6 @@
 import { router, routes, tabsNavigation, endpoints, validations, errors } from "./app.js";
 import { FormAction } from "./http/form-action.js";
+import { Confirmation } from "./component/confirmation.js";
 
 const HIDDEN_DISPLAY = "none";
 const emailForm = document.getElementById("emailForm");
@@ -21,6 +22,8 @@ const invalidNewPassword = document.getElementById("invalidNewPassword");
 const savePassword = document.getElementById("savePassword");
 let showPasswordForm = passwordForm.style.display == HIDDEN_DISPLAY || passwordForm.className == "hidden";
 
+const confirmation = new Confirmation(document.getElementById("confirmation"));
+
 let allInputs = document.querySelectorAll("input");
 const inputs = {
     email: allInputs[0],
@@ -29,15 +32,25 @@ const inputs = {
     newPassword: allInputs[5]
 };
 
+const previousEmail = inputs.email.value;
+const previousName = inputs.name.value;
+
 tabsNavigation.setup(document.querySelector("div"));
 window.addEventListener("submit", e => e.preventDefault());
 
 saveEmail.onclick = () => {
+    let email = inputs.email.value;
+    if (email === previousEmail) {
+        return;
+    }
     clearMessages();
     errors.clearAll(invalidEmail, usedEmail);
-    if (validations.isEmailValid(inputs.email.value)) {
-        new FormAction(emailForm).submit(endpoints.profileEmail);
-        saveEmail.disabled = true;
+    if (validations.isEmailValid(email)) {
+        confirmation.setup(() => {
+            new FormAction(emailForm).submit(endpoints.profileEmail);
+            saveEmail.disabled = true;
+        });
+        confirmation.show();
     } else {
         errors.set(invalidEmail);
     }
@@ -49,11 +62,18 @@ function clearMessages() {
 };
 
 saveName.onclick = () => {
+    let name = inputs.name.value;
+    if (name === previousName) {
+        return;
+    }
     clearMessages();
     errors.clearAll(invalidName, usedName);
-    if (validations.isNameValid(inputs.name.value)) {
-        new FormAction(nameForm).submit(endpoints.profileName);
-        saveName.disabled = true;
+    if (validations.isNameValid(name)) {
+        confirmation.setup(() => {
+            new FormAction(nameForm).submit(endpoints.profileName);
+            saveName.disabled = true;
+        });
+        confirmation.show();
     } else {
         errors.set(invalidName);
     }
@@ -65,8 +85,11 @@ savePassword.onclick = () => {
     let oldValid = validations.isPasswordValid(inputs.oldPassword.value);
     let newValid = validations.isPasswordValid(inputs.newPassword.value);
     if (oldValid && newValid) {
-        new FormAction(passwordForm).submit(endpoints.profilePassword);
-        savePassword.disabled = true;
+        confirmation.setup(() => {
+            new FormAction(passwordForm).submit(endpoints.profilePassword);
+            savePassword.disabled = true;
+        });
+        confirmation.show();
     } else {
         if (!oldValid) {
             errors.set(invalidOldPassword);
