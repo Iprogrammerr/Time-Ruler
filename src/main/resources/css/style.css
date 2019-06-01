@@ -14,7 +14,7 @@
     --accent-light: #77dae5;
     --accent-dark: #00e5ff;
     --error: red;
-    --faded-black: rgba(0, 0, 0, 0.25);
+    --faded-black: rgba(0, 0, 0, 0.5);
     --not-available: #dee5ef;
     --background-start: white;
     --background-end: #e3e5ea;
@@ -33,6 +33,7 @@
     --input-background: #f1f1f1;
     --input-border: black;
     --font-large: 2em;
+    --font-large-small: 1.75em;
     --font-medium-large: 1.5em;
     --font-button: 1.25em;
     --font-medium: 1em;
@@ -166,7 +167,7 @@ p.error-hidden {
 }
 
 input:not([type="input"]), textarea {
-    padding: var(--padding-small);
+    padding: var(--padding-small) var(--padding-small) var(--padding-small) var(--padding-small);
     outline: none;
     border-radius: var(--fields-radius);
     background-color: var(--primary-light);
@@ -383,4 +384,37 @@ a:hover {
 .time-options div:hover {
     background-color: var(--primary-dark);
     color: var(--font-light);
+}
+
+.yesterday {
+    font-size: var(--font-medium-large);
+    margin-bottom: var(--padding-large);
+}
+
+.yesterday:hover {
+    font-size: var(--font-large-small);
+    transition: 1s;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+div.page {
+    text-align: center;
+    padding: var(--padding-small);
+}
+
+.page a {
+    color: black;
+    padding: var(--padding-small);
+    text-decoration: none;
+}
+
+.page a:hover {
+    color: #74a2ed
+}
+
+.page a.active {
+    color: #666;
+    font-size: 1.25em;
+    text-decoration: underline;
 }

@@ -6,7 +6,7 @@ const date = dateTimeParams.dateFromUrl().asIsoDateString();
 const page = urlParams.getOrDefault(paramsKeys.page, 0);
 const pattern = urlParams.getOrDefault(paramsKeys.pattern, "");
 const enterKeyCode = 13;
-const searchInput = document.getElementById("search");
+const searchInput = document.getElementById("searchInput");
 
 tabsNavigation.setup(document.querySelector("div"), true);
 searchInput.onkeyup = (e) => {
@@ -14,7 +14,7 @@ searchInput.onkeyup = (e) => {
         searchActivities();
     }
 };
-document.getElementById("searchIcon").onclick = () => searchActivities();
+document.getElementById("search").onclick = () => searchActivities();
 setupListNavigation();
 
 function setupListNavigation() {
@@ -36,7 +36,7 @@ function setupListNavigation() {
 
 function searchActivities() {
     let currentPattern = searchInput.value;
-    if (currentPattern.length > 0 || currentPattern !== pattern) {
+    if (currentPattern !== pattern) {
         let params = new Map();
         if (page > 0) {
             params.set(paramsKeys.page, page);

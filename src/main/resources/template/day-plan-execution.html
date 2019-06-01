@@ -6,13 +6,6 @@
     <meta charset="UTF-8">
     <title th:text="${history}? #{historyDayTitle} : #{todayTitle}"></title>
     <link rel="stylesheet" type="text/css" href="/style.css" />
-    <style>
-        .yesterday:hover {
-            font-size: 1.5em;
-            transition: 1s;
-            cursor: pointer;
-        }
-    </style>
 </head>
 
 <body class="gradient" th:attr="data-confirmation=#{confirmation}, data-done-confirmation=#{doneConfirmation},

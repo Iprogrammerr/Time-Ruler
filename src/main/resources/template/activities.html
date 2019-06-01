@@ -6,51 +6,14 @@
     <meta charset="UTF-8">
     <title th:text="#{userActivities}"></title>
     <link rel="stylesheet" type="text/css" href="/style.css" />
-    <style>
-        span.search {
-            font-size: 2em;
-            cursor: pointer;
-        }
-
-        span.search:hover {
-            color: #666;
-            transition: 1s;
-            font-size: 3em;
-        }
-
-        div.page {
-            text-align: center;
-            padding: 8px;
-        }
-
-        a {
-            color: black;
-            padding: 4px;
-            text-decoration: none;
-        }
-
-        a:hover {
-            color: #74a2ed
-        }
-
-        a.active {
-            color: #666;
-            font-size: 1.25em;
-            text-decoration: underline;
-        }
-
-        #search {
-            margin-bottom: 16px;
-        }
-    </style>
 </head>
 
 <body class="gradient">
     <div th:replace="fragments.html :: tab"></div>
     <div class="centered-h">
         <h1 th:text=#{userActivities}></h1>
-        <input id="search" type="text" th:value="${pattern}" /></input>
-        <span id="searchIcon" class="search" th:utext="#{searchIcon}"></span>
+        <input id="searchInput" type="text" th:value="${pattern}" /></input>
+        <button id="search">Search</button>
         <div th:if="${pages.size() > 1}" class="page">
             <a th:each="p : ${pages}" th:href="${p.url}" th:text="${p.number}"
                 th:class="${currentPage == p.number} ? active"></a>
