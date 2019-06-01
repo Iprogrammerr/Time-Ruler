@@ -6,6 +6,18 @@
     <meta charset="UTF-8">
     <title th:text="#{userActivities}"></title>
     <link rel="stylesheet" type="text/css" href="/style.css" />
+    <style>
+        @media screen and (max-width: 1000px) {
+            div.page {
+                grid-template-columns: repeat(20, 5%);
+            }
+        }
+        @media screen and (max-width: 700px) {
+            div.page {
+                grid-template-columns: repeat(10, 10%);
+            }
+        }
+    </style>
 </head>
 
 <body class="gradient">

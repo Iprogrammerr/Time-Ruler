@@ -35,7 +35,7 @@
     --font-large: 2em;
     --font-large-small: 1.75em;
     --font-medium-large: 1.5em;
-    --font-button: 1.25em;
+    --font-medium-small: 1.25em;
     --font-medium: 1em;
     --font-small: 0.8em;
     --time-options-max-height: 50vh;
@@ -199,10 +199,10 @@ button, input[type=submit] {
     margin: var(--padding-small) 0;
     border: var(--padding-little) solid var(--primary);
     border-radius: var(--buttons-radius);
-    font-size: var(--font-button);
+    font-size: var(--font-medium-small);
 }
 
-button:hover, input[type=submit]:hover {
+button:hover, button:focus, input[type=submit]:hover, input[type=submit]:focus {
     color: var(--font-dark);
     background-color: var(--primary-light);
     border: var(--padding-little) solid var(--primary-dark);
@@ -381,6 +381,10 @@ a:hover {
     display: block;
 }
 
+.time-options div {
+    padding: var(--padding-small) 0;
+}
+
 .time-options div:hover {
     background-color: var(--primary-dark);
     color: var(--font-light);
@@ -401,20 +405,24 @@ a:hover {
 div.page {
     text-align: center;
     padding: var(--padding-small);
+    display: grid;
+    grid-template-columns: repeat(30, 3.3%);
+    text-align: center;
+    align-items: center;
 }
 
 .page a {
-    color: black;
+    color: var(--font-dark);
     padding: var(--padding-small);
     text-decoration: none;
 }
 
 .page a:hover {
-    color: #74a2ed
+    color: var(--accent-dark);
 }
 
 .page a.active {
-    color: #666;
-    font-size: 1.25em;
+    color: var(--primary-dark);
+    font-size: var(--font-medium-small);
     text-decoration: underline;
 }
