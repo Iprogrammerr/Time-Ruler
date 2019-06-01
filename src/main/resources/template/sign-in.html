@@ -8,7 +8,8 @@
     <link rel="stylesheet" text="text/css" href="style.css" />
 </head>
 
-<body class="clouded">
+<body>
+    <div th:class="${signOut} ? background-animated : background"></div>
     <div class="centered-with-padding">
         <h1 th:if="${!activation and !passwordChange and !signOut}" th:text="#{appName}"></h1>
         <h1 th:if="${activation}" th:text="#{activationCongratulations}"></h1>
