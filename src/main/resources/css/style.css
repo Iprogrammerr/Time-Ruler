@@ -338,7 +338,8 @@ ul.activities li:hover {
 
 .confirmation span, .confirmation-hidden span {
     font-size: var(--font-medium-large);
-    margin-right: var(--padding-large);
+    padding: var(--padding-small) var(--padding-largest);
+    margin: var(--padding-small) 0;
 }
 
 .confirmation-hidden {
