@@ -3,11 +3,11 @@ package com.iprogrammerr.time.ruler.model.activity;
 import com.iprogrammerr.time.ruler.database.DatabaseSession;
 import com.iprogrammerr.time.ruler.database.QueryTemplates;
 import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
-import com.iprogrammerr.time.ruler.tool.RandomActivities;
-import com.iprogrammerr.time.ruler.tool.RandomUsers;
 import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.user.User;
 import com.iprogrammerr.time.ruler.setup.TestDatabaseSetup;
+import com.iprogrammerr.time.ruler.tool.RandomActivities;
+import com.iprogrammerr.time.ruler.tool.RandomUsers;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -51,6 +51,19 @@ public class DatabaseActivitiesTest {
     public void returnsEmptyFromNonExistentId() {
         MatcherAssert.assertThat("Does not return empty activity",
             activities.activity(new Random().nextLong()).isPresent(), Matchers.equalTo(false));
+    }
+
+    @Test
+    public void updatesActivity() {
+        Random random = new Random();
+        User user = new RandomUsers(random).user();
+        RandomActivities randomActivities = new RandomActivities(random);
+        long userId = users.create(user.name, user.email, user.password);
+        long activityId = activities.create(randomActivities.activity(userId));
+        Activity toUpdate = randomActivities.activity(userId, Instant.now().getEpochSecond()).withId(activityId);
+        activities.update(toUpdate);
+        MatcherAssert.assertThat("Does not update", toUpdate,
+            Matchers.equalTo(activities.activity(activityId).get()));
     }
 
     @Test

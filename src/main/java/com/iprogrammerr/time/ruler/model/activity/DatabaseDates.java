@@ -27,7 +27,6 @@ public class DatabaseDates implements Dates {
         }, "SELECT MIN(start_date) from activity WHERE user_id = ?", id);
     }
 
-    //TODO better query
     @Override
     public List<Long> userPlannedDays(long id, long start, long end) {
         String query = new StringBuilder("SELECT start_date from activity ")

@@ -30,7 +30,7 @@ public class SessionIdentity implements Identity<Long> {
     public Long value(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null) {
-            throw new RuntimeException("There is no defaultView session");
+            throw new RuntimeException("There can not be value in null session");
         }
         Object id = session.getAttribute(IDENTITY);
         if (id == null || !Long.class.isAssignableFrom(id.getClass())) {

@@ -14,6 +14,7 @@ import java.util.Properties;
 
 public class ConfigurableEmailServer implements EmailServer {
 
+    private static final String CONTENT_TYPE = "text/html";
     private final String admin;
     private final String password;
     private final Properties properties;
@@ -42,13 +43,12 @@ public class ConfigurableEmailServer implements EmailServer {
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(email.recipient));
             message.setSubject(email.subject);
             MimeBodyPart mimeBodyPart = new MimeBodyPart();
-            mimeBodyPart.setContent(email.text, "text/html");
+            mimeBodyPart.setContent(email.text, CONTENT_TYPE);
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(mimeBodyPart);
             message.setContent(multipart);
             Transport.send(message);
         } catch (Exception e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

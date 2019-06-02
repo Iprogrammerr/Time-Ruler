@@ -33,7 +33,7 @@ public class CalendarRespondent {
     }
 
     public HtmlResponse planPage(HttpServletRequest request, int year, int month) {
-        ZonedDateTime currentDate = serverClientDates.utcClientDate(request);
+        ZonedDateTime currentDate = serverClientDates.zonedClientDate(request);
         int requestedYear = year;
         if (requestedYear < currentDate.getYear()) {
             requestedYear = currentDate.getYear();
@@ -68,12 +68,12 @@ public class CalendarRespondent {
     public HtmlResponse historyPage(HttpServletRequest request, int year, int month) {
         long firstDate = dates.userFirstActivity(identity.value(request));
         Instant date = firstDate == 0 ? serverClientDates.clientDate(request) : Instant.ofEpochSecond(firstDate);
-        return toPastCalendarPage(request, year, month, serverClientDates.utcClientDate(request, date));
+        return toPastCalendarPage(request, year, month, serverClientDates.zonedClientDate(request, date));
     }
 
     private HtmlResponse toPastCalendarPage(HttpServletRequest request, int year, int month,
         ZonedDateTime firstDate) {
-        ZonedDateTime currentDate = serverClientDates.utcClientDate(request);
+        ZonedDateTime currentDate = serverClientDates.zonedClientDate(request);
         int minYear = firstDate.getYear();
         int requestedYear = year;
         if (requestedYear < minYear) {

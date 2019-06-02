@@ -42,7 +42,7 @@ public class ServerClientDates {
         return serverDate.minusSeconds(clientUtcOffset(request));
     }
 
-    public ZonedDateTime utcClientDate(HttpServletRequest request, Instant serverDate) {
+    public ZonedDateTime zonedClientDate(HttpServletRequest request, Instant serverDate) {
         return inUtc(clientDate(request, serverDate));
     }
 
@@ -54,7 +54,7 @@ public class ServerClientDates {
         return clientDate(request, Instant.ofEpochSecond(serverSeconds));
     }
 
-    public ZonedDateTime utcClientDate(HttpServletRequest request, long serverSeconds) {
+    public ZonedDateTime zonedClientDate(HttpServletRequest request, long serverSeconds) {
         return inUtc(clientDate(request, serverSeconds));
     }
 
@@ -62,7 +62,7 @@ public class ServerClientDates {
         return clientDate(request, Instant.now(Clock.systemUTC()));
     }
 
-    public ZonedDateTime utcClientDate(HttpServletRequest request) {
+    public ZonedDateTime zonedClientDate(HttpServletRequest request) {
         return inUtc(clientDate(request));
     }
 }

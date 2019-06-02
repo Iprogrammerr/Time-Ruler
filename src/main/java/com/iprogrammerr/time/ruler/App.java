@@ -200,7 +200,6 @@ public class App {
 
         errorRoutes.init(app);
 
-        //TODO Authentication respondent
         app.before(userGroup + "*", ctx -> {
             if (!identity.isValid(ctx.req)) {
                 ctx.redirect("/");

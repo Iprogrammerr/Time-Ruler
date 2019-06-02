@@ -64,12 +64,12 @@ public class ActivityRespondent {
         String view;
         if (templateId > 0 && activities.activity(templateId).isPresent()) {
             DescribedActivity activity = descriptions.describedActivity(templateId).withDone(!plan);
-            view = views.filled(activity, date -> serverClientDates.utcClientDate(request, date));
+            view = views.filled(activity, date -> serverClientDates.zonedClientDate(request, date));
         } else if (id > 0 && activities.activity(id).isPresent()) {
             view = views.filled(descriptions.describedActivity(id),
-                date -> serverClientDates.utcClientDate(request, date));
+                date -> serverClientDates.zonedClientDate(request, date));
         } else {
-            view = views.empty(serverClientDates.utcClientDate(request), plan);
+            view = views.empty(serverClientDates.zonedClientDate(request), plan);
         }
         return new HtmlResponse(view);
     }
@@ -77,7 +77,7 @@ public class ActivityRespondent {
     //TODO simplify
     public HtmlResponse invalidActivityPage(HttpServletRequest request, String name, String startTime, String endTime,
         String description, boolean plan) {
-        return new HtmlResponse(views.withErrors(serverClientDates.utcClientDate(request), plan,
+        return new HtmlResponse(views.withErrors(serverClientDates.zonedClientDate(request), plan,
             new ValidateableName(name), new ValidateableTime(startTime), new ValidateableTime(endTime),
             description));
     }
