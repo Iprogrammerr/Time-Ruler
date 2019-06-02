@@ -45,7 +45,7 @@ public class PasswordResetRoutes implements Routes {
     }
 
     private void sentPasswordResetEmail(Context context) {
-        Redirection redirection = respondent.sentPasswordResetEmail(context.formParam(FormParams.PASSWORD));
+        Redirection redirection = respondent.sentPasswordResetEmail(context.formParam(FormParams.EMAIL, ""));
         context.redirect(redirection.location);
     }
 

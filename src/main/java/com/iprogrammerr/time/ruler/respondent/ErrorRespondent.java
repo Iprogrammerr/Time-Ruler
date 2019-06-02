@@ -31,6 +31,7 @@ public class ErrorRespondent {
         } else {
             error = ErrorCode.UNKNOWN;
         }
+        exception.printStackTrace();
         return new Redirection(String.format("/%s/%d", ERROR, error.ordinal()));
     }
 }
