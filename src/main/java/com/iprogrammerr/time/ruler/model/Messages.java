@@ -74,7 +74,6 @@ public class Messages implements IMessageResolver, ErrorsTranslation {
         return absentMessage(key);
     }
 
-    //TODO make it possible to use locale
     @Override
     public String translated(ErrorCode code, Locale locale) {
         String key = errorsPrefix + code.ordinal();
