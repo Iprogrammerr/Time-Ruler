@@ -1,6 +1,7 @@
 package com.iprogrammerr.time.ruler.model.date;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 
 public class DateTimeFormatting {
@@ -13,6 +14,11 @@ public class DateTimeFormatting {
         this.dateFormat = dateFormat;
         this.timeFormat = timeFormat;
         this.dateTimeFormat = dateTimeFormat;
+    }
+
+    public DateTimeFormatting() {
+        this(new SimpleDateFormat("dd.MM.yyyy"), new SimpleDateFormat("HH:mm"),
+            new SimpleDateFormat("dd.MM.yyyy, HH:mm"));
     }
 
     public String time(Instant time) {

@@ -16,7 +16,7 @@ public class SessionIdentityTest {
     public void throwsExceptionIfThereIsNoSession() {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         Mockito.when(request.getSession()).thenReturn(null);
-        String message = "There is no defaultView session";
+        String message = "There can not be value in null session";
         MatcherAssert.assertThat(
             "Should throw exception with message",
             () -> new SessionIdentity().value(request),
