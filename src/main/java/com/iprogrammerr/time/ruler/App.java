@@ -64,8 +64,18 @@ import com.iprogrammerr.time.ruler.view.rendering.SigningInViews;
 import com.iprogrammerr.time.ruler.view.rendering.SigningUpViews;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import io.javalin.EmbeddedJavalin;
 import io.javalin.Javalin;
-import io.javalin.staticfiles.Location;
+import org.eclipse.jetty.server.HandlerContainer;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.servlet.ServletHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.servlet.ServletMapping;
+import org.eclipse.jetty.util.resource.Resource;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
 
@@ -78,13 +88,26 @@ import java.util.TimeZone;
 public class App {
 
     public static void main(String... args) throws Exception {
+        embedded(args).start();
+    }
+
+    public static Javalin embedded(String... args) throws Exception {
+        return configured(Javalin.create(), true, args);
+    }
+
+    public static Javalin forContainer() throws Exception {
+        return configured(new EmbeddedJavalin(), false);
+    }
+
+    public static Javalin configured(Javalin app, boolean embedded, String... args) throws Exception {
         Configuration configuration = Configuration.fromCmd(args);
         File root = new File(configuration.resourcesPath());
 
-        Javalin app = Javalin.create()
-            .enableStaticFiles(root.getPath() + File.separator + "css", Location.EXTERNAL)
-            .enableStaticFiles(root.getPath() + File.separator + "image", Location.EXTERNAL)
-            .enableStaticFiles(root.getPath() + File.separator + "js", Location.EXTERNAL);
+        if (embedded) {
+//            app.enableStaticFiles(root.getPath() + File.separator + "css", Location.EXTERNAL)
+//                .enableStaticFiles(root.getPath() + File.separator + "image", Location.EXTERNAL)
+//                .enableStaticFiles(root.getPath() + File.separator + "js", Location.EXTERNAL);
+        }
 
         DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -199,14 +222,40 @@ public class App {
         profileRoutes.init(userGroup, app);
 
         errorRoutes.init(app);
-
         //TODO Authentication respondent
         app.before(userGroup + "*", ctx -> {
             if (!identity.isValid(ctx.req)) {
                 ctx.redirect("/");
             }
         });
+        if (embedded) {
+            app.port(configuration.port());
+        }
+        app.server(() -> {
+            Server s = new Server();
 
-        app.start(configuration.port());
+            String cacheControl = String.format("maxAge=%d", 60);
+
+            ResourceHandler cssHandler = new ResourceHandler();
+            cssHandler.setBaseResource(Resource.newResource(new File(root.getPath() + File.separator + "css")));
+            cssHandler.setDirAllowed(false);
+            cssHandler.setCacheControl(cacheControl);
+
+            ResourceHandler jsHandler = new ResourceHandler();
+            jsHandler.setBaseResource(Resource.newResource(new File(root.getPath() + File.separator + "js")));
+            jsHandler.setCacheControl(cacheControl);
+
+            ResourceHandler imageHandler = new ResourceHandler();
+            imageHandler.setBaseResource(Resource.newResource(new File(root.getPath() + File.separator + "image")));
+            imageHandler.setCacheControl(cacheControl);
+
+            HandlerCollection handlers = new HandlerCollection(cssHandler, jsHandler, imageHandler);
+            ContextHandler resHandler = new ContextHandler("/resources");
+            resHandler.setHandler(handlers);
+            s.setHandler(resHandler);
+
+            return s;
+        });
+        return app;
     }
 }

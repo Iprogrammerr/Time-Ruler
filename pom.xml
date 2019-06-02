@@ -7,6 +7,7 @@
     <groupId>com.iprogrammerr</groupId>
     <artifactId>time-ruler</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>${packaging.type}</packaging>
 
     <name>time-ruler</name>
 
@@ -15,6 +16,78 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>embedded</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <packaging.type>jar</packaging.type>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>
+                            maven-assembly-plugin
+                        </artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <archive>
+                                        <manifest>
+                                            <mainClass>com.iprogrammerr.time.ruler.App</mainClass>
+                                        </manifest>
+                                    </archive>
+                                    <descriptorRefs>
+                                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                                    </descriptorRefs>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>container</id>
+            <properties>
+                <packaging.type>war</packaging.type>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>3.2.3</version>
+                        <configuration>
+                            <webResources>
+                                <resources>
+                                    <directory>
+                                        src/main/resources/js
+                                    </directory>
+                                </resources>
+                                <resource>
+                                    <directory>
+                                        src/main/resources/css
+                                    </directory>
+                                </resource>
+                                <resource>
+                                    <directory>
+                                        src/main/resources/image
+                                    </directory>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
@@ -110,29 +183,9 @@
                     <check/>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>
-                    maven-assembly-plugin
-                </artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <archive>
-                                <manifest>
-                                    <mainClass>com.iprogrammerr.time.ruler.App</mainClass>
-                                </manifest>
-                            </archive>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
+        <finalName>
+            ${project.artifactId}
+        </finalName>
     </build>
 </project>

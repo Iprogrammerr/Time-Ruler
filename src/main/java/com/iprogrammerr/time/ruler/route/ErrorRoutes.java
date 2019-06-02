@@ -24,6 +24,7 @@ public class ErrorRoutes implements Routes {
     }
 
     private void handleException(Exception exception, Context context) {
+        exception.printStackTrace();
         context.redirect(respondent.handleException(exception).location);
     }
 }
