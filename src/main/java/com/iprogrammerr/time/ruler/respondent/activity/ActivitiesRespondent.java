@@ -25,8 +25,7 @@ public class ActivitiesRespondent {
     private final int pageSize;
 
     public ActivitiesRespondent(Identity<Long> identity, ActivitiesViews views, ActivitiesSearch search,
-        ServerClientDates dates,
-        int pageSize) {
+        ServerClientDates dates, int pageSize) {
         this.identity = identity;
         this.views = views;
         this.search = search;

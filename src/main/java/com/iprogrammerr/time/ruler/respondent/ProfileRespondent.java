@@ -16,7 +16,6 @@ import com.iprogrammerr.time.ruler.view.rendering.ProfileViews;
 
 import javax.servlet.http.HttpServletRequest;
 
-//TODO remove servlet api dependency in all respondents
 public class ProfileRespondent {
 
     public static final String PROFILE = "profile";
@@ -120,8 +119,7 @@ public class ProfileRespondent {
     }
 
     private Redirection nameChangedRedirection() {
-        return new Redirection(
-            new UrlQueryBuilder().put(QueryParams.NAME_CHANGED, true).build(PROFILE));
+        return new Redirection(new UrlQueryBuilder().put(QueryParams.NAME_CHANGED, true).build(PROFILE));
     }
 
     private Redirection invalidNameRedirection(String name, boolean nameTaken) {

@@ -1,31 +1,41 @@
 package com.iprogrammerr.time.ruler.route.authentication;
 
+import com.iprogrammerr.time.ruler.model.Identity;
 import com.iprogrammerr.time.ruler.model.form.FormParams;
 import com.iprogrammerr.time.ruler.model.param.SigningInParams;
 import com.iprogrammerr.time.ruler.respondent.Redirection;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningInRespondent;
 import com.iprogrammerr.time.ruler.route.Routes;
+import com.iprogrammerr.time.ruler.route.day.DayPlanExecutionRoutes;
 import io.javalin.Context;
 import io.javalin.Javalin;
 
 public class SigningInRoutes implements Routes {
 
+    private final Identity<Long> identity;
     private final SigningInRespondent respondent;
+    private final DayPlanExecutionRoutes dayRoutes;
 
-    public SigningInRoutes(SigningInRespondent respondent) {
+    public SigningInRoutes(Identity<Long> identity, SigningInRespondent respondent,
+        DayPlanExecutionRoutes dayRoutes) {
+        this.identity = identity;
         this.respondent = respondent;
+        this.dayRoutes = dayRoutes;
     }
 
     @Override
     public void init(Javalin app) {
-        //TODO redirect if signed in
-        app.get(SigningInRespondent.SIGN_IN, this::renderSignIn);
+        app.get(SigningInRespondent.SIGN_IN, this::renderSignInOrRedirect);
         app.post(SigningInRespondent.SIGN_IN, this::signIn);
     }
 
-    private void renderSignIn(Context context) {
-        SigningInParams params = SigningInParams.fromQuery(context.queryParamMap());
-        context.html(respondent.signInPage(params).html);
+    private void renderSignInOrRedirect(Context context) {
+        if (identity.isValid(context.req)) {
+            dayRoutes.redirectToToday(context);
+        } else {
+            SigningInParams params = SigningInParams.fromQuery(context.queryParamMap());
+            context.html(respondent.signInPage(params).html);
+        }
     }
 
     private void signIn(Context context) {

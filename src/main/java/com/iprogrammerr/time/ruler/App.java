@@ -170,7 +170,6 @@ public class App {
         WelcomeRoutes welcomeRoutes = new WelcomeRoutes(welcomeRespondent);
 
         SigningUpRoutes signingUpRoutes = new SigningUpRoutes(signingUpRespondent);
-        SigningInRoutes signingInRoutes = new SigningInRoutes(signingInRespondent);
         SigningOutRoutes signingOutRoutes = new SigningOutRoutes(signingOutRespondent);
         PasswordResetRoutes passwordResetRoutes = new PasswordResetRoutes(passwordResetRespondent);
 
@@ -181,6 +180,8 @@ public class App {
         ActivityRoutes activityRoutes = new ActivityRoutes(activityRespondent);
         ActivitiesRoutes activitiesRoutes = new ActivitiesRoutes(activitiesRespondent);
         ProfileRoutes profileRoutes = new ProfileRoutes(profileRespondent);
+
+        SigningInRoutes signingInRoutes = new SigningInRoutes(identity, signingInRespondent, dayPlanExecutionRoutes);
 
         ErrorRoutes errorRoutes = new ErrorRoutes(errorRespondent);
 

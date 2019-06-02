@@ -31,8 +31,6 @@ public class ErrorRespondent {
         } else {
             error = ErrorCode.UNKNOWN;
         }
-        //TODO remove it, it is for development purposes only
-        exception.printStackTrace();
         return new Redirection(String.format("/%s/%d", ERROR, error.ordinal()));
     }
 }

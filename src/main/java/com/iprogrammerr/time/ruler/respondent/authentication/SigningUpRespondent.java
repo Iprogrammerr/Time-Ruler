@@ -92,7 +92,6 @@ public class SigningUpRespondent {
             redirection = takenRedirection(email, name, emailTaken, nameTaken);
         } else {
             createUser(email, name, password);
-            //TODO remove this page, redirect to sign in with proper message
             redirection = new Redirection(SIGN_UP_SUCCESS);
         }
         return redirection;

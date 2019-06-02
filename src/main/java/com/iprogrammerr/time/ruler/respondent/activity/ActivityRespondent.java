@@ -74,7 +74,6 @@ public class ActivityRespondent {
         return new HtmlResponse(view);
     }
 
-    //TODO simplify
     public HtmlResponse invalidActivityPage(HttpServletRequest request, String name, String startTime, String endTime,
         String description, boolean plan) {
         return new HtmlResponse(views.withErrors(serverClientDates.zonedClientDate(request), plan,

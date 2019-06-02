@@ -28,8 +28,7 @@ public class DayPlanRespondent {
     private final ServerClientDates serverClientDates;
 
     public DayPlanRespondent(Identity<Long> identity, DayPlanViews views, ActivitiesSearch activities,
-        LimitedDate limitedDate,
-        DateParsing parsing, ServerClientDates serverClientDates) {
+        LimitedDate limitedDate, DateParsing parsing, ServerClientDates serverClientDates) {
         this.identity = identity;
         this.views = views;
         this.activities = activities;
