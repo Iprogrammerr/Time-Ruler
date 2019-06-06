@@ -81,6 +81,7 @@ export const parametrizedEndpoints = {
 };
 
 attachUtcOffset();
+preventFormSubmit();
 
 function attachUtcOffset() {
     let cookies = new Cookies();
@@ -98,4 +99,14 @@ function attachUtcOffset() {
     if (oldOffset !== offset) {
         cookies.put(cookiesKeys.utcOffset, offset);
     }
+};
+
+function preventFormSubmit() {
+    addEventListener("submit", e => {
+        e.preventDefault();
+        let focused = document.activeElement;
+        if (focused != null) {
+            focused.blur();
+        }
+    });
 };

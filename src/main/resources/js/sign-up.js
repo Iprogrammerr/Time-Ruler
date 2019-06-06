@@ -7,11 +7,18 @@ const nameError = document.getElementById("invalidName");
 const nameTaken = document.getElementById("nameTaken");
 const passwordError = document.getElementById("invalidPassword");
 const passwordsMismatch = document.getElementById("passwordsMismatch");
-const inputs = document.querySelectorAll("input");
+
 const form = document.querySelector("form");
+let inputsFields = form.querySelectorAll("input");
+const inputs = {
+    email: inputsFields[0],
+    name: inputsFields[1],
+    password: inputsFields[2],
+    repassword: inputsFields[3]
+};
+
 const signUp = document.getElementById("signUp");
 
-addEventListener("submit", e => e.preventDefault());
 signUp.onclick = () => {
     if (isFormValid()) {
         new FormAction(form).submit(`${endpoints.signUp}`);
@@ -22,19 +29,19 @@ signUp.onclick = () => {
 function isFormValid() {
     let valid = true;
     errors.clearAll(emailError, emailTaken, nameError, nameTaken, passwordError, passwordsMismatch);
-    if (!validations.isEmailValid(inputs[0].value)) {
+    if (!validations.isEmailValid(inputs.email.value)) {
         valid = false;
         errors.set(emailError);
     }
-    if (!validations.isNameValid(inputs[1].value)) {
+    if (!validations.isNameValid(inputs.name.value)) {
         valid = false;
         errors.set(nameError);
     }
-    if (!validations.isPasswordValid(inputs[2].value)) {
+    if (!validations.isPasswordValid(inputs.password.value)) {
         valid = false;
         errors.set(passwordError);
     }
-    if (!validations.areInputsEqual(inputs[2].value, inputs[3].value)) {
+    if (!validations.areInputsEqual(inputs.password.value, inputs.repassword.value)) {
        valid = false;
        errors.set(passwordsMismatch); 
     }
