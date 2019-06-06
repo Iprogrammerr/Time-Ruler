@@ -5,10 +5,9 @@
     <button th:class="${activeTab.name() == 'PROFILE'}? active" th:text="#{profileTab}"></button>
 </div>
 <div id="confirmation" class="confirmation-hidden" th:fragment="confirmation">
-    <span th:text="#{confirmation}"></span>
-    <div></div>
-    <button id="yes" th:text="#{yes}"></button>
-    <button id="no" th:text="#{no}"></button>
+    <div><span th:text="#{confirmation}"></span></div>
+    <button th:text="#{yes}"></button>
+    <button th:text="#{no}"></button>
 </div>
 
 <div th:id="${id}" th:fragment="time-picker(id, hour, minute)">

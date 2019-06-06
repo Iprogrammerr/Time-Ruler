@@ -23,6 +23,7 @@ public class CalendarViews {
     private static final String NEXT_TEMPLATE = "next";
     private static final String MONTH_TEMPLATE = "month";
     private static final String YEAR_TEMPLATE = "year";
+    private static final String FIRST_DAY_OFFSET = "firstDayOffset";
     private static final String DAYS_TEMPLATE = "days";
     private final ViewsTemplates templates;
     private final String name;
@@ -52,6 +53,8 @@ public class CalendarViews {
         params.put(NEXT_TEMPLATE, viewParams.hasNext);
         params.put(MONTH_TEMPLATE, viewParams.firstDate.getMonth().getDisplayName(TextStyle.FULL, Locale.US));
         params.put(YEAR_TEMPLATE, viewParams.firstDate.getYear());
+        int firstDayOffset = monthStart(viewParams.firstDate).getDayOfWeek().getValue() - 1;
+        params.put(FIRST_DAY_OFFSET, firstDayOffset);
         params.put(DAYS_TEMPLATE, calendarDays(viewParams.days, viewParams.firstDate, viewParams.currentDate,
             fromPast));
         return templates.rendered(name, params);
@@ -62,14 +65,10 @@ public class CalendarViews {
         int daysNumber = firstDate.toLocalDate().lengthOfMonth();
         List<CalendarDay> calendarDays = new ArrayList<>(daysNumber);
         int plannedDayIdx = 0;
-        ZonedDateTime monthStart = monthStart(firstDate);
-        for (int i = 0; i < monthStart.getDayOfWeek().getValue() - 1; i++) {
-            calendarDays.add(new CalendarDay(0, DayState.EMPTY));
-        }
-        long monthStartSeconds = monthStart.toEpochSecond();
+        long monthStart = monthStart(firstDate).toEpochSecond();
         long firstDateSeconds = firstDate.toEpochSecond();
         for (int i = 0; i < daysNumber; i++) {
-            long dayStart = monthStartSeconds + (DAY_SECONDS * i);
+            long dayStart = monthStart + (DAY_SECONDS * i);
             long dayEnd = dayStart + (DAY_SECONDS - 1);
             long plannedDay = plannedDayIdx < days.size() ? days.get(plannedDayIdx) : -1;
             DayState state = fromPast ?

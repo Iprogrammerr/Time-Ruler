@@ -5,6 +5,7 @@ const STATE = {
     PLAN: "plan",
     HISTORY: "history"
 };
+const NOT_AVAILABLE_CLASS =  "not-available";
 
 const yearMonth = dateTimeParams.currentYearMonthFromUrl();
 tabsNavigation.setup(document.querySelector("div"));
@@ -53,12 +54,11 @@ function setupMonthsNavigation() {
 };
 
 function setupDaysNavigation() {
-    let notAvailableClass = "not-available";
     let days = document.getElementsByClassName("day");
     let date = new SmartDate();
     for (let i = 0; i < days.length; i++) {
         let className = days[i].children[0].className;
-        if (className !== notAvailableClass) {
+        if (className !== NOT_AVAILABLE_CLASS) {
             let day = i + 1;
             if (date.isNow(yearMonth.year, yearMonth.month, day)) {
                 days[i].onclick = () => router.forward(routes.today);

@@ -1,18 +1,23 @@
-export function Confirmation(component, messageNode = component.querySelector("span"), inAnimation = "fadeIn", outAnimation = "fadeOut") {
+export function Confirmation(component, inAnimation = "fadeIn", outAnimation = "fadeOut") {
 
     const _animationEndEvents = ["animationend", "webkitAnimationEnd"];
     const _component = component;
-    const _messageNode = messageNode;
+    const _messageNode = _component.querySelector("span");
+
+    let buttons = _component.querySelectorAll("button");
+    const yes = buttons[0];
+    const no = buttons[1];
+
     const _inAnimation = inAnimation;
     const _outAnimation = outAnimation;
     const _hide = () => _component.style.display = "none";
 
     this.setup = (onYesClicked, onNoClicked = () => {}) => {
-        document.getElementById("yes").onclick = () => {
+        yes.onclick = () => {
             onYesClicked();
             this.hide();
         };
-        document.getElementById("no").onclick = () => {
+        no.onclick = () => {
             onNoClicked();
             this.hide();
         };

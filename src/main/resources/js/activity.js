@@ -1,4 +1,5 @@
-import { tabsNavigation, router, routes, dateTimeParams, parametrizedEndpoints, paramsKeys, urlParams, errors, validations } from "./app.js";
+import { tabsNavigation, router, routes, dateTimeParams, parametrizedEndpoints, paramsKeys, urlParams,
+     errors, validations } from "./app.js";
 import { FormAction } from "./http/form-action.js";
 import { TimePicker } from "./component/time-picker.js";
 

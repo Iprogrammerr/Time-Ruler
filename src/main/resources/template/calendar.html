@@ -28,9 +28,9 @@
         <div class="weekday" th:text="#{fridayShortcut}"></div>
         <div class="weekday" th:text="#{saturdayShortcut}"></div>
         <div class="weekday" th:text="#{sundayShortcut}"></div>
+        <div th:each="i: ${#numbers.sequence(0, firstDayOffset-1)}"></div>
         <div class="day" th:each="d : ${days}">
             <th:block th:switch="${d.state.name()}">
-                <span th:case="'EMPTY'"></span>
                 <span th:case="'NOT_AVAILABLE'" class="not-available" th:text="${d.number}"></span>
                 <span th:case="'CURRENT'" class="current" th:text="${d.number}"></span>
                 <span th:case="'AVAILABLE'" class="available" th:text="${d.number}"></span>

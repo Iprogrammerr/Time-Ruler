@@ -2,6 +2,7 @@ import { SmartDate } from "./smart-date.js";
 
 export function DateTimeParams(urlParams, paramsKeys) {
 
+    const DAY_MILLIS = 24 * 3600 * 1000;
     const _urlParams = urlParams;
     const _paramsKeys = paramsKeys;
 
@@ -17,17 +18,7 @@ export function DateTimeParams(urlParams, paramsKeys) {
         };
     };
 
-    this.currentYearMonthDayFromUrlDate = () => {
-        let yearMonthDay = new SmartDate().asYearMonthDay();
-        return this.yearMonthDayFromUrl(yearMonthDay.year, yearMonthDay.month, yearMonthDay.day);
-    };
-
     this.yearMonthAsParams = (year, month) => params([_paramsKeys.year, _paramsKeys.month], [year, month])
-
-    this.currentYearMonthAsParams = () => {
-        let yearMonth = new SmartDate().asYearMonth();
-        return this.yearMonthAsParams(yearMonth.year, yearMonth.month);
-    };
 
     function params(keys, values) {
         let params = new Map();
@@ -45,7 +36,7 @@ export function DateTimeParams(urlParams, paramsKeys) {
 
     this.yesterdayAsDateParam = () => {
         let date = new Date();
-        date.setTime(date.getTime() - 24 * 3600 * 1000);
+        date.setTime(date.getTime() - DAY_MILLIS);
         let yesterday = new SmartDate(date).asYearMonthDay();
         return this.yearMonthDayAsDateParam(yesterday.year, yesterday.month, yesterday.day);
     };
