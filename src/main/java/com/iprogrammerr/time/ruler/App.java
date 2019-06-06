@@ -73,6 +73,7 @@ import javax.sql.DataSource;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.TimeZone;
 
 public class App {
@@ -86,11 +87,11 @@ public class App {
             .enableStaticFiles(root.getPath() + File.separator + "image", Location.EXTERNAL)
             .enableStaticFiles(root.getPath() + File.separator + "js", Location.EXTERNAL);
 
-        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        DateFormat dateFormat = new SimpleDateFormat("E, dd.MM.yyyy", Locale.US);
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         DateFormat timeFormat = new SimpleDateFormat("HH:mm");
         timeFormat.setTimeZone(dateFormat.getTimeZone());
-        DateFormat dateTimeFormat = new SimpleDateFormat("dd.MM.yyyy, HH:mm");
+        DateFormat dateTimeFormat = new SimpleDateFormat("E, dd.MM.yyyy, HH:mm", Locale.US);
         dateTimeFormat.setTimeZone(dateFormat.getTimeZone());
 
         DateTimeFormatting formatting = new DateTimeFormatting(dateFormat, timeFormat,

@@ -1,14 +1,16 @@
 package com.iprogrammerr.time.ruler;
 
-import com.iprogrammerr.time.ruler.model.date.ZonedDateTimeBuilder;
 import org.junit.Test;
 
-import java.time.ZonedDateTime;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class ExperimentalTest {
 
     @Test
     public void experimentalTest() {
-        ZonedDateTime dateTime = new ZonedDateTimeBuilder().build();
+        DateFormat format = new SimpleDateFormat("EEEE, dd.MM.yyyy", Locale.US);
+        System.out.println(format.format(System.currentTimeMillis()));
     }
 }
