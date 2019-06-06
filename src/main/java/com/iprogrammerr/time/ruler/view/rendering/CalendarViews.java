@@ -62,10 +62,14 @@ public class CalendarViews {
         int daysNumber = firstDate.toLocalDate().lengthOfMonth();
         List<CalendarDay> calendarDays = new ArrayList<>(daysNumber);
         int plannedDayIdx = 0;
-        long monthStart = monthStart(firstDate);
+        ZonedDateTime monthStart = monthStart(firstDate);
+        for (int i = 0; i < monthStart.getDayOfWeek().getValue() - 1; i++) {
+            calendarDays.add(new CalendarDay(0, DayState.EMPTY));
+        }
+        long monthStartSeconds = monthStart.toEpochSecond();
         long firstDateSeconds = firstDate.toEpochSecond();
         for (int i = 0; i < daysNumber; i++) {
-            long dayStart = monthStart + (DAY_SECONDS * i);
+            long dayStart = monthStartSeconds + (DAY_SECONDS * i);
             long dayEnd = dayStart + (DAY_SECONDS - 1);
             long plannedDay = plannedDayIdx < days.size() ? days.get(plannedDayIdx) : -1;
             DayState state = fromPast ?
@@ -79,11 +83,11 @@ public class CalendarViews {
         return calendarDays;
     }
 
-    private long monthStart(ZonedDateTime currentDate) {
+    private ZonedDateTime monthStart(ZonedDateTime currentDate) {
         return new ZonedDateTimeBuilder()
             .withYear(currentDate.getYear()).withMonth(currentDate.getMonthValue())
             .withDay(1).withHour(0).withSecond(0)
-            .build().toEpochSecond();
+            .build();
     }
 
     private DayState dayStateForFuture(long dayStart, long dayEnd, long plannedDay, long currentDay) {
