@@ -4,7 +4,7 @@
 Self-contained web application for taking charge of your time.
 
 ## Deployment
-Everything contained in a single executable jar. The only thing that is needed from the outside is MySQL(you obviously can change connector in pom.xml and make it work with any relational database) database. All you need to do is to create it from this script(src/test/resources/schema.sql):
+Everything is contained in a single executable jar. The only thing that is needed from the outside is MySQL(you obviously can change connector in pom.xml and make it work with any relational database) database. All you need to do is to create it from this script(src/test/resources/schema.sql):
 ```
 CREATE TABLE user (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
