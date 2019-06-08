@@ -7,7 +7,7 @@ export function UrlParams() {
             return params.get(key);
         }
         throw new Error(`There is no value associated with ${key} key`);
-    }
+    };
 
     this.has = (key) => {
         readIfEmpty();

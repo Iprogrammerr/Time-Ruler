@@ -8,5 +8,7 @@ public interface Descriptions {
 
     void updateOrCreate(Description description);
 
+    void delete(long activityId);
+
     DescribedActivity describedActivity(long activityId);
 }

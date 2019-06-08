@@ -190,7 +190,9 @@ public class ActivityRespondent {
             }
         }
         activities.update(activity);
-        if (!description.isEmpty()) {
+        if (description.isEmpty()) {
+            descriptions.delete(activity.id);
+        } else {
             descriptions.updateOrCreate(new Description(activity.id, description));
         }
     }

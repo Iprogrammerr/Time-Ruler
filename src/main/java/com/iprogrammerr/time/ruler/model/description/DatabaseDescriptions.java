@@ -50,6 +50,11 @@ public class DatabaseDescriptions implements Descriptions {
         }
     }
 
+    @Override
+    public void delete(long activityId) {
+        session.delete(Description.TABLE, "activity_id = ?", activityId);
+    }
+
     private boolean descriptionExists(long activityId) {
         return session.select(ResultSet::next, "SELECT id FROM description WHERE activity_id = ?", activityId);
     }

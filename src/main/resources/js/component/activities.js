@@ -1,4 +1,4 @@
-import { hiddenDataKeys, paramsKeys, parametrizedEndpoints } from "../app.js";
+import { router, routes, hiddenDataKeys, paramsKeys, parametrizedEndpoints } from "../app.js";
 import { HttpConnections } from "../http/http-connections.js";
 
 export function Activities(confirmation, httpConnections = new HttpConnections()) {

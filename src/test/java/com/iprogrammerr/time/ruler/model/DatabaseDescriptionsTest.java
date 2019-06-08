@@ -4,9 +4,6 @@ import com.iprogrammerr.time.ruler.database.DatabaseSession;
 import com.iprogrammerr.time.ruler.database.QueryTemplates;
 import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
 import com.iprogrammerr.time.ruler.matcher.ThrowsMatcher;
-import com.iprogrammerr.time.ruler.tool.RandomActivities;
-import com.iprogrammerr.time.ruler.tool.RandomStrings;
-import com.iprogrammerr.time.ruler.tool.RandomUsers;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
 import com.iprogrammerr.time.ruler.model.activity.DatabaseActivities;
 import com.iprogrammerr.time.ruler.model.activity.DescribedActivity;
@@ -15,6 +12,9 @@ import com.iprogrammerr.time.ruler.model.description.Description;
 import com.iprogrammerr.time.ruler.model.user.DatabaseUsers;
 import com.iprogrammerr.time.ruler.model.user.User;
 import com.iprogrammerr.time.ruler.setup.TestDatabaseSetup;
+import com.iprogrammerr.time.ruler.tool.RandomActivities;
+import com.iprogrammerr.time.ruler.tool.RandomStrings;
+import com.iprogrammerr.time.ruler.tool.RandomUsers;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -104,5 +104,23 @@ public class DatabaseDescriptionsTest {
         descriptions.updateOrCreate(description);
         MatcherAssert.assertThat("Does not create description", description.content,
             Matchers.equalTo(descriptions.describedActivity(activity.id).description));
+    }
+
+    @Test
+    public void deletesDescriptionNoOp() {
+        Activity activity = createActivity();
+        descriptions.delete(activity.id);
+        MatcherAssert.assertThat("Should do nothing", descriptions.describedActivity(activity.id).description,
+            Matchers.emptyString());
+    }
+
+    @Test
+    public void deletesDescription() {
+        RandomStrings strings = new RandomStrings();
+        Activity activity = createActivity();
+        descriptions.create(new Description(activity.id, strings.alphanumeric()));
+        descriptions.delete(activity.id);
+        MatcherAssert.assertThat("Does not delete description", descriptions.describedActivity(activity.id),
+            Matchers.equalTo(new DescribedActivity(activity, "")));
     }
 }

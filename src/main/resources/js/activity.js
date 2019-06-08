@@ -1,11 +1,10 @@
-import { tabsNavigation, router, routes, dateTimeParams, parametrizedEndpoints, paramsKeys, urlParams,
-     errors, validations } from "./app.js";
+import { tabsNavigation, router, routes, dateTimeParams, parametrizedEndpoints, paramsKeys, urlParams, 
+    errors, validations } from "./app.js";
 import { FormAction } from "./http/form-action.js";
 import { TimePicker } from "./component/time-picker.js";
 
 const activityId = urlParams.getOrDefault(paramsKeys.id, 0);
-const date = activityId > 0 ? {} : dateTimeParams.dateFromUrl().asIsoDateString();
-const plan = urlParams.getOrDefault(paramsKeys.plan, "false");
+const date = activityId > 0 ? "" : dateTimeParams.dateFromUrl().asIsoDateString();
 
 const form = document.querySelector("form");
 let formInputs = form.querySelectorAll("input");
@@ -22,13 +21,13 @@ const description = document.querySelector("textarea");
 const saveActivity = document.getElementById("save");
 
 tabsNavigation.setup(document.querySelector("div"), true);
-addEventListener("submit", e => e.preventDefault());
 document.getElementById("recent").onclick = () => {
-    let params = new Map([[paramsKeys.plan, plan]]);
+    let params = new Map();
     if (activityId > 0) {
         params.set(paramsKeys.id, activityId);
     } else {
         params.set(paramsKeys.date, date);
+        params.set(paramsKeys.plan, urlParams.getOrDefault(paramsKeys.plan, true));
     }
     router.forwardWithParams(routes.activities, params);
 };
@@ -57,6 +56,7 @@ description.oninput = () => {
         description.style.height = `${description.scrollHeight}px`;
     }
 };
+
 saveActivity.onclick = () => {
     if (isFormValid()) {
         let endpoint;
