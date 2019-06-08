@@ -16,13 +16,13 @@ import java.util.function.Function;
 
 public class ActivitiesViews {
 
-    private static final String CURRENT_PAGE_TEMPLATE = "currentPage";
-    private static final String PAGES_TEMPLATE = "pages";
-    private static final String ACTIVITIES_TEMPLATE = "activities";
-    private static final String PATTERN_TEMPLATE = "pattern";
+    public static final String CURRENT_PAGE_TEMPLATE = "currentPage";
+    public static final String PAGES_TEMPLATE = "pages";
+    public static final String ACTIVITIES_TEMPLATE = "activities";
+    public static final String PATTERN_TEMPLATE = "pattern";
+    public final String name;
     private final ViewsTemplates templates;
     private final DateTimeFormatting formatting;
-    private final String name;
 
     public ActivitiesViews(ViewsTemplates templates, DateTimeFormatting formatting, String name) {
         this.templates = templates;
@@ -37,7 +37,7 @@ public class ActivitiesViews {
     public String view(boolean plan, String pattern, int currentPage, List<Page> pages, List<Activity> activities,
         Function<Long, Instant> dateTransformation) {
         Map<String, Object> params = new HashMap<>();
-        params.put(ActiveTab.KEY, plan ? ActiveTab.PLAN : ActiveTab.HISTORY);
+        params.put(ActiveTab.KEY, ActiveTab.planHistory(plan));
         params.put(PATTERN_TEMPLATE, pattern);
         params.put(CURRENT_PAGE_TEMPLATE, currentPage);
         params.put(PAGES_TEMPLATE, pages);

@@ -1,6 +1,6 @@
 package com.iprogrammerr.time.ruler.view;
 
-import com.iprogrammerr.time.ruler.matcher.ActivitiesViewsMatcher;
+import com.iprogrammerr.time.ruler.matcher.rendering.ActivitiesViewsMatcher;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
 import com.iprogrammerr.time.ruler.model.date.DateTimeFormatting;
 import com.iprogrammerr.time.ruler.model.rendering.Page;
@@ -27,11 +27,13 @@ public class ActivitiesViewsTest {
     private static final int MAX_URL_SIZE = 50;
     private final DateTimeFormatting formatting = new DateTimeFormatting(DATE_TIME_FORMAT, TIME_FORMAT,
         DATE_TIME_FORMAT);
+    private ViewsTemplates templates;
     private ActivitiesViews views;
 
     @Before
     public void setup() {
-        views = new ActivitiesViews(new TestTemplatesSetup().templates(), formatting);
+        templates = new TestTemplatesSetup().templates();
+        views = new ActivitiesViews(templates, formatting);
     }
 
     @Test
@@ -55,8 +57,8 @@ public class ActivitiesViewsTest {
         for (int i = 0; i < activitiesNumber; i++) {
             activities.add(randomActivities.activity());
         }
-        MatcherAssert.assertThat("Should render view based on given parameters", views,
-            new ActivitiesViewsMatcher(plan, pattern, currentPage, pages, activities, formatting));
+        MatcherAssert.assertThat("Should render rendering based on given parameters", views,
+            new ActivitiesViewsMatcher(templates, plan, pattern, currentPage, pages, activities, formatting));
     }
 
     @Test
@@ -67,8 +69,8 @@ public class ActivitiesViewsTest {
     @Test
     public void returnsEmptyView() {
         Random random = new Random();
-        MatcherAssert.assertThat("Should render empty view", views,
-            new ActivitiesViewsMatcher(random.nextBoolean(), "", random.nextInt(),
+        MatcherAssert.assertThat("Should render empty rendering", views,
+            new ActivitiesViewsMatcher(templates, random.nextBoolean(), "", random.nextInt(),
                 new ArrayList<>(), new ArrayList<>(), formatting));
     }
 }

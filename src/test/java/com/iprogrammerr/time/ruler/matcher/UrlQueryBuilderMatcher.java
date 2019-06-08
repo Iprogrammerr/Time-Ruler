@@ -6,7 +6,7 @@ import org.hamcrest.TypeSafeMatcher;
 
 import java.util.Map;
 
-public class UrlQueryBuilderThatBuildsProperQuery extends TypeSafeMatcher<UrlQueryBuilder> {
+public class UrlQueryBuilderMatcher extends TypeSafeMatcher<UrlQueryBuilder> {
 
     private static final String START = "?";
     private static final String PARAMS_SEPARATOR = "&";
@@ -14,7 +14,7 @@ public class UrlQueryBuilderThatBuildsProperQuery extends TypeSafeMatcher<UrlQue
     private final Map<String, Object> params;
     private final String base;
 
-    public UrlQueryBuilderThatBuildsProperQuery(Map<String, Object> params, String base) {
+    public UrlQueryBuilderMatcher(Map<String, Object> params, String base) {
         this.params = params;
         this.base = base;
     }

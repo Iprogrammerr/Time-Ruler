@@ -1,7 +1,7 @@
 package com.iprogrammerr.time.ruler.model;
 
 import com.iprogrammerr.time.ruler.tool.RandomStrings;
-import com.iprogrammerr.time.ruler.matcher.UrlQueryBuilderThatBuildsProperQuery;
+import com.iprogrammerr.time.ruler.matcher.UrlQueryBuilderMatcher;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -46,7 +46,7 @@ public class UrlQueryBuilderTest {
             builder.put(key, value);
         }
         MatcherAssert.assertThat("Does not build proper query", builder,
-            new UrlQueryBuilderThatBuildsProperQuery(params, base));
+            new UrlQueryBuilderMatcher(params, base));
     }
 
     @Test
