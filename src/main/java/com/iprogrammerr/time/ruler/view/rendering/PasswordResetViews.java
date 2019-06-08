@@ -1,6 +1,7 @@
 package com.iprogrammerr.time.ruler.view.rendering;
 
 import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
+import com.iprogrammerr.time.ruler.view.TemplatesParams;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 
 import java.util.HashMap;
@@ -8,13 +9,6 @@ import java.util.Map;
 
 public class PasswordResetViews {
 
-    private static final String LINK_SENT_TEMPLATE = "linkSent";
-    private static final String INVALID_EMAIL_TEMPLATE = "invalidEmail";
-    private static final String UNKNOWN_EMAIL_TEMPLATE = "unknownEmail";
-    private static final String EMAIL_TEMPLATE = "email";
-    private static final String INACTIVE_ACCOUNT_TEMPLATE = "inactiveAccount";
-    private static final String INVALID_PASSWORD_TEMPLATE = "invalidPassword";
-    private static final String PASSWORD_RESET_URL_TEMPLATE = "passwordResetUrl";
     private final ViewsTemplates templates;
     private final String emailSendName;
     private final String changePasswordName;
@@ -35,33 +29,33 @@ public class PasswordResetViews {
 
     public String emailSentView(String email) {
         Map<String, Object> params = new HashMap<>();
-        params.put(LINK_SENT_TEMPLATE, true);
-        params.put(EMAIL_TEMPLATE, email);
+        params.put(TemplatesParams.LINK_SENT, true);
+        params.put(TemplatesParams.EMAIL, email);
         return templates.rendered(emailSendName, params);
     }
 
     public String invalidEmailView(ValidateableEmail email) {
         Map<String, Object> params = new HashMap<>();
         if (email.isValid()) {
-            params.put(UNKNOWN_EMAIL_TEMPLATE, true);
+            params.put(TemplatesParams.UNKNOWN_EMAIL, true);
         } else {
-            params.put(INVALID_EMAIL_TEMPLATE, true);
+            params.put(TemplatesParams.INVALID_EMAIL, true);
         }
-        params.put(EMAIL_TEMPLATE, email.value());
+        params.put(TemplatesParams.EMAIL, email.value());
         return templates.rendered(emailSendName, params);
     }
 
     public String inactiveAccountView(String email) {
         Map<String, Object> params = new HashMap<>();
-        params.put(EMAIL_TEMPLATE, email);
-        params.put(INACTIVE_ACCOUNT_TEMPLATE, true);
+        params.put(TemplatesParams.EMAIL, email);
+        params.put(TemplatesParams.INACTIVE_ACCOUNT, true);
         return templates.rendered(emailSendName, params);
     }
 
     public String changePasswordView(String passwordResetUrl, boolean invalidPassword) {
         Map<String, Object> params = new HashMap<>();
-        params.put(PASSWORD_RESET_URL_TEMPLATE, passwordResetUrl);
-        params.put(INVALID_PASSWORD_TEMPLATE, invalidPassword);
+        params.put(TemplatesParams.PASSWORD_RESET_URL, passwordResetUrl);
+        params.put(TemplatesParams.INVALID_PASSWORD, invalidPassword);
         return templates.rendered(changePasswordName, params);
     }
 }

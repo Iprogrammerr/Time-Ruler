@@ -7,7 +7,7 @@ import com.iprogrammerr.time.ruler.model.rendering.ActiveTab;
 import com.iprogrammerr.time.ruler.model.rendering.DayActivity;
 import com.iprogrammerr.time.ruler.view.TemplatesParams;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
-import com.iprogrammerr.time.ruler.view.rendering.DayPlanExecutionViews;
+import com.iprogrammerr.time.ruler.view.rendering.DayPlanViews;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
@@ -18,36 +18,33 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-public class DayPlanExecutionViewsMatcher extends TypeSafeMatcher<DayPlanExecutionViews> {
+public class DayPlanViewsMatcher extends TypeSafeMatcher<DayPlanViews> {
 
     private final ViewsTemplates templates;
     private final DateTimeFormatting formatting;
     private final Instant date;
-    private final boolean history;
-    private final List<Activity> activities;
     private final Function<Long, Instant> timeTransformation;
+    private final List<Activity> activities;
 
-    public DayPlanExecutionViewsMatcher(ViewsTemplates templates, DateTimeFormatting formatting, Instant date,
-        boolean history, List<Activity> activities, Function<Long, Instant> timeTransformation) {
+    public DayPlanViewsMatcher(ViewsTemplates templates, DateTimeFormatting formatting, Instant date,
+        Function<Long, Instant> timeTransformation, List<Activity> activities) {
         this.templates = templates;
         this.formatting = formatting;
         this.date = date;
-        this.history = history;
-        this.activities = activities;
         this.timeTransformation = timeTransformation;
+        this.activities = activities;
     }
 
     @Override
-    protected boolean matchesSafely(DayPlanExecutionViews item) {
-        return rendered(item.name).equals(item.view(date, history, activities, timeTransformation));
+    protected boolean matchesSafely(DayPlanViews item) {
+        return rendered(item.name).equals(item.view(date, timeTransformation, activities));
     }
 
     private String rendered(String name) {
         Map<String, Object> params = new HashMap<>();
-        params.put(ActiveTab.KEY, ActiveTab.planHistory(!history));
+        params.put(ActiveTab.KEY, ActiveTab.PLAN);
         params.put(TemplatesParams.DATE, formatting.date(date));
-        params.put(TemplatesParams.HISTORY, history);
-        List<DayActivity> viewActivities = new ArrayList<>();
+        List<DayActivity> viewActivities = new ArrayList<>(activities.size());
         activities.forEach(a -> viewActivities.add(new DayActivity(a, formatting, timeTransformation)));
         params.put(TemplatesParams.ACTIVITIES, viewActivities);
         return templates.rendered(name, params);
@@ -59,8 +56,8 @@ public class DayPlanExecutionViewsMatcher extends TypeSafeMatcher<DayPlanExecuti
     }
 
     @Override
-    protected void describeMismatchSafely(DayPlanExecutionViews item, Description mismatchDescription) {
-        new ViewsMismatchDescription(item.view(date, history, activities, timeTransformation),
+    protected void describeMismatchSafely(DayPlanViews item, Description mismatchDescription) {
+        new ViewsMismatchDescription(item.view(date, timeTransformation, activities),
             rendered(item.name)).append(mismatchDescription);
     }
 }

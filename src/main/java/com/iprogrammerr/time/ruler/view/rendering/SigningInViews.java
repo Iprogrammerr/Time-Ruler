@@ -2,6 +2,7 @@ package com.iprogrammerr.time.ruler.view.rendering;
 
 import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
+import com.iprogrammerr.time.ruler.view.TemplatesParams;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 
 import java.util.HashMap;
@@ -9,17 +10,6 @@ import java.util.Map;
 
 public class SigningInViews {
 
-    private static final String EMAIL_NAME_TEMPLATE = "emailName";
-    private static final String INVALID_EMAIL_NAME_TEMPLATE = "invalidEmailName";
-    private static final String NON_EXISTENT_USER_TEMPLATE = "nonExistentUser";
-    private static final String INVALID_PASSWORD_TEMPLATE = "invalidPassword";
-    private static final String NOT_USER_PASSWORD_TEMPLATE = "notUserPassword";
-    private static final String INACTIVE_ACCOUNT_TEMPLATE = "inactiveAccount";
-    private static final String ACTIVATION_TEMPLATE = "activation";
-    private static final String PASSWORD_CHANGE_TEMPLATE = "passwordChange";
-    private static final String SIGN_OUT_TEMPLATE = "signOut";
-    private static final String SIGN_UP_URL_TEMPLATE = "signUpUrl";
-    private static final String PASSWORD_RESET_URL_TEMPLATE = "passwordResetUrl";
     private final ViewsTemplates templates;
     private final String name;
     private final String signUpUrl;
@@ -41,8 +31,8 @@ public class SigningInViews {
     }
 
     private String withUrls(Map<String, Object> params) {
-        params.put(SIGN_UP_URL_TEMPLATE, signUpUrl);
-        params.put(PASSWORD_RESET_URL_TEMPLATE, passwordResetUrl);
+        params.put(TemplatesParams.SIGN_UP_URL, signUpUrl);
+        params.put(TemplatesParams.PASSWORD_RESET_URL, passwordResetUrl);
         return templates.rendered(name, params);
     }
 
@@ -64,45 +54,45 @@ public class SigningInViews {
     private String invalidView(String invalidEmailName, boolean invalidPassword) {
         Map<String, Object> params = new HashMap<>();
         if (!invalidEmailName.isEmpty()) {
-            params.put(EMAIL_NAME_TEMPLATE, invalidEmailName);
+            params.put(TemplatesParams.EMAIL_NAME, invalidEmailName);
             boolean valid = invalidEmailName.contains("@") ?
                 new ValidateableEmail(invalidEmailName).isValid() :
                 new ValidateableName(invalidEmailName).isValid();
-            params.put(INVALID_EMAIL_NAME_TEMPLATE, valid);
+            params.put(TemplatesParams.INVALID_EMAIL_NAME, valid);
         } else {
-            params.put(INVALID_EMAIL_NAME_TEMPLATE, false);
+            params.put(TemplatesParams.INVALID_EMAIL_NAME, false);
         }
-        params.put(INVALID_PASSWORD_TEMPLATE, invalidPassword);
+        params.put(TemplatesParams.INVALID_PASSWORD, invalidPassword);
         return withUrls(params);
     }
 
     private String nonExistentUserView(String emailName) {
         Map<String, Object> params = new HashMap<>();
-        params.put(EMAIL_NAME_TEMPLATE, emailName);
-        params.put(NON_EXISTENT_USER_TEMPLATE, true);
+        params.put(TemplatesParams.EMAIL_NAME, emailName);
+        params.put(TemplatesParams.NON_EXISTENT_USER, true);
         return withUrls(params);
     }
 
     private String notUserPasswordView(String emailName) {
         Map<String, Object> params = new HashMap<>();
-        params.put(EMAIL_NAME_TEMPLATE, emailName);
-        params.put(NOT_USER_PASSWORD_TEMPLATE, true);
+        params.put(TemplatesParams.EMAIL_NAME, emailName);
+        params.put(TemplatesParams.NOT_USER_PASSWORD, true);
         return withUrls(params);
     }
 
     private String notActiveUserView(String emailName) {
         Map<String, Object> params = new HashMap<>();
-        params.put(EMAIL_NAME_TEMPLATE, emailName);
-        params.put(INACTIVE_ACCOUNT_TEMPLATE, true);
+        params.put(TemplatesParams.EMAIL_NAME, emailName);
+        params.put(TemplatesParams.INACTIVE_ACCOUNT, true);
         return withUrls(params);
     }
 
     public String withNewPasswordView() {
-        return withMessageView(PASSWORD_CHANGE_TEMPLATE);
+        return withMessageView(TemplatesParams.PASSWORD_CHANGE);
     }
 
     public String withFarewellView() {
-        return withMessageView(SIGN_OUT_TEMPLATE);
+        return withMessageView(TemplatesParams.SIGN_OUT);
     }
 
     private String withMessageView(String key) {
@@ -112,6 +102,6 @@ public class SigningInViews {
     }
 
     public String withActivationCongratulationsView() {
-        return withMessageView(ACTIVATION_TEMPLATE);
+        return withMessageView(TemplatesParams.ACTIVATION);
     }
 }

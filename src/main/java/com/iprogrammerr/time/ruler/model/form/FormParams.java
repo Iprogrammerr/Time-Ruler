@@ -1,7 +1,6 @@
 package com.iprogrammerr.time.ruler.model.form;
 
 public class FormParams {
-
     public static final String EMAIL = "email";
     public static final String EMAIL_NAME = "emailName";
     public static final String NAME = "name";

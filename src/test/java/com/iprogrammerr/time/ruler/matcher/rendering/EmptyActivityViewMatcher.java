@@ -4,6 +4,7 @@ import com.iprogrammerr.time.ruler.matcher.ViewsMismatchDescription;
 import com.iprogrammerr.time.ruler.model.date.DateTimeFormatting;
 import com.iprogrammerr.time.ruler.model.date.FormattedTimes;
 import com.iprogrammerr.time.ruler.model.rendering.ActiveTab;
+import com.iprogrammerr.time.ruler.view.TemplatesParams;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import com.iprogrammerr.time.ruler.view.rendering.ActivityViews;
 import org.hamcrest.Description;
@@ -37,7 +38,7 @@ public class EmptyActivityViewMatcher extends TypeSafeMatcher<ActivityViews> {
     private String rendered(String name) {
         Map<String, Object> params = new HashMap<>();
         params.put(ActiveTab.KEY, ActiveTab.planHistory(plan));
-        params.put(ActivityViews.PLAN_TEMPLATE, plan);
+        params.put(TemplatesParams.PLAN, plan);
         FormattedTimes times = formatting.times(time);
         times.put(params);
         return templates.rendered(name, params);

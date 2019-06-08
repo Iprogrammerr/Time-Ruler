@@ -2,6 +2,7 @@ package com.iprogrammerr.time.ruler.view.rendering;
 
 import com.iprogrammerr.time.ruler.model.error.ErrorCode;
 import com.iprogrammerr.time.ruler.model.error.ErrorsTranslation;
+import com.iprogrammerr.time.ruler.view.TemplatesParams;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 
 import java.util.HashMap;
@@ -10,7 +11,6 @@ import java.util.Map;
 
 public class ErrorViews {
 
-    private static final String ERROR_TEMPLATE = "error";
     private final ViewsTemplates templates;
     private final ErrorsTranslation translation;
     private final String name;
@@ -27,7 +27,7 @@ public class ErrorViews {
 
     public String view(ErrorCode code, Locale locale) {
         Map<String, Object> params = new HashMap<>();
-        params.put(ERROR_TEMPLATE, translation.translated(code, locale));
+        params.put(TemplatesParams.ERROR, translation.translated(code, locale));
         return templates.rendered(name, params);
     }
 }

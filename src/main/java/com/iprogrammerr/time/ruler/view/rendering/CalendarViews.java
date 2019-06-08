@@ -4,6 +4,7 @@ import com.iprogrammerr.time.ruler.model.date.ZonedDateTimeBuilder;
 import com.iprogrammerr.time.ruler.model.rendering.ActiveTab;
 import com.iprogrammerr.time.ruler.model.rendering.CalendarDay;
 import com.iprogrammerr.time.ruler.model.rendering.DayState;
+import com.iprogrammerr.time.ruler.view.TemplatesParams;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 
 import java.time.ZonedDateTime;
@@ -18,13 +19,6 @@ import java.util.concurrent.TimeUnit;
 public class CalendarViews {
 
     private static final long DAY_SECONDS = TimeUnit.DAYS.toSeconds(1);
-    private static final String PLAN_TEMPLATE = "plan";
-    private static final String PREV_TEMPLATE = "prev";
-    private static final String NEXT_TEMPLATE = "next";
-    private static final String MONTH_TEMPLATE = "month";
-    private static final String YEAR_TEMPLATE = "year";
-    private static final String FIRST_DAY_OFFSET = "firstDayOffset";
-    private static final String DAYS_TEMPLATE = "days";
     private final ViewsTemplates templates;
     private final String name;
 
@@ -47,15 +41,15 @@ public class CalendarViews {
 
     private String view(Params viewParams, boolean fromPast) {
         Map<String, Object> params = new HashMap<>();
-        params.put(PLAN_TEMPLATE, viewParams.plan);
+        params.put(TemplatesParams.PLAN, viewParams.plan);
         params.put(ActiveTab.KEY, ActiveTab.planHistory(viewParams.plan));
-        params.put(PREV_TEMPLATE, viewParams.hasPrevious);
-        params.put(NEXT_TEMPLATE, viewParams.hasNext);
-        params.put(MONTH_TEMPLATE, viewParams.firstDate.getMonth().getDisplayName(TextStyle.FULL, Locale.US));
-        params.put(YEAR_TEMPLATE, viewParams.firstDate.getYear());
+        params.put(TemplatesParams.PREV, viewParams.hasPrevious);
+        params.put(TemplatesParams.NEXT, viewParams.hasNext);
+        params.put(TemplatesParams.MONTH, viewParams.firstDate.getMonth().getDisplayName(TextStyle.FULL, Locale.US));
+        params.put(TemplatesParams.YEAR, viewParams.firstDate.getYear());
         int firstDayOffset = monthStart(viewParams.firstDate).getDayOfWeek().getValue() - 1;
-        params.put(FIRST_DAY_OFFSET, firstDayOffset);
-        params.put(DAYS_TEMPLATE, calendarDays(viewParams.days, viewParams.firstDate, viewParams.currentDate,
+        params.put(TemplatesParams.FIRST_DAY_OFFSET, firstDayOffset);
+        params.put(TemplatesParams.DAYS, calendarDays(viewParams.days, viewParams.firstDate, viewParams.currentDate,
             fromPast));
         return templates.rendered(name, params);
     }

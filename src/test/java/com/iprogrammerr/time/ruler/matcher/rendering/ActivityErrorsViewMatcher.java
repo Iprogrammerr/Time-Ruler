@@ -4,6 +4,7 @@ import com.iprogrammerr.time.ruler.model.date.DateTimeFormatting;
 import com.iprogrammerr.time.ruler.model.rendering.ActiveTab;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateableTime;
+import com.iprogrammerr.time.ruler.view.TemplatesParams;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import com.iprogrammerr.time.ruler.view.rendering.ActivityViews;
 import org.hamcrest.Description;
@@ -45,19 +46,19 @@ public class ActivityErrorsViewMatcher extends TypeSafeMatcher<ActivityViews> {
     private String rendered(String viewName) {
         Map<String, Object> params = new HashMap<>();
         params.put(ActiveTab.KEY, ActiveTab.planHistory(plan));
-        params.put(ActivityViews.PLAN_TEMPLATE, plan);
-        params.put(ActivityViews.INVALID_NAME_TEMPLATE, !name.isValid());
-        params.put(ActivityViews.NAME_TEMPLATE, name.value());
+        params.put(TemplatesParams.PLAN, plan);
+        params.put(TemplatesParams.INVALID_NAME, !name.isValid());
+        params.put(TemplatesParams.NAME, name.value());
         formatting.times(time).put(params);
-        params.put(ActivityViews.INVALID_START_TIME_TEMPLATE, !startTime.isValid());
+        params.put(TemplatesParams.INVALID_START_TIME, !startTime.isValid());
         if (startTime.isValid()) {
-            params.put(ActivityViews.START_TIME_TEMPLATE, formatting.time(startTime.value()));
+            params.put(TemplatesParams.START_TIME, formatting.time(startTime.value()));
         }
-        params.put(ActivityViews.INVALID_END_TIME_TEMPLATE, !endTime.isValid());
+        params.put(TemplatesParams.INVALID_END_TIME, !endTime.isValid());
         if (endTime.isValid()) {
-            params.put(ActivityViews.END_TIME_TEMPLATE, formatting.time(endTime.value()));
+            params.put(TemplatesParams.END_TIME, formatting.time(endTime.value()));
         }
-        params.put(ActivityViews.DESCRIPTION_TEMPLATE, description);
+        params.put(TemplatesParams.DESCRIPTION, description);
         return templates.rendered(viewName, params);
     }
 

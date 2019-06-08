@@ -6,6 +6,7 @@ import com.iprogrammerr.time.ruler.model.date.DateTimeFormatting;
 import com.iprogrammerr.time.ruler.model.rendering.ActiveTab;
 import com.iprogrammerr.time.ruler.model.rendering.FoundActivity;
 import com.iprogrammerr.time.ruler.model.rendering.Page;
+import com.iprogrammerr.time.ruler.view.TemplatesParams;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import com.iprogrammerr.time.ruler.view.rendering.ActivitiesViews;
 import org.hamcrest.Description;
@@ -56,12 +57,12 @@ public class ActivitiesViewsMatcher extends TypeSafeMatcher<ActivitiesViews> {
     private String rendered(String name) {
         Map<String, Object> params = new HashMap<>();
         params.put(ActiveTab.KEY, ActiveTab.planHistory(plan));
-        params.put(ActivitiesViews.PATTERN_TEMPLATE, pattern);
-        params.put(ActivitiesViews.CURRENT_PAGE_TEMPLATE, currentPage);
+        params.put(TemplatesParams.PATTERN, pattern);
+        params.put(TemplatesParams.CURRENT_PAGE, currentPage);
         List<FoundActivity> viewActivities = new ArrayList<>(activities.size());
         activities.forEach(a -> viewActivities.add(new FoundActivity(a, formatting, dateTransformation)));
-        params.put(ActivitiesViews.ACTIVITIES_TEMPLATE, viewActivities);
-        params.put(ActivitiesViews.PAGES_TEMPLATE, pages);
+        params.put(TemplatesParams.ACTIVITIES, viewActivities);
+        params.put(TemplatesParams.PAGES, pages);
         return templates.rendered(name, params);
     }
 

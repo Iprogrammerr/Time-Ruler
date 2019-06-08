@@ -1,6 +1,6 @@
 package com.iprogrammerr.time.ruler.model.date;
 
-import com.iprogrammerr.time.ruler.view.rendering.ActivityViews;
+import com.iprogrammerr.time.ruler.view.TemplatesParams;
 
 import java.util.Map;
 
@@ -34,8 +34,8 @@ public class FormattedTimes {
     }
 
     public void put(Map<String, Object> params) {
-        put(params, ActivityViews.START_HOUR_TEMPLATE, ActivityViews.START_MINUTE_TEMPLATE,
-            ActivityViews.START_TIME_TEMPLATE, ActivityViews.END_HOUR_TEMPLATE,
-            ActivityViews.END_MINUTE_TEMPLATE, ActivityViews.END_TIME_TEMPLATE);
+        put(params, TemplatesParams.START_HOUR, TemplatesParams.START_MINUTE,
+            TemplatesParams.START_TIME, TemplatesParams.END_HOUR,
+            TemplatesParams.END_MINUTE, TemplatesParams.END_TIME);
     }
 }

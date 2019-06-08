@@ -1,7 +1,6 @@
 package com.iprogrammerr.time.ruler.model.param;
 
 public class QueryParams {
-
     public static final String FAREWELL = "farewell";
     public static final String NEW_PASSWORD = "newPassword";
     public static final String EMAIL_NAME = "emailName";
