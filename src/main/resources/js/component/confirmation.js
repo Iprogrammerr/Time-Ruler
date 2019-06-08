@@ -1,23 +1,23 @@
 export function Confirmation(component, inAnimation = "fadeIn", outAnimation = "fadeOut") {
 
-    const _animationEndEvents = ["animationend", "webkitAnimationEnd"];
+    const ANIMATION_END_EVENTS = ["animationend", "webkitAnimationEnd"];
     const _component = component;
     const _messageNode = _component.querySelector("span");
 
     let buttons = _component.querySelectorAll("button");
-    const yes = buttons[0];
-    const no = buttons[1];
+    const yesButton = buttons[0];
+    const noButton = buttons[1];
 
     const _inAnimation = inAnimation;
     const _outAnimation = outAnimation;
     const _hide = () => _component.style.display = "none";
 
     this.setup = (onYesClicked, onNoClicked = () => {}) => {
-        yes.onclick = () => {
+        yesButton.onclick = () => {
             onYesClicked();
             this.hide();
         };
-        no.onclick = () => {
+        noButton.onclick = () => {
             onNoClicked();
             this.hide();
         };
@@ -28,7 +28,7 @@ export function Confirmation(component, inAnimation = "fadeIn", outAnimation = "
     };
 
     this.show = () => {
-        for (let e of _animationEndEvents) {
+        for (let e of ANIMATION_END_EVENTS) {
             _component.removeEventListener(e, _hide);
         }
         _component.style.display = "block";
@@ -36,7 +36,7 @@ export function Confirmation(component, inAnimation = "fadeIn", outAnimation = "
     };
 
     this.hide = () => {        
-        for (let e of _animationEndEvents) {
+        for (let e of ANIMATION_END_EVENTS) {
             _component.addEventListener(e, _hide);
         }
         _component.style.animationName = _outAnimation;

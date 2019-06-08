@@ -400,7 +400,6 @@ a:hover {
 .yesterday:hover {
     font-size: var(--font-large-small);
     transition: 1s;
-    font-weight: bold;
     cursor: pointer;
 }
 
