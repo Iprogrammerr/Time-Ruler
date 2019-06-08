@@ -48,7 +48,7 @@ public class CalendarViews {
     private String view(Params viewParams, boolean fromPast) {
         Map<String, Object> params = new HashMap<>();
         params.put(PLAN_TEMPLATE, viewParams.plan);
-        params.put(ActiveTab.KEY, viewParams.plan ? ActiveTab.PLAN : ActiveTab.HISTORY);
+        params.put(ActiveTab.KEY, ActiveTab.planHistory(viewParams.plan));
         params.put(PREV_TEMPLATE, viewParams.hasPrevious);
         params.put(NEXT_TEMPLATE, viewParams.hasNext);
         params.put(MONTH_TEMPLATE, viewParams.firstDate.getMonth().getDisplayName(TextStyle.FULL, Locale.US));

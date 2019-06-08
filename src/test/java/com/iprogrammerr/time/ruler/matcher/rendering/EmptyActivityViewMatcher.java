@@ -1,5 +1,6 @@
 package com.iprogrammerr.time.ruler.matcher.rendering;
 
+import com.iprogrammerr.time.ruler.matcher.ViewsMismatchDescription;
 import com.iprogrammerr.time.ruler.model.date.DateTimeFormatting;
 import com.iprogrammerr.time.ruler.model.date.FormattedTimes;
 import com.iprogrammerr.time.ruler.model.rendering.ActiveTab;
@@ -49,8 +50,6 @@ public class EmptyActivityViewMatcher extends TypeSafeMatcher<ActivityViews> {
 
     @Override
     protected void describeMismatchSafely(ActivityViews item, Description mismatchDescription) {
-        mismatchDescription.appendText(item.empty(time, plan))
-            .appendText(System.lineSeparator()).appendText(" is not:")
-            .appendText(System.lineSeparator()).appendText(rendered(item.name));
+        new ViewsMismatchDescription(item.empty(time, plan), rendered(item.name)).append(mismatchDescription);
     }
 }

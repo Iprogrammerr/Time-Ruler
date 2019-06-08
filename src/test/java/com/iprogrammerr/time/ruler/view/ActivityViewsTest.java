@@ -12,7 +12,6 @@ import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateableTime;
 import com.iprogrammerr.time.ruler.view.rendering.ActivityViews;
 import org.hamcrest.MatcherAssert;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.time.Instant;
@@ -24,14 +23,8 @@ import java.util.function.Function;
 public class ActivityViewsTest {
 
     private final DateTimeFormatting formatting = new DateTimeFormatting();
-    private ViewsTemplates templates;
-    private ActivityViews views;
-
-    @Before
-    public void setup() {
-        templates = new TestTemplatesSetup().templates();
-        views = new ActivityViews(templates, formatting);
-    }
+    private final ViewsTemplates templates = new TestTemplatesSetup().templates();
+    private final ActivityViews views = new ActivityViews(templates, formatting);
 
     @Test
     public void returnsEmptyView() {

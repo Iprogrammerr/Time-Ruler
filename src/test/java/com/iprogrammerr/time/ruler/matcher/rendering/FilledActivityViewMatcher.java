@@ -1,5 +1,6 @@
 package com.iprogrammerr.time.ruler.matcher.rendering;
 
+import com.iprogrammerr.time.ruler.matcher.ViewsMismatchDescription;
 import com.iprogrammerr.time.ruler.model.activity.DescribedActivity;
 import com.iprogrammerr.time.ruler.model.date.DateTimeFormatting;
 import com.iprogrammerr.time.ruler.model.date.FormattedTimes;
@@ -31,6 +32,10 @@ public class FilledActivityViewMatcher extends TypeSafeMatcher<ActivityViews> {
 
     @Override
     protected boolean matchesSafely(ActivityViews item) {
+        return rendered(item.name).equals(item.filled(activity, timeTransformation));
+    }
+
+    private String rendered(String name) {
         Map<String, Object> params = new HashMap<>();
         boolean plan = !activity.activity.done;
         params.put(ActiveTab.KEY, ActiveTab.planHistory(plan));
@@ -40,11 +45,17 @@ public class FilledActivityViewMatcher extends TypeSafeMatcher<ActivityViews> {
             timeTransformation.apply(activity.activity.endDate));
         times.put(params);
         params.put(ActivityViews.DESCRIPTION_TEMPLATE, activity.description);
-        return templates.rendered(item.name, params).equals(item.filled(activity, timeTransformation));
+        return templates.rendered(name, params);
     }
 
     @Override
     public void describeTo(Description description) {
         description.appendText(getClass().getSimpleName());
+    }
+
+    @Override
+    protected void describeMismatchSafely(ActivityViews item, Description mismatchDescription) {
+        new ViewsMismatchDescription(item.filled(activity, timeTransformation), rendered(item.name))
+            .append(mismatchDescription);
     }
 }

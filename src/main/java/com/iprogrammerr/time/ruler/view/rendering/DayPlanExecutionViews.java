@@ -15,12 +15,12 @@ import java.util.function.Function;
 
 public class DayPlanExecutionViews {
 
-    private static final String DATE_TEMPLATE = "firstDate";
-    private static final String HISTORY_TEMPLATE = "history";
-    private static final String ACTIVITIES_TEMPLATE = "activities";
+    public static final String DATE_TEMPLATE = "firstDate";
+    public static final String HISTORY_TEMPLATE = "history";
+    public static final String ACTIVITIES_TEMPLATE = "activities";
+    public final String name;
     private final ViewsTemplates templates;
     private final DateTimeFormatting formatting;
-    private final String name;
 
     public DayPlanExecutionViews(ViewsTemplates templates, DateTimeFormatting formatting, String name) {
         this.templates = templates;
@@ -32,9 +32,10 @@ public class DayPlanExecutionViews {
         this(templates, formatting, "day-plan-execution");
     }
 
-    public String view(Instant date, boolean history, List<Activity> activities, Function<Long, Instant> timeTransformation) {
+    public String view(Instant date, boolean history, List<Activity> activities,
+        Function<Long, Instant> timeTransformation) {
         Map<String, Object> params = new HashMap<>();
-        params.put(ActiveTab.KEY, history ? ActiveTab.HISTORY : ActiveTab.TODAY);
+        params.put(ActiveTab.KEY, ActiveTab.planHistory(!history));
         params.put(DATE_TEMPLATE, formatting.date(date));
         params.put(HISTORY_TEMPLATE, history);
         List<DayActivity> viewActivities = new ArrayList<>();

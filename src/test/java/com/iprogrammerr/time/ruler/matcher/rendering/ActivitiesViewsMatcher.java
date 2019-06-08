@@ -1,5 +1,6 @@
 package com.iprogrammerr.time.ruler.matcher.rendering;
 
+import com.iprogrammerr.time.ruler.matcher.ViewsMismatchDescription;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
 import com.iprogrammerr.time.ruler.model.date.DateTimeFormatting;
 import com.iprogrammerr.time.ruler.model.rendering.ActiveTab;
@@ -48,27 +49,31 @@ public class ActivitiesViewsMatcher extends TypeSafeMatcher<ActivitiesViews> {
 
     @Override
     protected boolean matchesSafely(ActivitiesViews item) {
-        boolean matched;
-        try {
-            Map<String, Object> params = new HashMap<>();
-            params.put(ActiveTab.KEY, ActiveTab.planHistory(plan));
-            params.put(ActivitiesViews.PATTERN_TEMPLATE, pattern);
-            params.put(ActivitiesViews.CURRENT_PAGE_TEMPLATE, currentPage);
-            List<FoundActivity> viewActivities = new ArrayList<>(activities.size());
-            activities.forEach(a -> viewActivities.add(new FoundActivity(a, formatting, dateTransformation)));
-            params.put(ActivitiesViews.ACTIVITIES_TEMPLATE, viewActivities);
-            params.put(ActivitiesViews.PAGES_TEMPLATE, pages);
-            matched = templates.rendered(item.name, params).equals(item.view(plan, pattern, currentPage,
-                pages, activities, dateTransformation));
-        } catch (Exception e) {
-            e.printStackTrace();
-            matched = false;
-        }
-        return matched;
+        return rendered(item.name).equals(item.view(plan, pattern, currentPage, pages,
+            activities, dateTransformation));
+    }
+
+    private String rendered(String name) {
+        Map<String, Object> params = new HashMap<>();
+        params.put(ActiveTab.KEY, ActiveTab.planHistory(plan));
+        params.put(ActivitiesViews.PATTERN_TEMPLATE, pattern);
+        params.put(ActivitiesViews.CURRENT_PAGE_TEMPLATE, currentPage);
+        List<FoundActivity> viewActivities = new ArrayList<>(activities.size());
+        activities.forEach(a -> viewActivities.add(new FoundActivity(a, formatting, dateTransformation)));
+        params.put(ActivitiesViews.ACTIVITIES_TEMPLATE, viewActivities);
+        params.put(ActivitiesViews.PAGES_TEMPLATE, pages);
+        return templates.rendered(name, params);
     }
 
     @Override
     public void describeTo(Description description) {
         description.appendText(getClass().getSimpleName());
+    }
+
+    @Override
+    protected void describeMismatchSafely(ActivitiesViews item, Description mismatchDescription) {
+        String actual = item.view(plan, pattern, currentPage, pages, activities, dateTransformation);
+        String expected = rendered(item.name);
+        new ViewsMismatchDescription(actual, expected).append(mismatchDescription);
     }
 }
