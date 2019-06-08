@@ -11,9 +11,9 @@ import java.util.Map;
 
 public class ErrorViews {
 
+    public final String name;
     private final ViewsTemplates templates;
     private final ErrorsTranslation translation;
-    private final String name;
 
     public ErrorViews(ViewsTemplates templates, ErrorsTranslation translation, String name) {
         this.templates = templates;

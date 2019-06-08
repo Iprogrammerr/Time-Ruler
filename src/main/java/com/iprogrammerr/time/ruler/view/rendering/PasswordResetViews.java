@@ -9,9 +9,9 @@ import java.util.Map;
 
 public class PasswordResetViews {
 
+    public final String emailSendName;
+    public final String changePasswordName;
     private final ViewsTemplates templates;
-    private final String emailSendName;
-    private final String changePasswordName;
 
     public PasswordResetViews(ViewsTemplates templates, String emailSendName, String changePasswordName) {
         this.templates = templates;

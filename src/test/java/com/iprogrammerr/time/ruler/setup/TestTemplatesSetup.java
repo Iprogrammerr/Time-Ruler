@@ -26,10 +26,14 @@ public class TestTemplatesSetup {
         FileTemplateResolver resolver = new FileTemplateResolver();
         resolver.setPrefix(root + File.separator);
         engine.setTemplateResolver(resolver);
+        engine.setMessageResolver(messages());
+        return engine;
+    }
+
+    public Messages messages() {
         Messages messages = new Messages();
         messages.init(messagesResource);
-        engine.setMessageResolver(messages);
-        return engine;
+        return messages;
     }
 
     public ViewsTemplates templates() {
