@@ -37,6 +37,25 @@ public class RandomStrings {
         return random(random.nextInt(MAX_RANDOM_SIZE));
     }
 
+    public String nonAlphabetic(int size) {
+        int upperStart = 1 + ALPHABETIC_LOWER_CASE_MAX;
+        char[] chars = new char[size];
+        for (int i = 0; i < size; i++) {
+            char c;
+            if (random.nextBoolean()) {
+                c = (char) random.nextInt(ALPHABETIC_LOWER_CASE_MIN);
+            } else {
+                c = (char) (upperStart + (random.nextInt(MAX_ASCII - ALPHABETIC_LOWER_CASE_MAX)));
+            }
+            chars[i] = c;
+        }
+        return new String(chars);
+    }
+
+    public String nonAlphabetic() {
+        return nonAlphabetic(1 + random.nextInt(MAX_RANDOM_SIZE));
+    }
+
     public String alphabetic(int size) {
         int range = 1 + ALPHABETIC_LOWER_CASE_MAX - ALPHABETIC_LOWER_CASE_MIN;
         char[] chars = new char[size];

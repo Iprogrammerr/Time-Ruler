@@ -10,10 +10,10 @@ import java.util.Map;
 
 public class SigningInViews {
 
+    public final String name;
+    public final String signUpUrl;
+    public final String passwordResetUrl;
     private final ViewsTemplates templates;
-    private final String name;
-    private final String signUpUrl;
-    private final String passwordResetUrl;
 
     public SigningInViews(ViewsTemplates templates, String name, String signUpUrl, String passwordResetUrl) {
         this.templates = templates;
@@ -51,17 +51,16 @@ public class SigningInViews {
         return view;
     }
 
-    private String invalidView(String invalidEmailName, boolean invalidPassword) {
+    private String invalidView(String emailName, boolean invalidPassword) {
         Map<String, Object> params = new HashMap<>();
-        if (!invalidEmailName.isEmpty()) {
-            params.put(TemplatesParams.EMAIL_NAME, invalidEmailName);
-            boolean valid = invalidEmailName.contains("@") ?
-                new ValidateableEmail(invalidEmailName).isValid() :
-                new ValidateableName(invalidEmailName).isValid();
-            params.put(TemplatesParams.INVALID_EMAIL_NAME, valid);
+        params.put(TemplatesParams.EMAIL_NAME, emailName);
+        boolean invalidEmailName;
+        if (emailName.contains("@")) {
+            invalidEmailName = !new ValidateableEmail(emailName).isValid();
         } else {
-            params.put(TemplatesParams.INVALID_EMAIL_NAME, false);
+            invalidEmailName = !new ValidateableName(emailName).isValid();
         }
+        params.put(TemplatesParams.INVALID_EMAIL_NAME, invalidEmailName);
         params.put(TemplatesParams.INVALID_PASSWORD, invalidPassword);
         return withUrls(params);
     }
