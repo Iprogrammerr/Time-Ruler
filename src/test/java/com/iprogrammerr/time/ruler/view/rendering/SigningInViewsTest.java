@@ -19,7 +19,7 @@ public class SigningInViewsTest {
     private static final String AT = "@";
     private final ViewsTemplates templates = new TestTemplatesSetup().templates();
     private final RandomStrings strings = new RandomStrings();
-    private final SigningInViews views = new SigningInViews(templates, strings.random(), strings.random());
+    private final SigningInViews views = new SigningInViews(templates, strings.alphanumeric(), strings.alphanumeric());
 
     @Test
     public void returnsValidView() {

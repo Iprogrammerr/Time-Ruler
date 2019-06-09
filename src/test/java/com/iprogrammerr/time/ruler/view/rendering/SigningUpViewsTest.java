@@ -17,7 +17,7 @@ public class SigningUpViewsTest {
 
     private final ViewsTemplates templates = new TestTemplatesSetup().templates();
     private final RandomStrings strings = new RandomStrings();
-    private final SigningUpViews views = new SigningUpViews(templates, strings.random());
+    private final SigningUpViews views = new SigningUpViews(templates, strings.alphanumeric());
 
     @Test
     public void returnsView() {
