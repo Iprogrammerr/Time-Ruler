@@ -4,28 +4,46 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset="UTF-8">
-    <title th:text="${title}"></title>
+    <title th:text="#{activityTitle}"></title>
     <link rel="stylesheet" type="text/css" href="/style.css" />
+    <style>
+        @media screen and (max-width: 500px) {
+
+            .input-description {
+                width: 75%;
+            }
+        }
+
+        @media screen and (min-width: 1000px) {
+
+            .input-description {
+                width: 30%;
+            }
+        }
+    </style>
 </head>
 
-<body class="marginless">
+<body class="gradient">
     <div th:replace="fragments.html :: tab"></div>
     <div class="centered-h">
         <form>
             <p th:text="#{name}"></p>
-            <p th:text="#{invalidName}" th:class="${invalidName}? error : error-hidden"></p>
+            <p id="invalidName" th:text="#{invalidName}" th:class="${invalidName}? error : error-hidden"></p>
             <input type="text" name="name" th:value="${name}"></input>
             <p th:text="#{startTime}"></p>
             <p th:text="${invalidStartTime}? #{invalidTime}" class="error"></p>
-            <input type="time" name="start" th:value="${start}"></input>
+            <div th:replace="fragments.html :: time-picker(startTimePicker, ${startHour}, ${startMinute})"></div>
+            <input type="hidden" name="start" th:value="${start}"></input>
             <p th:text="#{endTime}"></p>
             <p th:text="${invalidEndTime}? #{invalidTime}" class="error"></p>
-            <input type="time" name="end" th:value="${end}"></input>
+            <div th:replace="fragments.html :: time-picker(endTimePicker, ${endHour}, ${endMinute})"></div>
+            <input type="hidden" name="end" th:value="${end}"></input>
             <p th:text="#{description}"></p>
-            <textarea name="description" th:text="${description}"></textarea>
-            </br>
+            <textarea class="input-description" name="description" th:text="${description}"
+                th:placeholder="#{descriptionPlaceholder}"></textarea>
+            <div></div>
             <input type="hidden" name="done" th:value="!${plan}"></input>
-            <input id="save" type="submit" value="Save"></input>
+            <input id="save" type="submit" th:value="#{save}"></input>
         </form>
         <button id="recent" th:text="#{fromTemplate}"></button>
     </div>

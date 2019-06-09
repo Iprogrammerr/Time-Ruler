@@ -56,7 +56,7 @@ public class ActivitiesViewsMatcher extends TypeSafeMatcher<ActivitiesViews> {
 
     private String rendered(String name) {
         Map<String, Object> params = new HashMap<>();
-        params.put(ActiveTab.KEY, ActiveTab.planHistory(plan));
+        params.put(TemplatesParams.ACTIVE_TAB, ActiveTab.planHistory(plan));
         params.put(TemplatesParams.PATTERN, pattern);
         params.put(TemplatesParams.CURRENT_PAGE, currentPage);
         List<FoundActivity> viewActivities = new ArrayList<>(activities.size());

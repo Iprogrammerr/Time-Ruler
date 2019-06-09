@@ -32,7 +32,7 @@ public class ActivityViews {
 
     public String empty(ZonedDateTime time, boolean plan) {
         Map<String, Object> params = new HashMap<>();
-        params.put(ActiveTab.KEY, ActiveTab.planHistory(plan));
+        params.put(TemplatesParams.ACTIVE_TAB, ActiveTab.planHistory(plan));
         params.put(TemplatesParams.PLAN, plan);
         params.put(TemplatesParams.NAME, "");
         formatting.times(time).put(params);
@@ -43,7 +43,7 @@ public class ActivityViews {
     public String withErrors(ZonedDateTime time, boolean plan, ValidateableName name, ValidateableTime startTime,
         ValidateableTime endTime, String description) {
         Map<String, Object> params = new HashMap<>();
-        params.put(ActiveTab.KEY, ActiveTab.planHistory(plan));
+        params.put(TemplatesParams.ACTIVE_TAB, ActiveTab.planHistory(plan));
         params.put(TemplatesParams.PLAN, plan);
         params.put(TemplatesParams.INVALID_NAME, !name.isValid());
         params.put(TemplatesParams.NAME, name.value());
@@ -63,7 +63,7 @@ public class ActivityViews {
     public String filled(DescribedActivity activity, Function<Long, ZonedDateTime> timeTransformation) {
         Map<String, Object> params = new HashMap<>();
         boolean plan = !activity.activity.done;
-        params.put(ActiveTab.KEY, ActiveTab.planHistory(plan));
+        params.put(TemplatesParams.ACTIVE_TAB, ActiveTab.planHistory(plan));
         params.put(TemplatesParams.PLAN, plan);
         params.put(TemplatesParams.NAME, activity.activity.name);
         FormattedTimes times = formatting.times(timeTransformation.apply(activity.activity.startDate),

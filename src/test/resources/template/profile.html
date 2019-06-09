@@ -8,8 +8,9 @@
     <link rel="stylesheet" type="text/css" href="/style.css" />
 </head>
 
-<body class="marginless">
+<body class="gradient">
     <div th:replace="fragments.html :: tab"></div>
+    <div th:replace="fragments.html :: confirmation"></div>
     <div class="centered-h">
         <form id="emailForm">
             <h1 th:text="#{email}"></h1>
@@ -17,7 +18,7 @@
             <p id="invalidEmail" th:class="${invalidEmail} ? error : error-hidden" th:text="#{invalidEmail}"></p>
             <p id="usedEmail" th:class="${usedEmail} ? error : error-hidden" th:text="#{usedEmail}"></p>
             <input type="email" name="email" th:value="${email}"></input>
-            <input id="saveEmail" type="submit" th:value="#{save}" class="main"></input>
+            <input id="saveEmail" type="submit" th:value="#{save}"></input>
         </form>
         <form id="nameForm">
             <h1 th:text="#{name}"></h1>
@@ -25,9 +26,9 @@
             <p id="invalidName" th:class="${invalidName} ? error : error-hidden" th:text="#{invalidName}"></p>
             <p id="usedName" th:class="${usedName} ? error : error-hidden" th:text="#{usedName}"></p>
             <input type="text" name="name" th:value="${name}"></input>
-            <input id="saveName" type="submit" th:value="#{save}" class="main"></input>
+            <input id="saveName" type="submit" th:value="#{save}"></input>
         </form>
-        <button id="changePassword" class="main" th:text="#{changePassword}"></button>
+        <button id="changePassword" th:text="#{changePassword}"></button>
         <form id="passwordForm" th:class="!${showPasswords} ? hidden">
             <p th:text="#{oldPassword}"></p>
             <p id="invalidOldPassword" th:class="${invalidOldPassword} ? error : error-hidden"
@@ -39,11 +40,11 @@
             <p id="invalidNewPassword" th:class="${invalidNewPassword} ? error : error-hidden"
                 th:text="#{invalidPassword}"></p>
             <input type="password" name="newPassword"></input>
-            </br>
-            <input id="savePassword" type="submit" th:value="#{save}" class="main"></input>
+            <div></div>
+            <input id="savePassword" type="submit" th:value="#{save}"></input>
         </form>
         </br>
-        <button id="logout" class="main" th:text="#{logout}"></button>
+        <button id="logout" th:text="#{logout}"></button>
     </div>
 </body>
 <script src="/profile.js" type="module"></script>

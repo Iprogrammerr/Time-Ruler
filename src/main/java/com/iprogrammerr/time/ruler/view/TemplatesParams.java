@@ -51,4 +51,5 @@ public class TemplatesParams {
     public static final String SIGN_IN_URL = "signInUrl";
     public static final String EMAIL_TAKEN = "emailTaken";
     public static final String NAME_TAKEN = "nameTaken";
+    public static final String ACTIVE_TAB = "activeTab";
 }

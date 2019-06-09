@@ -8,13 +8,15 @@
     <link rel="stylesheet" type="text/css" href="/style.css" />
 </head>
 
-<!--TODO style it-->
-<body>
-    <h1 th:text="#{errorTitle}"></h1>
-    <p th:text="${error}"></p>
-    <button id="back" th:text="#{back}"></button>
+<body class="gradient">
+    <div class="centered-with-padding">
+        <h1 th:text="#{errorTitle}"></h1>
+        <p th:text="${error}"></p>
+        <button id="back" th:text="#{back}"></button>
+    </div>
 </body>
 <script>
-document.getElementById("back").onclick = () => history.back();
+    document.getElementById("back").onclick = () => history.back();
 </script>
+
 </html>

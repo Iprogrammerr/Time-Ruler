@@ -39,7 +39,7 @@ public class FilledActivityViewMatcher extends TypeSafeMatcher<ActivityViews> {
     private String rendered(String name) {
         Map<String, Object> params = new HashMap<>();
         boolean plan = !activity.activity.done;
-        params.put(ActiveTab.KEY, ActiveTab.planHistory(plan));
+        params.put(TemplatesParams.ACTIVE_TAB, ActiveTab.planHistory(plan));
         params.put(TemplatesParams.PLAN, plan);
         params.put(TemplatesParams.NAME, activity.activity.name);
         FormattedTimes times = formatting.times(timeTransformation.apply(activity.activity.startDate),

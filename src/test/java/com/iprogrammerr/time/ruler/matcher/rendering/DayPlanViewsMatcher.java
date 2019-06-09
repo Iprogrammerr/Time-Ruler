@@ -42,7 +42,7 @@ public class DayPlanViewsMatcher extends TypeSafeMatcher<DayPlanViews> {
 
     private String rendered(String name) {
         Map<String, Object> params = new HashMap<>();
-        params.put(ActiveTab.KEY, ActiveTab.PLAN);
+        params.put(TemplatesParams.ACTIVE_TAB, ActiveTab.PLAN);
         params.put(TemplatesParams.DATE, formatting.date(date));
         List<DayActivity> viewActivities = new ArrayList<>(activities.size());
         activities.forEach(a -> viewActivities.add(new DayActivity(a, formatting, timeTransformation)));

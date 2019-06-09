@@ -6,20 +6,16 @@
     <meta charset="UTF-8">
     <title th:text="#{signIn}"></title>
     <link rel="stylesheet" text="text/css" href="style.css" />
-    <!--TODO is this a good idea?-->
-    <style>
-        input {
-            margin-bottom: 4px;
-        }
-    </style>
 </head>
 
 <body>
+    <div th:class="${signOut} ? background-animated : background"></div>
     <div class="centered-with-padding">
+        <h1 th:if="${!activation and !passwordChange and !signOut}" th:text="#{appName}"></h1>
+        <h1 th:if="${activation}" th:text="#{activationCongratulations}"></h1>
+        <h1 th:if="${passwordChange}" th:text="#{useNewPassword}"></h1>
+        <h1 th:if="${signOut}" th:text="#{signOutFarewell}"></h1>
         <form>
-            <h1 th:if="${activation}" th:text="#{activationCongratulations}"></h1>
-            <h1 th:if="${passwordChange}" th:text="#{useNewPassword}"></h1>
-            <h1 th:if="${signOut}" th:text="#{signOutFarewell}"></h1>
             <p th:text="#{emailName}"></p>
             <p th:class="${invalidEmailName} ? error : error-hidden" id="emailNameError" th:text="#{invalidEmailName}">
             </p>
@@ -34,7 +30,7 @@
             <p th:class="${notUserPassword} ? error: error-hidden" id="notUserPassword" th:text="#{notUserPassword}">
             </p>
             <input type="password" name="password" th:value="${password}"></input>
-            </br>
+            <div></div>
             <input id="signIn" type="submit" th:value="#{signIn}"></input>
         </form>
         <div>

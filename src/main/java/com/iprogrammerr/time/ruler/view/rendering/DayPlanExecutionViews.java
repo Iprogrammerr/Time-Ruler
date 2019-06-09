@@ -33,7 +33,7 @@ public class DayPlanExecutionViews {
     public String view(Instant date, boolean history, List<Activity> activities,
         Function<Long, Instant> timeTransformation) {
         Map<String, Object> params = new HashMap<>();
-        params.put(ActiveTab.KEY, ActiveTab.planHistory(!history));
+        params.put(TemplatesParams.ACTIVE_TAB, ActiveTab.planHistory(!history));
         params.put(TemplatesParams.DATE, formatting.date(date));
         params.put(TemplatesParams.HISTORY, history);
         List<DayActivity> viewActivities = new ArrayList<>();

@@ -34,7 +34,7 @@ public class ActivitiesViews {
     public String view(boolean plan, String pattern, int currentPage, List<Page> pages, List<Activity> activities,
         Function<Long, Instant> dateTransformation) {
         Map<String, Object> params = new HashMap<>();
-        params.put(ActiveTab.KEY, ActiveTab.planHistory(plan));
+        params.put(TemplatesParams.ACTIVE_TAB, ActiveTab.planHistory(plan));
         params.put(TemplatesParams.PATTERN, pattern);
         params.put(TemplatesParams.CURRENT_PAGE, currentPage);
         params.put(TemplatesParams.PAGES, pages);

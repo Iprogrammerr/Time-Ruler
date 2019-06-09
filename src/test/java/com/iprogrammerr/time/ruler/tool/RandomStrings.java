@@ -5,6 +5,7 @@ import java.util.Random;
 public class RandomStrings {
 
     private static final int MAX_RANDOM_SIZE = 10_000;
+    private static final int MAX_ASCII = 256;
     private static final int ALPHABETIC_LOWER_CASE_MIN = 97;
     private static final int ALPHABETIC_LOWER_CASE_MAX = 122;
     private static final int ALPHABETIC_UPPER_CASE_MIN = 65;
@@ -21,6 +22,19 @@ public class RandomStrings {
 
     public RandomStrings() {
         this(new Random());
+    }
+
+    public String random(int size) {
+        int range = 1 + MAX_ASCII;
+        char[] chars = new char[size];
+        for (int i = 0; i < size; i++) {
+            chars[i] = (char) (random.nextInt(range));
+        }
+        return new String(chars);
+    }
+
+    public String random() {
+        return random(random.nextInt(MAX_RANDOM_SIZE));
     }
 
     public String alphabetic(int size) {

@@ -38,7 +38,7 @@ public class ProfileViews {
     }
 
     private String withActiveTabSet(Map<String, Object> params) {
-        params.put(ActiveTab.KEY, ActiveTab.PROFILE);
+        params.put(TemplatesParams.ACTIVE_TAB, ActiveTab.PROFILE);
         return templates.rendered(name, params);
     }
 

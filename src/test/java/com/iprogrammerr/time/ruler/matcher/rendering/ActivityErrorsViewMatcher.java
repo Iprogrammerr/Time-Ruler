@@ -45,7 +45,7 @@ public class ActivityErrorsViewMatcher extends TypeSafeMatcher<ActivityViews> {
 
     private String rendered(String viewName) {
         Map<String, Object> params = new HashMap<>();
-        params.put(ActiveTab.KEY, ActiveTab.planHistory(plan));
+        params.put(TemplatesParams.ACTIVE_TAB, ActiveTab.planHistory(plan));
         params.put(TemplatesParams.PLAN, plan);
         params.put(TemplatesParams.INVALID_NAME, !name.isValid());
         params.put(TemplatesParams.NAME, name.value());

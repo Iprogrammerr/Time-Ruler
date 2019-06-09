@@ -37,7 +37,7 @@ public class EmptyActivityViewMatcher extends TypeSafeMatcher<ActivityViews> {
 
     private String rendered(String name) {
         Map<String, Object> params = new HashMap<>();
-        params.put(ActiveTab.KEY, ActiveTab.planHistory(plan));
+        params.put(TemplatesParams.ACTIVE_TAB, ActiveTab.planHistory(plan));
         params.put(TemplatesParams.PLAN, plan);
         FormattedTimes times = formatting.times(time);
         times.put(params);

@@ -6,21 +6,14 @@
     <meta charset="UTF-8">
     <title th:text="${history}? #{historyDayTitle} : #{todayTitle}"></title>
     <link rel="stylesheet" type="text/css" href="/style.css" />
-    <style>
-        .yesterday:hover {
-            font-size: 1.5em;
-            transition: 1s;
-            cursor: pointer;
-        }
-    </style>
 </head>
 
-<body class="marginless" th:attr="data-confirmation=#{confirmation}, data-done-confirmation=#{doneConfirmation},
+<body class="gradient" th:attr="data-confirmation=#{confirmation}, data-done-confirmation=#{doneConfirmation},
     data-not-done-confirmation=#{notDoneConfirmation}">
     <div th:replace="fragments.html :: tab"></div>
     <div th:replace="fragments.html :: confirmation"></div>
     <div class="centered-h">
-        <h1 th:text=${firstDate}></h1>
+        <h1 th:text=${date}></h1>
         <p th:class="!${activities.isEmpty()} ? hidden" th:text="#{emptyPlanMessage}"></p>
         <ul class="activities">
             <li th:each="a : ${activities}" th:data-id="${a.id}">
