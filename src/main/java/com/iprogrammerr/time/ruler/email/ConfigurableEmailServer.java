@@ -16,27 +16,28 @@ public class ConfigurableEmailServer implements EmailServer {
 
     private static final String CONTENT_TYPE = "text/html";
     private final String admin;
-    private final String password;
     private final Properties properties;
+    private final Authenticator authenticator;
 
     public ConfigurableEmailServer(String admin, String password, String host, int port) {
         this.admin = admin;
-        this.password = password;
-        this.properties = new Properties();
-        properties.put("mail.smtp.auth", true);
-        properties.put("mail.smtp.starttls.enable", true);
-        properties.put("mail.smtp.host", host);
-        properties.put("mail.stmp.port", String.valueOf(port));
-    }
-
-    @Override
-    public void send(Email email) {
-        Session session = Session.getInstance(properties, new Authenticator() {
+        this.authenticator = new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(admin, password);
             }
-        });
+        };
+        this.properties = new Properties();
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.ssl.enable", "true");
+        properties.put("mail.smtp.host", host);
+        properties.put("mail.smtp.port", String.valueOf(port));
+    }
+
+    @Override
+    public void send(Email email) {
+        Session session = Session.getInstance(properties, authenticator);
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(admin));
