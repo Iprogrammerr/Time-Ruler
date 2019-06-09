@@ -1,4 +1,4 @@
-package com.iprogrammerr.time.ruler.view;
+package com.iprogrammerr.time.ruler.view.rendering;
 
 import com.iprogrammerr.time.ruler.matcher.rendering.ActivitiesViewsMatcher;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
@@ -7,7 +7,7 @@ import com.iprogrammerr.time.ruler.model.rendering.Page;
 import com.iprogrammerr.time.ruler.setup.TestTemplatesSetup;
 import com.iprogrammerr.time.ruler.tool.RandomActivities;
 import com.iprogrammerr.time.ruler.tool.RandomStrings;
-import com.iprogrammerr.time.ruler.view.rendering.ActivitiesViews;
+import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;

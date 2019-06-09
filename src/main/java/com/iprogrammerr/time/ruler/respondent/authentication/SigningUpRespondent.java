@@ -41,22 +41,22 @@ public class SigningUpRespondent {
     }
 
     public HtmlResponse signUpPage() {
-        return new HtmlResponse(views.valid());
+        return new HtmlResponse(views.view());
     }
 
     public HtmlResponse invalidSignUpPage(String email, String name, boolean emailTaken, boolean nameTaken,
         boolean invalidPassword) {
         String view;
         if (emailTaken || nameTaken) {
-            view = views.taken(email, name, emailTaken, nameTaken);
+            view = views.takenView(email, name, emailTaken, nameTaken);
         } else {
-            view = views.invalid(new ValidateableEmail(email), new ValidateableName(name), invalidPassword);
+            view = views.invalidView(new ValidateableEmail(email), new ValidateableName(name), invalidPassword);
         }
         return new HtmlResponse(view);
     }
 
     public HtmlResponse signUpSuccessPage() {
-        return new HtmlResponse(views.success());
+        return new HtmlResponse(views.successView());
     }
 
     public Redirection signUp(String email, String name, String password) {

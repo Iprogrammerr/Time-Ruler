@@ -1,8 +1,10 @@
-package com.iprogrammerr.time.ruler.view;
+package com.iprogrammerr.time.ruler.view.rendering;
 
 import com.iprogrammerr.time.ruler.model.error.ErrorCode;
 import com.iprogrammerr.time.ruler.model.error.ErrorsTranslation;
 import com.iprogrammerr.time.ruler.setup.TestTemplatesSetup;
+import com.iprogrammerr.time.ruler.view.TemplatesParams;
+import com.iprogrammerr.time.ruler.view.ViewsTemplates;
 import com.iprogrammerr.time.ruler.view.rendering.ErrorViews;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;

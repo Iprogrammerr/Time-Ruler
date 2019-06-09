@@ -21,7 +21,7 @@ public class HtmlViewsTemplatesTest {
     private final TestTemplatesSetup setup = new TestTemplatesSetup();
 
     @Test
-    public void rendersView() {
+    public void rendersWithParamsView() {
         RandomStrings randomStrings = new RandomStrings();
         Map<String, Object> params = new HashMap<>();
         params.put(TEMPLATE_TITLE, randomStrings.alphabetic(TEMPLATE_TITLE_SIZE));
@@ -31,7 +31,18 @@ public class HtmlViewsTemplatesTest {
         TemplateEngine engine = setup.engine();
         String rendered = engine.process(TEMPLATE + ".html", context);
         HtmlViewsTemplates viewsTemplates = new HtmlViewsTemplates(engine);
-        MatcherAssert.assertThat("Rendered templates should be equal", viewsTemplates.rendered(TEMPLATE, params),
+        MatcherAssert.assertThat("Does not render with params view", viewsTemplates.rendered(TEMPLATE, params),
+            Matchers.equalTo(rendered));
+    }
+
+    @Test
+    public void rendersView() {
+        Context context = new Context();
+        context.setVariables(new HashMap<>());
+        TemplateEngine engine = setup.engine();
+        String rendered = engine.process(TEMPLATE + ".html", context);
+        HtmlViewsTemplates viewsTemplates = new HtmlViewsTemplates(engine);
+        MatcherAssert.assertThat("Does not render view", viewsTemplates.rendered(TEMPLATE),
             Matchers.equalTo(rendered));
     }
 
