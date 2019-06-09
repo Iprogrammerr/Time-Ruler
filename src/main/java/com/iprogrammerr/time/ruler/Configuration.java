@@ -6,20 +6,20 @@ import java.util.Properties;
 
 public class Configuration {
 
-    private static final String PORT = "port";
-    private static final String COMPILED_RESOURCES = "compiledResources";
-    private static final String DATABASE_USER = "database.user";
-    private static final String DATABASE_PASSWORD = "database.password";
-    private static final String JDBC_URL = "jdbc-url";
-    private static final String ADMIN_EMAIL = "admin.email";
-    private static final String ADMIN_PASSWORD = "admin.password";
-    private static final String SMTP_HOST = "smtp.host";
-    private static final String SMTP_PORT = "smtp.port";
-    private static final String EMAILS_LINKS_BASE = "emailsLinksBase";
-    private static final String SIGN_UP_EMAIL_SUBJECT = "signUpEmailSubject";
-    private static final String SIGN_UP_EMAIL_TEMPLATE = "signUpEmailTemplate";
-    private static final String PASSWORD_RESET_EMAIL_SUBJECT = "passwordResetEmailSubject";
-    private static final String PASSWORD_RESET_EMAIL_TEMPLATE = "passwordResetEmailTemplate";
+    public static final String PORT = "port";
+    public static final String COMPILED_RESOURCES = "compiledResources";
+    public static final String DATABASE_USER = "database.user";
+    public static final String DATABASE_PASSWORD = "database.password";
+    public static final String JDBC_URL = "jdbc-url";
+    public static final String ADMIN_EMAIL = "admin.email";
+    public static final String ADMIN_PASSWORD = "admin.password";
+    public static final String SMTP_HOST = "smtp.host";
+    public static final String SMTP_PORT = "smtp.port";
+    public static final String EMAILS_LINKS_BASE = "emailsLinksBase";
+    public static final String SIGN_UP_EMAIL_SUBJECT = "signUpEmailSubject";
+    public static final String SIGN_UP_EMAIL_TEMPLATE = "signUpEmailTemplate";
+    public static final String PASSWORD_RESET_EMAIL_SUBJECT = "passwordResetEmailSubject";
+    public static final String PASSWORD_RESET_EMAIL_TEMPLATE = "passwordResetEmailTemplate";
     private final Properties properties;
 
     public Configuration(Properties properties) {
@@ -27,7 +27,7 @@ public class Configuration {
     }
 
     public static Configuration fromCmd(String... args) {
-        try (InputStream is = args.length == 0 ? App.class.getResourceAsStream("/application.properties")
+        try (InputStream is = args.length == 0 ? Configuration.class.getResourceAsStream("/application.properties")
             : new FileInputStream(args[0])) {
             Properties properties = new Properties();
             properties.load(is);
@@ -45,9 +45,13 @@ public class Configuration {
         return Integer.parseInt(notNull(PORT));
     }
 
+    public boolean useCompiledResources() {
+        return Boolean.parseBoolean(notNull(COMPILED_RESOURCES));
+    }
+
     public String resourcesPath() {
         String path;
-        if (Boolean.parseBoolean(notNull(COMPILED_RESOURCES))) {
+        if (useCompiledResources()) {
             path = Configuration.class.getResource("/").getPath();
         } else {
             String classPath = Configuration.class.getResource(".").getPath();
@@ -118,5 +122,12 @@ public class Configuration {
             throw new RuntimeException(String.format("There is no property associated with %s value", key));
         }
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return "Configuration{" +
+            "properties=" + properties +
+            '}';
     }
 }

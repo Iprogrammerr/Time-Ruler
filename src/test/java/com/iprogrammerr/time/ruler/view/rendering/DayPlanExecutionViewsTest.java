@@ -24,11 +24,13 @@ public class DayPlanExecutionViewsTest {
     private final ViewsTemplates templates = new TestTemplatesSetup().templates();
     private final DayPlanExecutionViews views = new DayPlanExecutionViews(templates, formatting);
 
-
     @Test
-    public void returnsView() {
+    public void returnsHistoryView() {
+        returnsView(true);
+    }
+
+    private void returnsView(boolean history) {
         Random random = new Random();
-        boolean history = random.nextBoolean();
         RandomActivities randomActivities = new RandomActivities();
         List<Activity> activities = new ArrayList<>();
         for (int i = 0; i < random.nextInt(MAX_ACTIVITIES); i++) {
@@ -40,5 +42,10 @@ public class DayPlanExecutionViewsTest {
         MatcherAssert.assertThat("Does not return properly rendered view", views,
             new DayPlanExecutionViewsMatcher(templates, formatting, Instant.now(), history,
                 activities, timeTransformation));
+    }
+
+    @Test
+    public void returnsTodayView() {
+        returnsView(false);
     }
 }
