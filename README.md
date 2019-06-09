@@ -45,8 +45,6 @@ Path to configuration is optional, if not supplied src/main/resources/applicatio
 ```
 #application process port
 port=8080
-#whether or not to use compiled resources from src/main/resources. It should always be true in production environment
-compiledResources=false
 database.user=time_ruler
 database.password=time_ruler
 jdbc-url=jdbc:mysql://localhost:3306/time_ruler?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC

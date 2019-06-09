@@ -44,7 +44,7 @@ public class DayPlanExecutionViewsMatcher extends TypeSafeMatcher<DayPlanExecuti
 
     private String rendered(String name) {
         Map<String, Object> params = new HashMap<>();
-        params.put(TemplatesParams.ACTIVE_TAB, ActiveTab.planHistory(!history));
+        params.put(TemplatesParams.ACTIVE_TAB, history ? ActiveTab.HISTORY : ActiveTab.TODAY);
         params.put(TemplatesParams.DATE, formatting.date(date));
         params.put(TemplatesParams.HISTORY, history);
         List<DayActivity> viewActivities = new ArrayList<>();

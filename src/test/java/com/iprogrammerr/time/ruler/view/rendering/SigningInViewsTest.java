@@ -6,7 +6,6 @@ import com.iprogrammerr.time.ruler.validation.ValidateableEmail;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.view.TemplatesParams;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
-import com.iprogrammerr.time.ruler.view.rendering.SigningInViews;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -16,10 +15,11 @@ import java.util.Map;
 
 public class SigningInViewsTest {
 
+    private static final String URL = "www.example.com";
     private static final String AT = "@";
     private final ViewsTemplates templates = new TestTemplatesSetup().templates();
     private final RandomStrings strings = new RandomStrings();
-    private final SigningInViews views = new SigningInViews(templates, strings.alphanumeric(), strings.alphanumeric());
+    private final SigningInViews views = new SigningInViews(templates, URL, URL);
 
     @Test
     public void returnsValidView() {

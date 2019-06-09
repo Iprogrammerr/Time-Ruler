@@ -30,7 +30,6 @@ public class ConfigurableEmailServer implements EmailServer {
         this.properties = new Properties();
         properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.starttls.enable", "true");
-        properties.put("mail.smtp.ssl.enable", "true");
         properties.put("mail.smtp.host", host);
         properties.put("mail.smtp.port", String.valueOf(port));
     }

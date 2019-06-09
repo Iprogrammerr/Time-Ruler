@@ -11,7 +11,6 @@ import com.iprogrammerr.time.ruler.tool.RandomStrings;
 import com.iprogrammerr.time.ruler.validation.ValidateableName;
 import com.iprogrammerr.time.ruler.validation.ValidateableTime;
 import com.iprogrammerr.time.ruler.view.ViewsTemplates;
-import com.iprogrammerr.time.ruler.view.rendering.ActivityViews;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 

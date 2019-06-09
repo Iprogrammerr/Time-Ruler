@@ -15,9 +15,10 @@ import java.util.Map;
 
 public class SigningUpViewsTest {
 
+    private static final String URL = "www.example.com";
     private final ViewsTemplates templates = new TestTemplatesSetup().templates();
     private final RandomStrings strings = new RandomStrings();
-    private final SigningUpViews views = new SigningUpViews(templates, strings.alphanumeric());
+    private final SigningUpViews views = new SigningUpViews(templates, URL);
 
     @Test
     public void returnsView() {

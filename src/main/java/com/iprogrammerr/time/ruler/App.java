@@ -67,6 +67,8 @@ import com.zaxxer.hikari.HikariDataSource;
 import io.javalin.Javalin;
 import io.javalin.staticfiles.Location;
 import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
 
 import javax.sql.DataSource;
@@ -80,12 +82,19 @@ public class App {
 
     public static void main(String... args) throws Exception {
         Configuration configuration = Configuration.fromCmd(args);
-        File root = new File(configuration.resourcesPath());
+        String root = configuration.resourcesPath();
 
-        Javalin app = Javalin.create()
-            .enableStaticFiles(root.getPath() + File.separator + "css", Location.EXTERNAL)
-            .enableStaticFiles(root.getPath() + File.separator + "image", Location.EXTERNAL)
-            .enableStaticFiles(root.getPath() + File.separator + "js", Location.EXTERNAL);
+        Javalin app = Javalin.create();
+        if (root.isEmpty()) {
+            app.enableStaticFiles("css", Location.CLASSPATH)
+                .enableStaticFiles("image", Location.CLASSPATH)
+                .enableStaticFiles("js", Location.CLASSPATH);
+        } else {
+            File rootFile = new File(root);
+            app.enableStaticFiles(rootFile.getPath() + File.separator + "css", Location.EXTERNAL)
+                .enableStaticFiles(rootFile.getPath() + File.separator + "image", Location.EXTERNAL)
+                .enableStaticFiles(rootFile.getPath() + File.separator + "js", Location.EXTERNAL);
+        }
 
         DateFormat dateFormat = new SimpleDateFormat("E, dd.MM.yyyy", Locale.US);
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -101,9 +110,16 @@ public class App {
         ServerClientDates serverClientDates = new ServerClientDates();
 
         TemplateEngine engine = new TemplateEngine();
-        FileTemplateResolver resolver = new FileTemplateResolver();
-        resolver.setCacheable(false);
-        resolver.setPrefix(new File(root, "template").getPath() + File.separator);
+        AbstractConfigurableTemplateResolver resolver;
+        if (root.isEmpty()) {
+            resolver = new ClassLoaderTemplateResolver();
+            resolver.setCacheable(true);
+            resolver.setPrefix("template" + File.separator);
+        } else {
+            resolver = new FileTemplateResolver();
+            resolver.setCacheable(false);
+            resolver.setPrefix(new File(root, "template").getPath() + File.separator);
+        }
         engine.setTemplateResolver(resolver);
         Messages messages = new Messages();
         messages.init("messages.properties");

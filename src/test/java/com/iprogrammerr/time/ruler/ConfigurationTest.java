@@ -17,7 +17,6 @@ public class ConfigurationTest {
     public void setup() {
         properties = new Properties();
         properties.put(Configuration.PORT, "8080");
-        properties.put(Configuration.COMPILED_RESOURCES, "false");
         properties.put(Configuration.DATABASE_USER, "time_ruler");
         properties.put(Configuration.DATABASE_PASSWORD, "time_ruler");
         properties.put(Configuration.JDBC_URL, "jdbc:h2:mem:time_ruler");
@@ -44,7 +43,6 @@ public class ConfigurationTest {
                 @Override
                 protected boolean matchesSafely(Configuration item) {
                     return item.port() == configuration.port() &&
-                        item.useCompiledResources() == configuration.useCompiledResources() &&
                         item.databaseUser().equals(configuration.databaseUser()) &&
                         item.databasePassword().equals(configuration.databasePassword()) &&
                         item.jdbcUrl().equals(configuration.jdbcUrl()) &&

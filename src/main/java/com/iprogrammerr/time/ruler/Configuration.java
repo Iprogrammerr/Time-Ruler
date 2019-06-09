@@ -2,12 +2,12 @@ package com.iprogrammerr.time.ruler;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Properties;
 
 public class Configuration {
 
     public static final String PORT = "port";
-    public static final String COMPILED_RESOURCES = "compiledResources";
     public static final String DATABASE_USER = "database.user";
     public static final String DATABASE_PASSWORD = "database.password";
     public static final String JDBC_URL = "jdbc-url";
@@ -45,14 +45,11 @@ public class Configuration {
         return Integer.parseInt(notNull(PORT));
     }
 
-    public boolean useCompiledResources() {
-        return Boolean.parseBoolean(notNull(COMPILED_RESOURCES));
-    }
-
     public String resourcesPath() {
         String path;
-        if (useCompiledResources()) {
-            path = Configuration.class.getResource("/").getPath();
+        URL root = Configuration.class.getResource(".");
+        if (root == null) {
+            path = "";
         } else {
             String classPath = Configuration.class.getResource(".").getPath();
             path = classPath.substring(0, classPath.indexOf("target")) + "src/main/resources";
