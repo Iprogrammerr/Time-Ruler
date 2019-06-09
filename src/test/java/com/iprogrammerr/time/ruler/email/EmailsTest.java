@@ -26,7 +26,7 @@ public class EmailsTest {
         rule.setUser(configuration.adminEmail(), configuration.adminPassword());
         ConfigurableEmailServer emailServer = new ConfigurableEmailServer(
             configuration.adminEmail(), configuration.adminPassword(), configuration.smtpHost(),
-            configuration.smtpPort()
+            configuration.smtpPort(), configuration.smtpSsl()
         );
         emails = new Emails(emailServer, configuration);
     }

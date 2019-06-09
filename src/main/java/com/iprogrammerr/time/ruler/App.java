@@ -155,7 +155,8 @@ public class App {
         Descriptions descriptions = new DatabaseDescriptions(session);
 
         EmailServer emailServer = new ConfigurableEmailServer(configuration.adminEmail(),
-            configuration.adminPassword(), configuration.smtpHost(), configuration.smtpPort());
+            configuration.adminPassword(), configuration.smtpHost(), configuration.smtpPort(),
+            configuration.smtpSsl());
         Emails emails = new Emails(emailServer, configuration);
         Hashing hashing = new Hashing();
         Identity<Long> identity = new SessionIdentity();

@@ -15,6 +15,7 @@ public class Configuration {
     public static final String ADMIN_PASSWORD = "admin.password";
     public static final String SMTP_HOST = "smtp.host";
     public static final String SMTP_PORT = "smtp.port";
+    public static final String SMTP_SSL = "smtp.ssl";
     public static final String EMAILS_LINKS_BASE = "emailsLinksBase";
     public static final String SIGN_UP_EMAIL_SUBJECT = "signUpEmailSubject";
     public static final String SIGN_UP_EMAIL_TEMPLATE = "signUpEmailTemplate";
@@ -83,6 +84,10 @@ public class Configuration {
 
     public int smtpPort() {
         return Integer.parseInt(notNull(SMTP_PORT));
+    }
+
+    public boolean smtpSsl() {
+        return Boolean.parseBoolean(notNull(SMTP_SSL));
     }
 
     public String emailsLinksBase() {

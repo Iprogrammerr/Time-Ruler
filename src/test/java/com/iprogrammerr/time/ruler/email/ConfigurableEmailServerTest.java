@@ -26,7 +26,7 @@ public class ConfigurableEmailServerTest {
     public void sendsEmail() {
         ConfigurableEmailServer emailServer = new ConfigurableEmailServer(
             configuration.adminEmail(), configuration.adminPassword(), configuration.smtpHost(),
-            configuration.smtpPort()
+            configuration.smtpPort(), configuration.smtpSsl()
         );
         Email email = new RandomEmails().email();
         emailServer.send(email);

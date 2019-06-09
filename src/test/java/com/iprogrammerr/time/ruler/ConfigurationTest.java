@@ -24,6 +24,7 @@ public class ConfigurationTest {
         properties.put(Configuration.ADMIN_PASSWORD, "fd38406ed994ff");
         properties.put(Configuration.SMTP_HOST, "smtp.mailtrap.io");
         properties.put(Configuration.SMTP_PORT, "25");
+        properties.put(Configuration.SMTP_SSL, "false");
         properties.put(Configuration.EMAILS_LINKS_BASE, "http://127.0.0.1:8080/");
         properties.put(Configuration.SIGN_UP_EMAIL_SUBJECT, "Welcome to Time Ruler");
         properties.put(Configuration.SIGN_UP_EMAIL_TEMPLATE,

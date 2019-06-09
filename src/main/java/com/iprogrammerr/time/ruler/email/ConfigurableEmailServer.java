@@ -19,7 +19,7 @@ public class ConfigurableEmailServer implements EmailServer {
     private final Properties properties;
     private final Authenticator authenticator;
 
-    public ConfigurableEmailServer(String admin, String password, String host, int port) {
+    public ConfigurableEmailServer(String admin, String password, String host, int port, boolean ssl) {
         this.admin = admin;
         this.authenticator = new Authenticator() {
             @Override
@@ -30,6 +30,7 @@ public class ConfigurableEmailServer implements EmailServer {
         this.properties = new Properties();
         properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.ssl.enable", String.valueOf(ssl));
         properties.put("mail.smtp.host", host);
         properties.put("mail.smtp.port", String.valueOf(port));
     }
