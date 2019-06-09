@@ -28,6 +28,14 @@ public class RandomUsers {
         return user(random.nextLong());
     }
 
+    public User different(String email, String name) {
+        User user = user();
+        while (email.equals(user.email) || name.equals(user.name)) {
+            user = user();
+        }
+        return user;
+    }
+
     public User inactive() {
         return user(random.nextLong(), false);
     }

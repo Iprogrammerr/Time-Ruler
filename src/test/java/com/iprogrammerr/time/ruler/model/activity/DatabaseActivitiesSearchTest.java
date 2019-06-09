@@ -167,7 +167,7 @@ public class DatabaseActivitiesSearchTest {
     }
 
     @Test
-    public void countsMatches() {
+    public void countsPatternMatches() {
         Random random = new Random();
         User user = new RandomUsers(random).user();
         long userId = users.create(user.name, user.email, user.password);
@@ -200,6 +200,31 @@ public class DatabaseActivitiesSearchTest {
 
     private String nameMatchingPattern(String pattern, int index) {
         return pattern + "_" + index;
+    }
+
+    @Test
+    public void countsMatches() {
+        Random random = new Random();
+        RandomUsers randomUsers = new RandomUsers(random);
+        RandomActivities randomActivities = new RandomActivities(random);
+
+        User user = randomUsers.user();
+        long userId = users.create(user.name, user.email, user.password);
+        User otherUser = randomUsers.different(user.email, user.name);
+        long otherUserId = users.create(otherUser.name, otherUser.email, otherUser.password);
+
+        int toCreate = 1 + random.nextInt(MAX_ACTIVITIES_SIZE);
+        int expectedMatches = 0;
+        for (int i = 0; i < toCreate; i++) {
+            if (random.nextBoolean()) {
+                activities.create(randomActivities.activity(userId));
+                expectedMatches++;
+            } else {
+                activities.create(randomActivities.activity(otherUserId));
+            }
+        }
+        MatcherAssert.assertThat("Does not return expected matches", activitiesSearch.matches(userId),
+            Matchers.equalTo(expectedMatches));
     }
 
     @Test
