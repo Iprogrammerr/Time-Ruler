@@ -31,6 +31,7 @@ public class DatabaseDates implements Dates {
     public List<Long> userPlannedDays(long id, long start, long end) {
         String query = new StringBuilder("SELECT start_date from activity ")
             .append("WHERE start_date >= ? AND start_date <= ? ")
+            .append("AND user_id = ? ")
             .append("ORDER by start_date ASC")
             .toString();
         return session.select(r -> {
@@ -52,6 +53,6 @@ public class DatabaseDates implements Dates {
                 }
             }
             return days;
-        }, query, start, end);
+        }, query, start, end, id);
     }
 }
