@@ -3,8 +3,8 @@ package com.iprogrammerr.time.ruler.route;
 import com.iprogrammerr.time.ruler.model.TypedMap;
 import com.iprogrammerr.time.ruler.model.param.QueryParams;
 import com.iprogrammerr.time.ruler.respondent.CalendarRespondent;
-import io.javalin.Context;
 import io.javalin.Javalin;
+import io.javalin.http.Context;
 
 public class CalendarRoutes implements GroupedRoutes {
 

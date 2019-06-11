@@ -1,7 +1,7 @@
 package com.iprogrammerr.time.ruler.mock;
 
-import io.javalin.Context;
-import io.javalin.core.util.ContextUtil;
+import io.javalin.http.Context;
+import io.javalin.http.util.ContextUtil;
 import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletRequest;

@@ -65,7 +65,7 @@ import com.iprogrammerr.time.ruler.view.rendering.SigningUpViews;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.javalin.Javalin;
-import io.javalin.staticfiles.Location;
+import io.javalin.http.staticfiles.Location;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
@@ -84,17 +84,18 @@ public class App {
         Configuration configuration = Configuration.fromCmd(args);
         String root = configuration.resourcesPath();
 
-        Javalin app = Javalin.create();
-        if (root.isEmpty()) {
-            app.enableStaticFiles("css", Location.CLASSPATH)
-                .enableStaticFiles("image", Location.CLASSPATH)
-                .enableStaticFiles("js", Location.CLASSPATH);
-        } else {
-            File rootFile = new File(root);
-            app.enableStaticFiles(rootFile.getPath() + File.separator + "css", Location.EXTERNAL)
-                .enableStaticFiles(rootFile.getPath() + File.separator + "image", Location.EXTERNAL)
-                .enableStaticFiles(rootFile.getPath() + File.separator + "js", Location.EXTERNAL);
-        }
+        Javalin app = Javalin.create(c -> {
+            if (root.isEmpty()) {
+                c.addStaticFiles("css", Location.CLASSPATH)
+                    .addStaticFiles("image", Location.CLASSPATH)
+                    .addStaticFiles("js", Location.CLASSPATH);
+            } else {
+                File rootFile = new File(root);
+                c.addStaticFiles(rootFile.getPath() + File.separator + "css", Location.EXTERNAL)
+                 .addStaticFiles(rootFile.getPath() + File.separator + "image", Location.EXTERNAL)
+                 .addStaticFiles(rootFile.getPath() + File.separator + "js", Location.EXTERNAL);
+            }
+        });
 
         DateFormat dateFormat = new SimpleDateFormat("E, dd.MM.yyyy", Locale.US);
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));

@@ -1,8 +1,8 @@
 package com.iprogrammerr.time.ruler.route;
 
 import com.iprogrammerr.time.ruler.respondent.WelcomeRespondent;
-import io.javalin.Context;
 import io.javalin.Javalin;
+import io.javalin.http.Context;
 
 public class WelcomeRoutes implements Routes {
 

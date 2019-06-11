@@ -5,8 +5,8 @@ import com.iprogrammerr.time.ruler.model.param.QueryParams;
 import com.iprogrammerr.time.ruler.respondent.HtmlResponse;
 import com.iprogrammerr.time.ruler.respondent.activity.ActivitiesRespondent;
 import com.iprogrammerr.time.ruler.route.GroupedRoutes;
-import io.javalin.Context;
 import io.javalin.Javalin;
+import io.javalin.http.Context;
 
 public class ActivitiesRoutes implements GroupedRoutes {
 

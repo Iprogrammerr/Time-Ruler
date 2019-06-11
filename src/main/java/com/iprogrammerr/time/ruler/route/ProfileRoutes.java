@@ -4,8 +4,8 @@ import com.iprogrammerr.time.ruler.model.form.FormParams;
 import com.iprogrammerr.time.ruler.model.param.ProfileParams;
 import com.iprogrammerr.time.ruler.respondent.ProfileRespondent;
 import com.iprogrammerr.time.ruler.respondent.Redirection;
-import io.javalin.Context;
 import io.javalin.Javalin;
+import io.javalin.http.Context;
 
 public class ProfileRoutes implements GroupedRoutes {
 

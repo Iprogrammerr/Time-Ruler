@@ -7,8 +7,8 @@ import com.iprogrammerr.time.ruler.respondent.Redirection;
 import com.iprogrammerr.time.ruler.respondent.authentication.SigningInRespondent;
 import com.iprogrammerr.time.ruler.route.Routes;
 import com.iprogrammerr.time.ruler.route.day.DayPlanExecutionRoutes;
-import io.javalin.Context;
 import io.javalin.Javalin;
+import io.javalin.http.Context;
 
 public class SigningInRoutes implements Routes {
 

@@ -3,9 +3,9 @@ package com.iprogrammerr.time.ruler.route.day;
 import com.iprogrammerr.time.ruler.model.param.QueryParams;
 import com.iprogrammerr.time.ruler.respondent.day.DayPlanRespondent;
 import com.iprogrammerr.time.ruler.route.GroupedRoutes;
-import io.javalin.Context;
 import io.javalin.Javalin;
 import io.javalin.core.util.Header;
+import io.javalin.http.Context;
 
 public class DayPlanRoutes implements GroupedRoutes {
 
