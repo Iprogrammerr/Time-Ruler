@@ -11,6 +11,7 @@ public class RandomStrings {
     private static final int ALPHABETIC_UPPER_CASE_MIN = 65;
     private static final int ASCII_DIGIT_MIN = 48;
     private static final int ASCII_DIGIT_MAX = 57;
+    private static final int MIN_NAME_SIZE = 3;
     private static final int MAX_NAME_SIZE = 25;
     private static final char AT = '@';
     private static final char DOT = '.';
@@ -98,7 +99,7 @@ public class RandomStrings {
     }
 
     public String name() {
-        return alphabetic(2 + random.nextInt(MAX_NAME_SIZE - 1));
+        return alphabetic(MIN_NAME_SIZE + random.nextInt(MAX_NAME_SIZE - MIN_NAME_SIZE));
     }
 
     public String email() {
