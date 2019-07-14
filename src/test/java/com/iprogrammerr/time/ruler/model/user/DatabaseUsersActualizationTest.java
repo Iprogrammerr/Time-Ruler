@@ -1,11 +1,10 @@
 package com.iprogrammerr.time.ruler.model.user;
 
-import com.iprogrammerr.time.ruler.database.DatabaseSession;
-import com.iprogrammerr.time.ruler.database.QueryTemplates;
-import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
+import com.iprogrammerr.smart.query.QueryFactory;
+import com.iprogrammerr.smart.query.SmartQueryFactory;
+import com.iprogrammerr.time.ruler.setup.TestDatabaseSetup;
 import com.iprogrammerr.time.ruler.tool.RandomStrings;
 import com.iprogrammerr.time.ruler.tool.RandomUsers;
-import com.iprogrammerr.time.ruler.setup.TestDatabaseSetup;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -24,9 +23,9 @@ public class DatabaseUsersActualizationTest {
 
     @Before
     public void setup() {
-        DatabaseSession session = new SqlDatabaseSession(setup.source(), new QueryTemplates());
-        users = new DatabaseUsers(session);
-        actualization = new DatabaseUsersActualization(session);
+        QueryFactory factory = new SmartQueryFactory(setup.source());
+        users = new DatabaseUsers(factory);
+        actualization = new DatabaseUsersActualization(factory);
         setup.setup();
     }
 

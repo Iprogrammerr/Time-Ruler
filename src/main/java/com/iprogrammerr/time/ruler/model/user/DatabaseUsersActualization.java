@@ -1,38 +1,53 @@
 package com.iprogrammerr.time.ruler.model.user;
 
-import com.iprogrammerr.time.ruler.database.DatabaseSession;
-import com.iprogrammerr.time.ruler.database.Record;
+import com.iprogrammerr.smart.query.QueryFactory;
 
 public class DatabaseUsersActualization implements UsersActualization {
 
-    private final DatabaseSession session;
+    private final QueryFactory factory;
 
-    public DatabaseUsersActualization(DatabaseSession session) {
-        this.session = session;
+    public DatabaseUsersActualization(QueryFactory factory) {
+        this.factory = factory;
     }
 
     @Override
     public void activate(long id) {
-        session.update(new Record(User.TABLE).put(User.ACTIVE, true), "id = ?", id);
+        factory.newQuery().dsl()
+            .update(User.TABLE).set(User.ACTIVE, true)
+            .where(User.ID).equal().value(id)
+            .query()
+            .execute();
     }
 
     @Override
     public void updateName(long id, String name) {
-        session.update(new Record(User.TABLE).put(User.NAME, name), "id = ?", id);
+        factory.newQuery().dsl()
+            .update(User.TABLE).set(User.NAME, name)
+            .where(User.ID).equal().value(id)
+            .query().execute();
     }
 
     @Override
     public void updateEmail(long id, String email) {
-        session.update(new Record(User.TABLE).put(User.EMAIL, email), "id = ?", id);
+        factory.newQuery().dsl()
+            .update(User.TABLE).set(User.EMAIL, email)
+            .where(User.ID).equal().value(id)
+            .query().execute();
     }
 
     @Override
     public void updatePassword(long id, String password) {
-        session.update(new Record(User.TABLE).put(User.PASSWORD, password), "id = ?", id);
+        factory.newQuery().dsl()
+            .update(User.TABLE).set(User.PASSWORD, password)
+            .where(User.ID).equal().value(id)
+            .query().execute();
     }
 
     @Override
     public void updatePassword(String email, String password) {
-        session.update(new Record(User.TABLE).put(User.PASSWORD, password), "email = ?", email);
+        factory.newQuery().dsl()
+            .update(User.TABLE).set(User.PASSWORD, password)
+            .where(User.EMAIL).equal().value(email)
+            .query().execute();
     }
 }

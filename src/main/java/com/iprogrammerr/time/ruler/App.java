@@ -2,9 +2,6 @@ package com.iprogrammerr.time.ruler;
 
 import com.iprogrammerr.smart.query.QueryFactory;
 import com.iprogrammerr.smart.query.SmartQueryFactory;
-import com.iprogrammerr.time.ruler.database.DatabaseSession;
-import com.iprogrammerr.time.ruler.database.QueryTemplates;
-import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
 import com.iprogrammerr.time.ruler.email.ConfigurableEmailServer;
 import com.iprogrammerr.time.ruler.email.EmailServer;
 import com.iprogrammerr.time.ruler.email.Emails;
@@ -149,11 +146,10 @@ public class App {
         config.setPassword(configuration.databasePassword());
         config.setJdbcUrl(configuration.jdbcUrl());
         DataSource dataSource = new HikariDataSource(config);
-        DatabaseSession session = new SqlDatabaseSession(dataSource, new QueryTemplates());
         QueryFactory queryFactory = new SmartQueryFactory(dataSource);
 
-        Users users = new DatabaseUsers(session);
-        UsersActualization actualization = new DatabaseUsersActualization(session);
+        Users users = new DatabaseUsers(queryFactory);
+        UsersActualization actualization = new DatabaseUsersActualization(queryFactory);
         Activities activities = new DatabaseActivities(queryFactory);
         ActivitiesSearch activitiesSearch = new DatabaseActivitiesSearch(queryFactory);
         Dates dates = new DatabaseDates(queryFactory);

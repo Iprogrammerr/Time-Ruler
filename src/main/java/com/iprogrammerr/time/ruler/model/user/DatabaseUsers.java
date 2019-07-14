@@ -1,7 +1,6 @@
 package com.iprogrammerr.time.ruler.model.user;
 
-import com.iprogrammerr.time.ruler.database.DatabaseSession;
-import com.iprogrammerr.time.ruler.database.Record;
+import com.iprogrammerr.smart.query.QueryFactory;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -10,15 +9,18 @@ import java.util.Optional;
 
 public class DatabaseUsers implements Users {
 
-    private final DatabaseSession session;
+    private final QueryFactory factory;
 
-    public DatabaseUsers(DatabaseSession session) {
-        this.session = session;
+    public DatabaseUsers(QueryFactory factory) {
+        this.factory = factory;
     }
 
     @Override
     public List<User> all() {
-        return session.select(this::users, "SELECT * FROM user");
+        return factory.newQuery().dsl()
+            .selectAll().from(User.TABLE)
+            .query()
+            .fetch(this::users);
     }
 
     private List<User> users(ResultSet result) throws Exception {
@@ -31,21 +33,28 @@ public class DatabaseUsers implements Users {
 
     @Override
     public List<User> allInactive() {
-        return session.select(this::users, "SELECT * FROM user WHERE active = 0");
+        return factory.newQuery().dsl()
+            .selectAll().from(User.TABLE).where(User.ACTIVE).equal().value(0)
+            .query()
+            .fetch(this::users);
     }
 
     @Override
     public long create(String name, String email, String password) {
-        return session.create(
-            new Record(User.TABLE).put(User.NAME, name).put(User.EMAIL, email).put(User.PASSWORD, password)
-                .put(User.ACTIVE, false)
-        );
+        return factory.newQuery().dsl()
+            .insertInto(User.TABLE)
+            .columns(User.NAME, User.EMAIL, User.PASSWORD)
+            .values(name, email, password)
+            .query()
+            .executeReturningId();
     }
 
     @Override
     public User user(long id) {
-        return session.select(r -> mapOrThrow(r, "There is no user with %s id", String.valueOf(id)),
-            "SELECT * FROM user WHERE id = ?", id);
+        return factory.newQuery().dsl()
+            .selectAll().from(User.TABLE).where(User.ID).equal().value(id)
+            .query()
+            .fetch(r -> mapOrThrow(r, "There is no user with %s id", String.valueOf(id)));
     }
 
     private User mapOrThrow(ResultSet result, String exceptionTemplate, String identifier) throws Exception {
@@ -57,7 +66,10 @@ public class DatabaseUsers implements Users {
 
     @Override
     public Optional<User> withEmail(String email) {
-        return session.select(this::userFromResult, "SELECT * FROM user WHERE email = ?", email);
+        return factory.newQuery().dsl()
+            .selectAll().from(User.TABLE).where(User.EMAIL).equal().value(email)
+            .query()
+            .fetch(this::userFromResult);
     }
 
     private Optional<User> userFromResult(ResultSet result) throws Exception {
@@ -69,6 +81,9 @@ public class DatabaseUsers implements Users {
 
     @Override
     public Optional<User> withName(String name) {
-        return session.select(this::userFromResult, "SELECT * FROM user WHERE name = ?", name);
+        return factory.newQuery().dsl()
+            .selectAll().from(User.TABLE).where(User.NAME).equal().value(name)
+            .query()
+            .fetch(this::userFromResult);
     }
 }
