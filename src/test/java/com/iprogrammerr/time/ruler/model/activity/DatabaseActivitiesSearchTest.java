@@ -21,6 +21,7 @@ import java.util.Random;
 
 public class DatabaseActivitiesSearchTest {
 
+    private static final String PATTERN_SUFFIX = "-";
     private static final int MAX_ACTIVITIES_SIZE = 100;
     private static final int MAX_ACTIVITY_NAME_SIZE = 50;
     private final TestDatabaseSetup setup = new TestDatabaseSetup();
@@ -166,27 +167,31 @@ public class DatabaseActivitiesSearchTest {
     }
 
     @Test
-    public void countsPatternMatches() {
+    public void countsPatternMatching() {
         Random random = new Random();
         User user = new RandomUsers(random).user();
         long userId = users.create(user.name, user.email, user.password);
         RandomActivities randomActivities = new RandomActivities(random);
         RandomStrings randomStrings = new RandomStrings(random);
-        String pattern = randomStrings.alphabetic(1 + random.nextInt(MAX_ACTIVITY_NAME_SIZE));
+        String pattern = uniquePattern(randomStrings, random);
 
         int toCreate = 1 + random.nextInt(MAX_ACTIVITIES_SIZE);
-        int expectedMatches = 0;
+        int expectedMatching = 0;
         for (int i = 0; i < toCreate; i++) {
             Activity a = notMatching(randomActivities, userId, pattern);
             if (random.nextBoolean()) {
                 a = new Activity(a.userId, nameMatchingPattern(pattern, i), a.startDate, a.endDate, a.done);
-                expectedMatches++;
+                expectedMatching++;
             }
             activities.create(a);
         }
 
-        MatcherAssert.assertThat("Does not return expected matches", activitiesSearch.matching(userId, pattern),
-            Matchers.equalTo(expectedMatches));
+        MatcherAssert.assertThat("Does not return expected matching", activitiesSearch.matching(userId, pattern),
+            Matchers.equalTo(expectedMatching));
+    }
+
+    private String uniquePattern(RandomStrings randomStrings, Random random) {
+        return randomStrings.alphabetic(1 + random.nextInt(MAX_ACTIVITY_NAME_SIZE)) + PATTERN_SUFFIX;
     }
 
     private Activity notMatching(RandomActivities random, long userId, String pattern) {
@@ -198,11 +203,11 @@ public class DatabaseActivitiesSearchTest {
     }
 
     private String nameMatchingPattern(String pattern, int index) {
-        return pattern + "_" + index;
+        return pattern + index;
     }
 
     @Test
-    public void countsMatches() {
+    public void countsMatching() {
         Random random = new Random();
         RandomUsers randomUsers = new RandomUsers(random);
         RandomActivities randomActivities = new RandomActivities(random);
@@ -213,17 +218,17 @@ public class DatabaseActivitiesSearchTest {
         long otherUserId = users.create(otherUser.name, otherUser.email, otherUser.password);
 
         int toCreate = 1 + random.nextInt(MAX_ACTIVITIES_SIZE);
-        int expectedMatches = 0;
+        int expectedMatching = 0;
         for (int i = 0; i < toCreate; i++) {
             if (random.nextBoolean()) {
                 activities.create(randomActivities.activity(userId));
-                expectedMatches++;
+                expectedMatching++;
             } else {
                 activities.create(randomActivities.activity(otherUserId));
             }
         }
-        MatcherAssert.assertThat("Does not return expected matches", activitiesSearch.matching(userId),
-            Matchers.equalTo(expectedMatches));
+        MatcherAssert.assertThat("Does not return expected matching", activitiesSearch.matching(userId),
+            Matchers.equalTo(expectedMatching));
     }
 
     @Test
@@ -234,7 +239,7 @@ public class DatabaseActivitiesSearchTest {
         long date = Instant.now().getEpochSecond();
         RandomActivities randomActivities = new RandomActivities(random);
         RandomStrings randomStrings = new RandomStrings(random);
-        String pattern = randomStrings.alphabetic(1 + random.nextInt(MAX_ACTIVITY_NAME_SIZE));
+        String pattern = uniquePattern(randomStrings, random);
 
         int toCreate = 1 + random.nextInt(MAX_ACTIVITIES_SIZE);
         boolean ascending = random.nextBoolean();
