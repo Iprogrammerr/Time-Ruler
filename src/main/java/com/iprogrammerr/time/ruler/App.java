@@ -1,5 +1,7 @@
 package com.iprogrammerr.time.ruler;
 
+import com.iprogrammerr.smart.query.QueryFactory;
+import com.iprogrammerr.smart.query.SmartQueryFactory;
 import com.iprogrammerr.time.ruler.database.DatabaseSession;
 import com.iprogrammerr.time.ruler.database.QueryTemplates;
 import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
@@ -92,8 +94,8 @@ public class App {
             } else {
                 File rootFile = new File(root);
                 c.addStaticFiles(rootFile.getPath() + File.separator + "css", Location.EXTERNAL)
-                 .addStaticFiles(rootFile.getPath() + File.separator + "image", Location.EXTERNAL)
-                 .addStaticFiles(rootFile.getPath() + File.separator + "js", Location.EXTERNAL);
+                    .addStaticFiles(rootFile.getPath() + File.separator + "image", Location.EXTERNAL)
+                    .addStaticFiles(rootFile.getPath() + File.separator + "js", Location.EXTERNAL);
             }
         });
 
@@ -148,12 +150,14 @@ public class App {
         config.setJdbcUrl(configuration.jdbcUrl());
         DataSource dataSource = new HikariDataSource(config);
         DatabaseSession session = new SqlDatabaseSession(dataSource, new QueryTemplates());
+        QueryFactory queryFactory = new SmartQueryFactory(dataSource);
+
         Users users = new DatabaseUsers(session);
         UsersActualization actualization = new DatabaseUsersActualization(session);
-        Activities activities = new DatabaseActivities(session);
-        ActivitiesSearch activitiesSearch = new DatabaseActivitiesSearch(session);
-        Dates dates = new DatabaseDates(session);
-        Descriptions descriptions = new DatabaseDescriptions(session);
+        Activities activities = new DatabaseActivities(queryFactory);
+        ActivitiesSearch activitiesSearch = new DatabaseActivitiesSearch(queryFactory);
+        Dates dates = new DatabaseDates(queryFactory);
+        Descriptions descriptions = new DatabaseDescriptions(queryFactory);
 
         EmailServer emailServer = new ConfigurableEmailServer(configuration.adminEmail(),
             configuration.adminPassword(), configuration.smtpHost(), configuration.smtpPort(),

@@ -1,7 +1,7 @@
 package com.iprogrammerr.time.ruler.model.description;
 
-import com.iprogrammerr.time.ruler.database.DatabaseSession;
-import com.iprogrammerr.time.ruler.database.Record;
+import com.iprogrammerr.smart.query.QueryDsl;
+import com.iprogrammerr.smart.query.QueryFactory;
 import com.iprogrammerr.time.ruler.model.activity.Activity;
 import com.iprogrammerr.time.ruler.model.activity.DescribedActivity;
 
@@ -9,53 +9,72 @@ import java.sql.ResultSet;
 
 public class DatabaseDescriptions implements Descriptions {
 
-    private final DatabaseSession session;
+    private final QueryFactory factory;
 
-    public DatabaseDescriptions(DatabaseSession session) {
-        this.session = session;
+    public DatabaseDescriptions(QueryFactory factory) {
+        this.factory = factory;
     }
 
     @Override
     public long create(Description description) {
-        return session.create(new Record(Description.TABLE).put(Description.ACTIVITY_ID, description.activityId)
-            .put(Description.CONTENT, description.content));
+        return factory.newQuery().dsl()
+            .insertInto(Description.TABLE)
+            .columns(Description.ACTIVITY_ID, Description.CONTENT)
+            .values(description.activityId, description.content)
+            .query()
+            .executeReturningId();
     }
 
     @Override
     public DescribedActivity describedActivity(long activityId) {
-        String query = new StringBuilder("SELECT a.*, d.content FROM activity a ")
-            .append("LEFT JOIN description d ON d.activity_id = a.id ")
-            .append("WHERE a.id = ?")
-            .toString();
-        return session.select(r -> {
-            if (r.next()) {
-                String description = r.getString(Description.CONTENT);
-                if (description == null) {
-                    description = "";
+        return factory.newQuery().dsl()
+            .select("a.*, d.content").from(Activity.TABLE).as("a")
+            .leftJoin(Description.TABLE).as("d").on("d.activity_id", "a.id")
+            .where("a.id").equal().value(activityId)
+            .query()
+            .fetch(r -> {
+                if (r.next()) {
+                    String description = r.getString(Description.CONTENT);
+                    if (description == null) {
+                        description = "";
+                    }
+                    return new DescribedActivity(new Activity(r), description);
                 }
-                return new DescribedActivity(new Activity(r), description);
-            }
-            throw new RuntimeException(String.format("There is no activity associated with %d id", activityId));
-        }, query, activityId);
+                throw new RuntimeException(String.format("There is no activity associated with %d id",
+                    activityId));
+            });
     }
 
     @Override
     public void updateOrCreate(Description description) {
-        Record record = new Record(Description.TABLE).put(Description.ACTIVITY_ID, description.activityId)
-            .put(Description.CONTENT, description.content);
+        QueryDsl dsl = factory.newQuery().dsl();
         if (descriptionExists(description.activityId)) {
-            session.update(record, "activity_id = ?", description.activityId);
+            dsl.update(Description.TABLE)
+                .set(Description.ACTIVITY_ID, description.activityId)
+                .set(Description.CONTENT, description.content)
+                .where(Description.ACTIVITY_ID).equal().value(description.activityId);
         } else {
-            session.create(record);
+            dsl.insertInto(Description.TABLE)
+                .columns(Description.ACTIVITY_ID, Description.CONTENT)
+                .values(description.activityId, description.content);
         }
+        dsl.query().execute();
     }
 
     @Override
     public void delete(long activityId) {
-        session.delete(Description.TABLE, "activity_id = ?", activityId);
+        factory.newQuery().dsl()
+            .delete(Description.TABLE)
+            .where(Description.ACTIVITY_ID).equal().value(activityId)
+            .query()
+            .execute();
     }
 
     private boolean descriptionExists(long activityId) {
-        return session.select(ResultSet::next, "SELECT id FROM description WHERE activity_id = ?", activityId);
+        return factory.newQuery().dsl()
+            .select(Description.ID).from(Description.TABLE)
+            .where(Description.ACTIVITY_ID).equal().value(activityId)
+            .query()
+            .fetch(ResultSet::next);
     }
 }

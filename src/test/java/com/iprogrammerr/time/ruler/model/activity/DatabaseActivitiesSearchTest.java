@@ -1,5 +1,7 @@
 package com.iprogrammerr.time.ruler.model.activity;
 
+import com.iprogrammerr.smart.query.QueryFactory;
+import com.iprogrammerr.smart.query.SmartQueryFactory;
 import com.iprogrammerr.time.ruler.database.DatabaseSession;
 import com.iprogrammerr.time.ruler.database.QueryTemplates;
 import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
@@ -32,9 +34,10 @@ public class DatabaseActivitiesSearchTest {
     @Before
     public void setup() {
         DatabaseSession session = new SqlDatabaseSession(setup.source(), new QueryTemplates());
+        QueryFactory factory = new SmartQueryFactory(setup.source());
         users = new DatabaseUsers(session);
-        activities = new DatabaseActivities(session);
-        activitiesSearch = new DatabaseActivitiesSearch(session);
+        activities = new DatabaseActivities(factory);
+        activitiesSearch = new DatabaseActivitiesSearch(factory);
         setup.setup();
     }
 
@@ -186,7 +189,7 @@ public class DatabaseActivitiesSearchTest {
             activities.create(a);
         }
 
-        MatcherAssert.assertThat("Does not return expected matches", activitiesSearch.matches(userId, pattern),
+        MatcherAssert.assertThat("Does not return expected matches", activitiesSearch.matching(userId, pattern),
             Matchers.equalTo(expectedMatches));
     }
 
@@ -223,7 +226,7 @@ public class DatabaseActivitiesSearchTest {
                 activities.create(randomActivities.activity(otherUserId));
             }
         }
-        MatcherAssert.assertThat("Does not return expected matches", activitiesSearch.matches(userId),
+        MatcherAssert.assertThat("Does not return expected matches", activitiesSearch.matching(userId),
             Matchers.equalTo(expectedMatches));
     }
 

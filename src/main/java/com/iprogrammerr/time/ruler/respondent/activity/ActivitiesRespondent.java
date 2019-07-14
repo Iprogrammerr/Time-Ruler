@@ -48,10 +48,10 @@ public class ActivitiesRespondent {
         int allPagesNumber;
         if (pattern.isEmpty()) {
             activities = search.userActivities(userId, (page - 1) * pageSize, pageSize, false);
-            allPagesNumber = pagesNumber(search.matches(userId));
+            allPagesNumber = pagesNumber(search.matching(userId));
         } else {
             activities = search.userActivities(userId, pattern, (page - 1) * pageSize, pageSize, false);
-            allPagesNumber = pagesNumber(search.matches(userId, pattern));
+            allPagesNumber = pagesNumber(search.matching(userId, pattern));
         }
         return new HtmlResponse(views.view(plan, pattern, page, pages(allPagesNumber, plan, pattern,
             currentParams), activities, d -> dates.clientDate(request, d)));

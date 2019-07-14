@@ -1,6 +1,7 @@
 package com.iprogrammerr.time.ruler.model.activity;
 
-import com.iprogrammerr.time.ruler.database.DatabaseSession;
+import com.iprogrammerr.smart.query.QueryDsl;
+import com.iprogrammerr.smart.query.QueryFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,10 +9,10 @@ import java.util.List;
 public class DatabaseActivitiesSearch implements ActivitiesSearch {
 
     private static final long DAY_SECONDS = 24 * 3600;
-    private final DatabaseSession session;
+    private final QueryFactory factory;
 
-    public DatabaseActivitiesSearch(DatabaseSession session) {
-        this.session = session;
+    public DatabaseActivitiesSearch(QueryFactory factory) {
+        this.factory = factory;
     }
 
     @Override
@@ -20,19 +21,22 @@ public class DatabaseActivitiesSearch implements ActivitiesSearch {
     }
 
     private List<Activity> userDayActivities(long id, long dayStart, ActivitiesFilter filter) {
-        StringBuilder queryBuilder = new StringBuilder("SELECT * FROM activity WHERE ")
-            .append("user_id = ? AND start_date >= ? AND start_date <= ?");
+        QueryDsl dsl = factory.newQuery().dsl()
+            .selectAll().from(Activity.TABLE)
+            .where(Activity.USER_ID).equal().value(id)
+            .and(Activity.START_DATE).greaterEqual().value(dayStart)
+            .and(Activity.END_DATE).lessEqual().value(dayStart + DAY_SECONDS);
         if (filter != ActivitiesFilter.ALL) {
-            queryBuilder.append(" AND done = ").append(filter == ActivitiesFilter.DONE ? "1" : "0");
+            dsl.and(Activity.DONE).equal().value(filter == ActivitiesFilter.DONE ? 1 : 0);
         }
-        queryBuilder.append(" ORDER BY start_date ASC");
-        return session.select(r -> {
+        dsl.orderBy(Activity.START_DATE).asc();
+        return dsl.query().fetch(r -> {
             List<Activity> activities = new ArrayList<>();
             while (r.next()) {
                 activities.add(new Activity(r));
             }
             return activities;
-        }, queryBuilder.toString(), id, dayStart, dayStart + DAY_SECONDS);
+        });
     }
 
     @Override
@@ -47,54 +51,73 @@ public class DatabaseActivitiesSearch implements ActivitiesSearch {
 
     @Override
     public List<Activity> userActivities(long id, int offset, int limit, boolean ascending) {
-        String query = new StringBuilder("SELECT * FROM activity WHERE user_id = ? ")
-            .append("ORDER BY start_date ").append(orderType(ascending))
-            .append(" LIMIT ? OFFSET ?")
-            .toString();
-        return session.select(r -> {
+        QueryDsl dsl = factory.newQuery().dsl()
+            .selectAll().from(Activity.TABLE)
+            .where(Activity.USER_ID).equal().value(id)
+            .orderBy(Activity.START_DATE);
+        if (ascending) {
+            dsl.asc();
+        } else {
+            dsl.desc();
+        }
+        return dsl.limit(offset, limit).query().fetch(r -> {
             List<Activity> activities = new ArrayList<>();
             while (r.next()) {
                 activities.add(new Activity(r));
             }
             return activities;
-        }, query, id, limit, offset);
+        });
     }
 
-    private String orderType(boolean ascending) {
-        return ascending ? "ASC" : "DESC";
-    }
 
     @Override
-    public int matches(long userId) {
-        return session.select(r -> {
-            r.next();
-            return r.getInt(1);
-        }, "SELECT COUNT(id) FROM activity WHERE user_id = ?", userId);
-    }
-
-    @Override
-    public int matches(long userId, String pattern) {
-        return session.select(r -> {
+    public int matching(long userId) {
+        return factory.newQuery().dsl()
+            .select().count(Activity.ID).from(Activity.TABLE)
+            .where(Activity.USER_ID).equal().value(userId)
+            .query()
+            .fetch(r -> {
                 r.next();
                 return r.getInt(1);
-            }, "SELECT COUNT(id) FROM activity WHERE user_id = ? AND LOWER(name) LIKE LOWER(?)",
-            userId, pattern + "%");
+            });
+    }
+
+    @Override
+    public int matching(long userId, String pattern) {
+        return factory.newQuery().dsl()
+            .select().count(Activity.ID).from(Activity.TABLE)
+            .where(Activity.USER_ID).equal().value(userId)
+            .and("LOWER(name)").like(loweredPattern(pattern))
+            .query()
+            .fetch(r -> {
+                r.next();
+                return r.getInt(1);
+            });
+    }
+
+    private String loweredPattern(String pattern) {
+        return pattern.toLowerCase() + "%";
     }
 
     @Override
     public List<Activity> userActivities(long id, String pattern, int offset, int limit, boolean ascending) {
-        String query = new StringBuilder("SELECT * FROM activity ")
-            .append("WHERE user_id = ? AND LOWER(name) LIKE LOWER(?) ")
-            .append("ORDER BY start_date ").append(orderType(ascending))
-            .append(" LIMIT ? OFFSET ?")
-            .toString();
-        return session.select(r -> {
+        QueryDsl dsl = factory.newQuery().dsl()
+            .selectAll().from(Activity.TABLE)
+            .where(Activity.USER_ID).equal().value(id)
+            .and("LOWER(name)").like(loweredPattern(pattern))
+            .orderBy(Activity.START_DATE);
+        if (ascending) {
+            dsl.asc();
+        } else {
+            dsl.desc();
+        }
+        return dsl.limit(offset, limit).query().fetch(r -> {
             List<Activity> activities = new ArrayList<>();
             while (r.next()) {
                 activities.add(new Activity(r));
             }
             return activities;
-        }, query, id, pattern + "%", limit, offset);
+        });
     }
 
     private enum ActivitiesFilter {

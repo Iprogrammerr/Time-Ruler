@@ -87,6 +87,11 @@
             <artifactId>javax.mail</artifactId>
             <version>1.6.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.iprogrammerr</groupId>
+            <artifactId>smart-query</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>

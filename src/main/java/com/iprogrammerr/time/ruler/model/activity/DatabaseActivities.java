@@ -1,71 +1,82 @@
 package com.iprogrammerr.time.ruler.model.activity;
 
-import com.iprogrammerr.time.ruler.database.DatabaseSession;
-import com.iprogrammerr.time.ruler.database.Record;
+import com.iprogrammerr.smart.query.QueryFactory;
 
 import java.sql.ResultSet;
 import java.util.Optional;
 
 public class DatabaseActivities implements Activities {
 
-    private final DatabaseSession session;
+    private final QueryFactory factory;
 
-    public DatabaseActivities(DatabaseSession session) {
-        this.session = session;
+    public DatabaseActivities(QueryFactory factory) {
+        this.factory = factory;
     }
 
     @Override
     public long create(Activity activity) {
-        return session.create(
-            new Record(Activity.TABLE)
-                .put(Activity.NAME, activity.name)
-                .put(Activity.USER_ID, activity.userId)
-                .put(Activity.START_DATE, activity.startDate)
-                .put(Activity.END_DATE, activity.endDate)
-                .put(Activity.DONE, activity.done)
-        );
+        return factory.newQuery().dsl()
+            .insertInto(Activity.TABLE)
+            .columns(Activity.NAME, Activity.USER_ID, Activity.START_DATE, Activity.END_DATE, Activity.DONE)
+            .values(activity.name, activity.userId, activity.startDate, activity.endDate, activity.done)
+            .query()
+            .executeReturningId();
     }
 
     @Override
     public void update(Activity activity) {
-        session.update(
-            new Record(Activity.TABLE)
-                .put(Activity.NAME, activity.name)
-                .put(Activity.USER_ID, activity.userId)
-                .put(Activity.START_DATE, activity.startDate)
-                .put(Activity.END_DATE, activity.endDate)
-                .put(Activity.DONE, activity.done)
-            ,
-            "id = ?", activity.id
-        );
+        factory.newQuery().dsl()
+            .update(Activity.TABLE)
+            .set(Activity.NAME, activity.name)
+            .set(Activity.USER_ID, activity.userId)
+            .set(Activity.START_DATE, activity.startDate)
+            .set(Activity.END_DATE, activity.endDate)
+            .set(Activity.DONE, activity.done)
+            .where(Activity.ID).equal().value(activity.id)
+            .query()
+            .execute();
     }
 
     @Override
     public void delete(long id) {
-        session.delete("activity", "id = ?", id);
+        factory.newQuery().dsl()
+            .delete(Activity.TABLE).where(Activity.ID).equal().value(id)
+            .query()
+            .execute();
     }
 
     @Override
     public Optional<Activity> activity(long id) {
-        return session.select(r -> {
-            Optional<Activity> activity;
-            if (r.next()) {
-                activity = Optional.of(new Activity(r));
-            } else {
-                activity = Optional.empty();
-            }
-            return activity;
-        }, "SELECT * from activity WHERE id = ?", id);
+        return factory.newQuery().dsl()
+            .selectAll().from(Activity.TABLE).where(Activity.ID).equal().value(id)
+            .query()
+            .fetch(r -> {
+                Optional<Activity> activity;
+                if (r.next()) {
+                    activity = Optional.of(new Activity(r));
+                } else {
+                    activity = Optional.empty();
+                }
+                return activity;
+            });
     }
 
     @Override
     public boolean belongsToUser(long userId, long activityId) {
-        return session.select(ResultSet::next, "SELECT id from activity WHERE user_id = ? AND id = ?",
-            userId, activityId);
+        return factory.newQuery().dsl()
+            .select(Activity.ID).from(Activity.TABLE)
+            .where(Activity.USER_ID).equal().value(userId).and(Activity.ID).equal().value(activityId)
+            .query()
+            .fetch(ResultSet::next);
     }
 
     @Override
     public void setDone(long id, boolean done) {
-        session.update(new Record(Activity.TABLE).put(Activity.DONE, done), "id = ?", id);
+        factory.newQuery().dsl()
+            .update(Activity.TABLE)
+            .set(Activity.DONE, done)
+            .where(Activity.ID).equal().value(id)
+            .query()
+            .execute();
     }
 }

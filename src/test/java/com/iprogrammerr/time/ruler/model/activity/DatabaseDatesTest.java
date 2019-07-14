@@ -1,5 +1,7 @@
 package com.iprogrammerr.time.ruler.model.activity;
 
+import com.iprogrammerr.smart.query.QueryFactory;
+import com.iprogrammerr.smart.query.SmartQueryFactory;
 import com.iprogrammerr.time.ruler.database.DatabaseSession;
 import com.iprogrammerr.time.ruler.database.QueryTemplates;
 import com.iprogrammerr.time.ruler.database.SqlDatabaseSession;
@@ -28,9 +30,10 @@ public class DatabaseDatesTest {
     @Before
     public void setup() {
         DatabaseSession session = new SqlDatabaseSession(setup.source(), new QueryTemplates());
+        QueryFactory factory = new SmartQueryFactory(setup.source());
         users = new DatabaseUsers(session);
-        activities = new DatabaseActivities(session);
-        dates = new DatabaseDates(session);
+        activities = new DatabaseActivities(factory);
+        dates = new DatabaseDates(factory);
         setup.setup();
     }
 
